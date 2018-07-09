@@ -3,3 +3,5 @@
 /config/test.py
 /config/dev.py
 /config/prod.py
+.idea
+/__pycache__/

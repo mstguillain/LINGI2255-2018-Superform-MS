@@ -23,7 +23,7 @@ def create_app(config_type="dev"):
     }
     
     app.config.setdefault('SSO_ATTRIBUTE_MAP', SSO_ATTRIBUTE_MAP)
-    app.config.setdefault('SSO_LOGIN_URL', '/login')
+    app.config.setdefault('SSO_LOGIN_URL', '/login/sso')
     
 
     ext.init_app(app)
