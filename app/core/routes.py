@@ -35,25 +35,15 @@ def index():
         details = ''
     return render_template('index.html',details=details)
 
+@main.route('/login')
+def login():
+    return render_template('login.html')
+
 @main.route('/logout')
 def logout():
     session.pop('user')
     return redirect('/')
 
-
-@main.route('/login')
-def login():
-    if 'user' in session:
-        details = get_user_details([
-            'eppn',
-            'uid',
-            'givenName',
-            'mail',
-            'sn',
-            'affiliation',
-            'displayName',
-            'title'
-        ])
-    else:
-        details = ''
-    return render_template('login.html',details=details)
+@main.route('/records')
+def records():
+    return render_template('records.html')

@@ -1,0 +1,143 @@
+{% extends "layout.html" %}
+{% block title %}Superform - Records{% endblock %}
+{% block styles %}
+    {{super()}}
+    <link rel="stylesheet"
+          href="{{url_for('static', filename='css/style.css')}}">
+    {% endblock %}
+    {% block scripts %}
+    <!--<script src="{{url_for('static', filename='js/script.js')}}"></script>-->
+    {{super()}}
+    {% endblock %}
+
+
+
+
+
+{% block content %}
+  <h1>My Records</h1>
+  <div class="container-fluid">
+	<div class="row">
+		<div class="col-md-12">
+			<table class="table table-bordered">
+				<thead>
+					<tr>
+						<th>
+							#
+						</th>
+						<th>
+							Subject
+						</th>
+						<th>
+							Body
+						</th>
+						<th>
+							Channel
+						</th>
+                        <th>
+                            Action
+                        </th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>
+							1
+						</td>
+						<td>
+							TB - Monthly
+						</td>
+						<td>
+							aaaa
+						</td>
+						<td>
+							Portail UCL
+						</td>
+                        <td>
+                            <button type="button" class="btn btn-outline-primary" contenteditable="true">Edit</button>
+                            <button type="button" class="btn btn-outline-primary" contenteditable="true">Copy</button>
+                            <button type="button" class="btn btn-outline-primary" contenteditable="true">Delete</button>
+                        </td>
+					</tr>
+					<tr>
+						<td>
+							1
+						</td>
+						<td>
+							TB - Monthly
+						</td>
+						<td>
+							bbbb
+						</td>
+						<td>
+							Facebook INGI
+						</td>
+                        <td>
+                            <button type="button" class="btn btn-outline-primary" contenteditable="true">Edit</button>
+                            <button type="button" class="btn btn-outline-primary" contenteditable="true">Copy</button>
+                            <button type="button" class="btn btn-outline-primary" contenteditable="true">Delete</button>
+                        </td>
+					</tr>
+					<tr>
+						<td>
+							2
+						</td>
+						<td>
+							TB - Monthly
+						</td>
+						<td>
+							cccc
+						</td>
+						<td>
+							Mail list student ingi
+						</td>
+                        <td>
+                            <button type="button" class="btn btn-outline-primary" contenteditable="true">Edit</button>
+                            <button type="button" class="btn btn-outline-primary" contenteditable="true">Copy</button>
+                            <button type="button" class="btn btn-outline-primary" contenteditable="true">Delete</button>
+                        </td>
+					</tr>
+					<tr>
+						<td>
+							3
+						</td>
+						<td>
+							TB - Monthly
+						</td>
+						<td>
+							dddd
+						</td>
+						<td>
+							Portail UCL
+						</td>
+                        <td>
+                            <button type="button" class="btn btn-outline-primary" contenteditable="true">Edit</button>
+                            <button type="button" class="btn btn-outline-primary" contenteditable="true">Copy</button>
+                            <button type="button" class="btn btn-outline-primary" contenteditable="true">Delete</button>
+                        </td>
+					</tr>
+					<tr>
+						<td>
+							4
+						</td>
+						<td>
+							TB - Monthly
+						</td>
+						<td>
+							eeee
+						</td>
+						<td>
+							Portail ICTEAM
+						</td>
+                        <td>
+                            <button type="button" class="btn btn-outline-primary" contenteditable="true">Edit</button>
+                            <button type="button" class="btn btn-outline-primary" contenteditable="true">Copy</button>
+                            <button type="button" class="btn btn-outline-primary" contenteditable="true">Delete</button>
+                        </td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+  </div>
+{% endblock %}
