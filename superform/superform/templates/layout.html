@@ -24,7 +24,7 @@
                     <li class="nav-item active">
                         <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
                     </li>
-                    {% if logged_in %}
+                    {% if session.loggedin %}
                     <li class="nav-item">
                         <a class="nav-link" href="#">New post</a>
                     </li>
@@ -33,7 +33,7 @@
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            {{ user_name }}
+                            {{ session.attrs['givenName'] }} {{ session.attrs['sn'] }}
                         </a>
                         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
                             <a class="dropdown-item" href="{{ url_for('auth.logout') }}">Logout</a>

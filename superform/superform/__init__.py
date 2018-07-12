@@ -8,11 +8,7 @@ app.register_blueprint(auth_page)
 
 @app.route('/')
 def index():
-    attrs = session.get("attrs", {})
-    return render_template("index.html",
-                           logged_in=session.get("loggedin", False),
-                           user_name=str(attrs.get("givenName", "") + " " + attrs.get("sn", "")),
-                           attrs=str(attrs))
+    return render_template("index.html")
 
 
 if __name__ == '__main__':
