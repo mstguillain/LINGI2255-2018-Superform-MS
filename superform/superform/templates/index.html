@@ -9,4 +9,57 @@
         Your are not logged in.
     {% endif %}
     </p>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-12">
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th>
+                  #
+                </th>
+                <th>
+                  Subject
+                </th>
+                <th>
+                  Body
+                </th>
+                <th>
+                    Action
+                </th>
+              </tr>
+            </thead>
+
+            <tbody>
+
+                <tr>
+                    <td>
+                        1
+                    </td>
+                    <td>
+                        subject 1
+                    </td>
+                    <td>
+                        <div class="row">
+                            <div class="col">body1</div>
+                            <div class="w-100"></div>
+                            <div class="col">
+
+                                <div class="progress">
+                                    <p style="margin-right: 10px;">Portail</p><div class="progress-bar w-75 progress-bar-striped progress-bar-animated" style="width: 75%" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-outline-primary" contenteditable="true">Edit</button>
+                        <button type="button" class="btn btn-outline-primary" contenteditable="true">Copy</button>
+                        <button type="button" class="btn btn-outline-primary" contenteditable="true">Delete</button>
+                    </td>
+                </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
 {% endblock %}
