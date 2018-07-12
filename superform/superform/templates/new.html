@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+{% block title %}Index{% endblock %}
+{% block content %}
+    <h1>Index</h1>
+    <p>
+    {% if logged_in %}
+        {{ session.attrs }}
+    {% else %}
+        Your are not logged in.
+    {% endif %}
+    </p>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-12">
+            <p>hello</p>
+        </div>
+      </div>
+    </div>
+{% endblock %}

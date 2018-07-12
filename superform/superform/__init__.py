@@ -1,4 +1,4 @@
-from flask import Flask, render_template, session
+from flask import Flask, render_template, session, request
 from superform.auth import auth_page
 
 app = Flask(__name__)
@@ -15,6 +15,14 @@ def index():
 def records():
     records = [[1,"sub1","body1","FB INGI"],[2,"sub2","body2","Portail ICTEAM"]]
     return render_template('records.html', records = records)
+
+@app.route('/new')
+def new_post():
+    if request.method == "GET":
+        return render_template('new.html')
+    else:
+        return render_template('done.html')
+
 
 
 if __name__ == '__main__':
