@@ -12,7 +12,8 @@ def index():
 
 @app.route('/records')
 def records():
-    return render_template('records.html')
+    records = [[1,"sub1","body1","FB INGI"],[2,"sub2","body2","Portail ICTEAM"]]
+    return render_template('records.html', records = records)
 
 
 if __name__ == '__main__':

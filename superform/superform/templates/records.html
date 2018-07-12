@@ -40,37 +40,19 @@
           </tr>
         </thead>
         <tbody>
-          <tr>
+          {% for rec in records %}
+              <tr>
             <td>
-              1
+              {{ rec[0] }}
             </td>
             <td>
-              TB - Monthly
+              {{ rec[1] }}
             </td>
             <td>
-              aaaa
+              {{ rec[2] }}
             </td>
             <td>
-              Portail UCL
-            </td>
-                        <td>
-                            <button type="button" class="btn btn-outline-primary" contenteditable="true">Edit</button>
-                            <button type="button" class="btn btn-outline-primary" contenteditable="true">Copy</button>
-                            <button type="button" class="btn btn-outline-primary" contenteditable="true">Delete</button>
-                        </td>
-          </tr>
-          <tr>
-            <td>
-              1
-            </td>
-            <td>
-              TB - Monthly
-            </td>
-            <td>
-              bbbb
-            </td>
-            <td>
-              Facebook INGI
+              {{ rec[3] }}
             </td>
                         <td>
                             <button type="button" class="btn btn-outline-primary" contenteditable="true">Edit</button>
@@ -78,63 +60,7 @@
                             <button type="button" class="btn btn-outline-primary" contenteditable="true">Delete</button>
                         </td>
           </tr>
-          <tr>
-            <td>
-              2
-            </td>
-            <td>
-              TB - Monthly
-            </td>
-            <td>
-              cccc
-            </td>
-            <td>
-              Mail list student ingi
-            </td>
-                        <td>
-                            <button type="button" class="btn btn-outline-primary" contenteditable="true">Edit</button>
-                            <button type="button" class="btn btn-outline-primary" contenteditable="true">Copy</button>
-                            <button type="button" class="btn btn-outline-primary" contenteditable="true">Delete</button>
-                        </td>
-          </tr>
-          <tr>
-            <td>
-              3
-            </td>
-            <td>
-              TB - Monthly
-            </td>
-            <td>
-              dddd
-            </td>
-            <td>
-              Portail UCL
-            </td>
-                        <td>
-                            <button type="button" class="btn btn-outline-primary" contenteditable="true">Edit</button>
-                            <button type="button" class="btn btn-outline-primary" contenteditable="true">Copy</button>
-                            <button type="button" class="btn btn-outline-primary" contenteditable="true">Delete</button>
-                        </td>
-          </tr>
-          <tr>
-            <td>
-              4
-            </td>
-            <td>
-              TB - Monthly
-            </td>
-            <td>
-              eeee
-            </td>
-            <td>
-              Portail ICTEAM
-            </td>
-                        <td>
-                            <button type="button" class="btn btn-outline-primary" contenteditable="true">Edit</button>
-                            <button type="button" class="btn btn-outline-primary" contenteditable="true">Copy</button>
-                            <button type="button" class="btn btn-outline-primary" contenteditable="true">Delete</button>
-                        </td>
-          </tr>
+          {% endfor %}
         </tbody>
       </table>
     </div>
