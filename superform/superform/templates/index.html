@@ -1,0 +1,12 @@
+{% extends "layout.html" %}
+{% block title %}Index{% endblock %}
+{% block content %}
+    <h1>Index</h1>
+    <p>
+    {% if logged_in %}
+        {{ attrs }}
+    {% else %}
+        Your are not logged in.
+    {% endif %}
+    </p>
+{% endblock %}
