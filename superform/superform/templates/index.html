@@ -3,8 +3,8 @@
 {% block content %}
     <h1>Index</h1>
     <p>
-    {% if logged_in %}
-        {{ session.attrs }}
+    {% if session.logged_in %}
+        {{ user }}
     {% else %}
         Your are not logged in.
     {% endif %}

@@ -1,9 +1,13 @@
-from flask import Blueprint, current_app, url_for, request, make_response, redirect, session, render_template
+from flask import Blueprint, current_app, url_for, request, make_response, redirect, session
+from flask_sqlalchemy import SQLAlchemy
 
 from onelogin.saml2.auth import OneLogin_Saml2_Auth
 from onelogin.saml2.utils import OneLogin_Saml2_Utils
 
+from superform.models import User
+
 auth_page = Blueprint('auth', __name__)
+db = SQLAlchemy()
 
 
 def prepare_saml_request(request):
@@ -39,11 +43,21 @@ def callback():
     auth.process_response()
     errors = auth.get_errors()
     if len(errors) == 0:
-        attrs = auth.get_attributes()
+        auth_attrs = auth.get_attributes()
         mappings = current_app.config["SAML"]["attributes"]
+        attrs = {key: auth_attrs[mapping][0] for key, mapping in mappings.items()}
 
-        session["loggedin"] = True
-        session["attrs"] = {key: attrs[mapping][0] for key, mapping in mappings.items()}
+        user = db.session.query(User).filter(User.uid == attrs["uid"]).one_or_none()
+        if user is None:
+            user = User(uid=attrs["uid"], sn=attrs["sn"], givenName=attrs["givenName"], email=attrs["email"])
+            db.session.add(user)
+            db.session.commit()
+
+        session["logged_in"] = True
+        session["uid"] = user.uid
+        session["givenName"] = user.givenName
+        session["sn"] = user.sn
+        session["email"] = user.email
 
         # Redirect to desired url
         self_url = OneLogin_Saml2_Utils.get_self_url(prepare_saml_request(request))
@@ -63,5 +77,5 @@ def login():
 
 @auth_page.route('/logout')
 def logout():
-    session["loggedin"] = False
+    session.clear()
     return redirect(url_for("index"))
