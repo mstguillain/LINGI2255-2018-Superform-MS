@@ -8,7 +8,8 @@ app.register_blueprint(auth_page)
 
 @app.route('/')
 def index():
-    return render_template("index.html")
+    items = [[1,"sub1","body1"],[2,"sub2","body2"]]
+    return render_template("index.html", items=items)
 
 @app.route('/records')
 def records():
