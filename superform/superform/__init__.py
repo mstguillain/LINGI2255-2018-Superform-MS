@@ -10,6 +10,10 @@ app.register_blueprint(auth_page)
 def index():
     return render_template("index.html")
 
+@app.route('/records')
+def records():
+    return render_template('records.html')
+
 
 if __name__ == '__main__':
     app.run()
