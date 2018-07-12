@@ -25,10 +25,9 @@ SuperForm has the following dependencies:
 * Python 3.5
 * Flask 1.0.2
 * SQLAlchemy 1.2.8
-* jinja 2.10
-* Flask-Bootstrap4 4.0.2
-* Flask-SQLAlchemy 2.3.2
-* Flask-SSO 0.4.0
+* Jinja 2.10
+* Setuptools 39.1.0
+* Onelogin 1.4.0
 
 ## API Reference
 
