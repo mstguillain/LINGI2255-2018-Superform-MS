@@ -2,14 +2,9 @@
 {% block title %}Index{% endblock %}
 {% block content %}
     <h1>Index</h1>
-    <p>
-    {% if logged_in %}
-        {{ session.attrs }}
-    {% else %}
-        Your are not logged in.
-    {% endif %}
-    </p>
-      <div class="row">
+    {% if session.logged_in %}
+        <p>{{ user }}</p>
+        <div class="row">
         <div class="col-md-8">
             <p>hello</p>
         </div>
@@ -17,4 +12,8 @@
             <p>aside</p>
         </div>
       </div>
+    {% else %}
+        Your are not logged in.
+    {% endif %}
+
 {% endblock %}

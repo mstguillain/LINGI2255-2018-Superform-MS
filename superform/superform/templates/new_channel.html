@@ -10,11 +10,20 @@
     {% endif %}
     </p>
       <div class="row">
-        <div class="col-md-8">
-            <p>hello</p>
-        </div>
-        <div class="col-md-4">
-            <p>aside</p>
+        <div class="col-md-12">
+            <form method="POST" action="">
+                <div class="form-group">
+                    <label for="chanName">Name of the channel</label>
+                    <input type="text" name="chanName" id="chanName" class="form-group">
+                </div>
+                <div class="form-group">
+                    <label for="plugintype">Plugin</label>
+                    <select name="plugintype" id="plugintype" class="form-group">
+                        <option>mail</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary">Save</button>
+            </form>
         </div>
       </div>
 {% endblock %}
