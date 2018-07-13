@@ -1,5 +1,5 @@
 from flask import Flask, render_template, session, request
-from superform.auth import auth_page, db as auth_db
+from superform.auth import login_required, auth_page, db as auth_db
 from superform.models import User, db as models_db
 
 
@@ -27,6 +27,7 @@ def records():
 
 
 @app.route('/new')
+@login_required
 def new_post():
     if request.method == "GET":
         return render_template('new.html')

@@ -1,4 +1,5 @@
-from flask import Blueprint, current_app, url_for, request, make_response, redirect, session
+from functools import wraps
+from flask import Blueprint, current_app, url_for, request, make_response, redirect, session, render_template
 from flask_sqlalchemy import SQLAlchemy
 
 from onelogin.saml2.auth import OneLogin_Saml2_Auth
@@ -8,6 +9,15 @@ from superform.models import User
 
 auth_page = Blueprint('auth', __name__)
 db = SQLAlchemy()
+
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not session.get("logged_in", False):
+            return render_template("403.html"), 403
+        return f(*args, **kwargs)
+    return decorated_function
 
 
 def prepare_saml_request(request):
