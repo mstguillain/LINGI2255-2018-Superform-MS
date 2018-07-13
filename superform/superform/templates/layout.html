@@ -25,23 +25,26 @@
                         <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
                     </li>
                     {% if session.logged_in %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="/new">New post</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/records">Archives</a>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            {{ session.first_name }} {{ session.name }}
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
-                            <a class="dropdown-item" href="{{ url_for('auth.logout') }}">Logout</a>
-                        </div>
-                    </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/new">New post</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/records">Archives</a>
+                        </li>
+                        <li>
+                            <a class="nav-link" href="{{ url_for('authorizations.authorizations') }}">Authorizations</a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                {{ session.first_name }} {{ session.name }}
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
+                                <a class="dropdown-item" href="{{ url_for('authentication.logout') }}">Logout</a>
+                            </div>
+                        </li>
                     {% else %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('auth.login') }}">Login</a>
+                        <a class="nav-link" href="{{ url_for('authentication.login') }}">Login</a>
                     </li>
                     {% endif %}
                 </ul>
