@@ -1,6 +1,6 @@
-from flask import Flask, render_template, session, request
+from flask import Flask, render_template, session, request, redirect, url_for
 
-from superform.models import User, db as models_db
+from superform.models import User,Channel, db as models_db
 from superform.authentication import authentication_page, db as authentication_db
 from superform.authorizations import authorizations_page, db as authorizations_db
 from superform.utils import login_required
@@ -37,6 +37,21 @@ def new_post():
         return render_template('new.html')
     else:
         return render_template('done.html')
+
+@app.route('/new_channel', methods=['GET','POST'])
+@login_required
+def new_channel():
+    if request.method == "GET":
+        return render_template('new_channel.html',pluginparams={})
+    elif request.method == "POST":
+        channelname = request.form.get('chanName')
+        c = Channel(name=channelname,module="mail",config={})
+        models_db.session.add(c)
+        models_db.commit()
+        return redirect(url_for('index'))
+
+
+
 
 
 @app.errorhandler(403)
