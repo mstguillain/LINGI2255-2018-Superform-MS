@@ -44,7 +44,7 @@ def authorize():
 
 @app.errorhandler(403)
 def forbidden(error):
-    return render_template('forbidden.html'),403
+    return render_template('403.html'),403
 
 
 @app.errorhandler(404)
