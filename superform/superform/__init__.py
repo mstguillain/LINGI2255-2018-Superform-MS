@@ -39,6 +39,17 @@ def new_post():
 def authorize():
     if request.method == "GET":
         return render_template('authorize.html')
+    elif request.method=="POST":
+        return ""
+
+@app.errorhandler(403)
+def forbidden(error):
+    return render_template('403.html'),403
+
+
+@app.errorhandler(404)
+def notfound(error):
+    return render_template('notfound.html'),404
 
 if __name__ == '__main__':
     app.run()
