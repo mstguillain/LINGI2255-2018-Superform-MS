@@ -1,14 +1,7 @@
 {% extends "layout.html" %}
-{% block title %}Index{% endblock %}
+{% block title %}Page not found{% endblock %}
 {% block content %}
-    <h1>Index</h1>
-    <p>
-    {% if session.logged_in %}
-        {{ user }}
-    {% else %}
-        Your are not logged in.
-    {% endif %}
-    </p>
+    <h1>Page not found</h1>
     <div class="container-fluid">
       <div class="row">
         <div class="col-md-12">
