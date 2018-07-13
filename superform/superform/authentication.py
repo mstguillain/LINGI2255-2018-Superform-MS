@@ -1,4 +1,3 @@
-from functools import wraps
 from flask import Blueprint, current_app, url_for, request, make_response, redirect, session, render_template
 from flask_sqlalchemy import SQLAlchemy
 
@@ -7,21 +6,13 @@ from onelogin.saml2.utils import OneLogin_Saml2_Utils
 
 from superform.models import User
 
-auth_page = Blueprint('auth', __name__)
+authentication_page = Blueprint('authentication', __name__)
 db = SQLAlchemy()
 
 
-def login_required(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if not session.get("logged_in", False):
-            return render_template("403.html"), 403
-        return f(*args, **kwargs)
-    return decorated_function
-
-
 def prepare_saml_request(request):
-    current_app.config["SAML"]["sp"]["assertionConsumerService"]["url"] = url_for("auth.callback", _external=True)
+    acs_config = current_app.config["SAML"]["sp"]["assertionConsumerService"]
+    acs_config["url"] = url_for("authentication.callback", _external=True)
     return {
         'https': 'on' if request.scheme == 'https' else 'off',
         'http_host': request.host,
@@ -33,7 +24,7 @@ def prepare_saml_request(request):
     }
 
 
-@auth_page.route('/metadata')
+@authentication_page.route('/metadata')
 def metadata():
     auth = OneLogin_Saml2_Auth(prepare_saml_request(request), current_app.config["SAML"])
     metadata = auth.get_settings().get_sp_metadata()
@@ -47,7 +38,7 @@ def metadata():
     return resp
 
 
-@auth_page.route("/callback", methods=['GET', 'POST'])
+@authentication_page.route("/callback", methods=['GET', 'POST'])
 def callback():
     auth = OneLogin_Saml2_Auth(prepare_saml_request(request), current_app.config["SAML"])
     auth.process_response()
@@ -64,10 +55,11 @@ def callback():
             db.session.commit()
 
         session["logged_in"] = True
-        session["id"] = user.id
+        session["user_id"] = user.id
         session["first_name"] = user.first_name
         session["name"] = user.name
         session["email"] = user.email
+        session["admin"] = user.admin
 
         # Redirect to desired url
         self_url = OneLogin_Saml2_Utils.get_self_url(prepare_saml_request(request))
@@ -79,13 +71,13 @@ def callback():
     return make_response("saml_acs_error", 500)
 
 
-@auth_page.route('/login')
+@authentication_page.route('/login')
 def login():
     auth = OneLogin_Saml2_Auth(prepare_saml_request(request), current_app.config["SAML"])
     return redirect(auth.login(url_for("index", _external=True)))
 
 
-@auth_page.route('/logout')
+@authentication_page.route('/logout')
 def logout():
     session.clear()
     return redirect(url_for("index"))
