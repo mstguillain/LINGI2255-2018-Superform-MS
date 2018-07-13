@@ -16,7 +16,7 @@ models_db.init_app(app)
 
 @app.route('/')
 def index():
-    user = User.query.get(session.get("id", "")) if session.get("logged_in", False) else None
+    user = User.query.get(session.get("user_id", "")) if session.get("logged_in", False) else None
     return render_template("index.html", user=user)
 
 
@@ -27,7 +27,7 @@ def records():
 
 
 @app.route('/new')
-@login_required
+@login_required()
 def new_post():
     if request.method == "GET":
         return render_template('new.html')
@@ -35,7 +35,7 @@ def new_post():
         return render_template('done.html')
 
 @app.route('/authorize')
-@login_required
+@login_required(admin_required=True)
 def authorize():
     if request.method == "GET":
         return render_template('authorize.html')

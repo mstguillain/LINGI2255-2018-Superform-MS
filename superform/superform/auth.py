@@ -11,14 +11,16 @@ auth_page = Blueprint('auth', __name__)
 db = SQLAlchemy()
 
 
-def login_required(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if not session.get("logged_in", False):
-            return render_template("403.html"), 403
-        return f(*args, **kwargs)
-    return decorated_function
-
+def login_required(admin_required=False):
+    def decorator(f):
+        @wraps(f)
+        def decorated_function(*args, **kwargs):
+            if not session.get("logged_in", False) or (admin_required and not session.get("admin", False)):
+                return render_template("403.html"), 403
+            else:
+                return f(*args, **kwargs)
+        return decorated_function
+    return decorator
 
 def prepare_saml_request(request):
     current_app.config["SAML"]["sp"]["assertionConsumerService"]["url"] = url_for("auth.callback", _external=True)
@@ -64,10 +66,11 @@ def callback():
             db.session.commit()
 
         session["logged_in"] = True
-        session["id"] = user.id
+        session["user_id"] = user.id
         session["first_name"] = user.first_name
         session["name"] = user.name
         session["email"] = user.email
+        session["admin"] = user.admin
 
         # Redirect to desired url
         self_url = OneLogin_Saml2_Utils.get_self_url(prepare_saml_request(request))
