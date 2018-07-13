@@ -31,6 +31,8 @@ class Post(db.Model):
 
     publishings = db.relationship("Publishing", backref="post", lazy=True)
 
+    __table_args__ = ({"sqlite_autoincrement": True},)
+
     def __repr__(self):
         return '<Post {}>'.format(repr(self.id))
 
@@ -54,6 +56,8 @@ class Channel(db.Model):
 
     publishings = db.relationship("Publishing", backref="channel", lazy=True)
     authorizations = db.relationship("Authorization", backref="channel", lazy=True)
+
+    __table_args__ = ({"sqlite_autoincrement": True},)
 
     def __repr__(self):
         return '<Channel {}>'.format(repr(self.id))
