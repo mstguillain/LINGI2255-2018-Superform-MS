@@ -34,6 +34,11 @@ def new_post():
     else:
         return render_template('done.html')
 
+@app.route('/authorize')
+@login_required
+def authorize():
+    if request.method == "GET":
+        return render_template('authorize.html')
 
 if __name__ == '__main__':
     app.run()

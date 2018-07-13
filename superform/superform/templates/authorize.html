@@ -1,0 +1,108 @@
+{% extends "layout.html" %}
+{% block title %}Index{% endblock %}
+{% block content %}
+    <h1>Authorize</h1>
+    <form action="authorize" method="POST">
+        <div class="container-fluid" style="margin-bottom: 1rem;">
+          <div class="row">
+            <div class="col-md-12">
+             <div id="accordion">
+              <div class="card">
+                <div class="card-header" id="headingOne">
+                  <h5 class="mb-0">
+                    <button type=button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                      Facebook INGI
+                    </button>
+                  </h5>
+                </div>
+                <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+                  <div class="card-body">
+
+                      <table class="table">
+                          <thead>
+                            <tr>
+                                <th>Person</th>
+                                <th>Right</th>
+                                <th>Action</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                                <td>
+                            <div class="container">
+                              <div class="row">
+                                <div class="col">
+                                    <p>John Doe</p>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="container" style="margin-top:1rem;">
+                              <div class="row">
+                                <div class="col">
+                                    <p>Freddy Mercury</p>
+                                </div>
+                              </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="container">
+                              <div class="row">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <select class="form-control" id="sel1">
+                                            <option>Writer</option>
+                                            <option>Validator</option>
+                                        </select>
+                                    </div>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="container">
+                              <div class="row">
+                                <div class="col">
+                                    <div class="form-group">
+                                    <select class="form-control" id="sel2">
+                                        <option>Writer</option>
+                                        <option>Validator</option>
+                                    </select>
+                                    </div>
+                                </div>
+                              </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="container">
+                              <div class="row">
+                                <div class="col">
+                                    <button class="btn btn-danger">Delete</button>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="container" style="margin-top:1rem;">
+                              <div class="row">
+                                <div class="col">
+                                    <button class="btn btn-danger">Delete</button>
+                                </div>
+                              </div>
+                            </div>
+
+                        </td>
+                            </tr>
+                          </tbody>
+
+                      </table>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        </div>
+        <div class="container-fluid">
+            <button class="btn btn-warning">Update</button>
+            <button class="btn btn-success">Add</button>
+        </div>
+
+    </form>
+{% endblock %}
