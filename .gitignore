@@ -2,4 +2,4 @@
 /venv/
 .idea
 /__pycache__/
-superform/superform/config.json
+/superform/superform/config.json
