@@ -48,7 +48,7 @@ def forbidden(error):
 
 
 @app.errorhandler(404)
-def forbidden(error):
+def notfound(error):
     return render_template('notfound.html'),404
 
 if __name__ == '__main__':
