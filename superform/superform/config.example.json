@@ -1,5 +1,7 @@
 {
   "SECRET_KEY": "",
+  "SQLALCHEMY_DATABASE_URI": "sqlite:///superform.db",
+  "SQLALCHEMY_TRACK_MODIFICATIONS": false,
   "SAML": {
     "sp": {
       "entityId": "MY ID",

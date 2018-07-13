@@ -47,16 +47,16 @@ def callback():
         mappings = current_app.config["SAML"]["attributes"]
         attrs = {key: auth_attrs[mapping][0] for key, mapping in mappings.items()}
 
-        user = db.session.query(User).filter(User.uid == attrs["uid"]).one_or_none()
-        if user is None:
-            user = User(uid=attrs["uid"], sn=attrs["sn"], givenName=attrs["givenName"], email=attrs["email"])
+        user = User.query.get(attrs["uid"])
+        if not user:
+            user = User(id=attrs["uid"], name=attrs["sn"], first_name=attrs["givenName"], email=attrs["email"])
             db.session.add(user)
             db.session.commit()
 
         session["logged_in"] = True
-        session["uid"] = user.uid
-        session["givenName"] = user.givenName
-        session["sn"] = user.sn
+        session["id"] = user.id
+        session["first_name"] = user.first_name
+        session["name"] = user.name
         session["email"] = user.email
 
         # Redirect to desired url
