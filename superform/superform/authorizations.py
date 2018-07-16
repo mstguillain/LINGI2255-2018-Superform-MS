@@ -8,5 +8,6 @@ db = SQLAlchemy()
 
 
 @authorizations_page.route("/authorizations")
+@login_required()
 def authorizations():
     return render_template("authorizations.html")

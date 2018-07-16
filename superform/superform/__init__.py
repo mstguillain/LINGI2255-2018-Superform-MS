@@ -1,8 +1,12 @@
 from flask import Flask, render_template, session, request, redirect, url_for
+import pkgutil
+import importlib
 
+import superform.plugins
 from superform.models import User, Channel, db as models_db
 from superform.authentication import authentication_page, db as authentication_db
 from superform.authorizations import authorizations_page, db as authorizations_db
+from superform.channels import channels_page, db as channels_db
 from superform.utils import login_required
 
 app = Flask(__name__)
@@ -11,11 +15,20 @@ app.config.from_json("config.json")
 # Register blueprints
 app.register_blueprint(authentication_page)
 app.register_blueprint(authorizations_page)
+app.register_blueprint(channels_page)
 
 # Init dbs
-authentication_db.init_app(app)
 models_db.init_app(app)
+authentication_db.init_app(app)
 authorizations_db.init_app(app)
+channels_db.init_app(app)
+
+# List available channels in config
+app.config["PLUGINS"] = {
+    name: importlib.import_module(name)
+    for finder, name, ispkg
+    in pkgutil.iter_modules(superform.plugins.__path__, superform.plugins.__name__ + ".")
+}
 
 
 @app.route('/')
@@ -46,9 +59,9 @@ def new_channel():
         return render_template('new_channel.html', pluginparams={})
     elif request.method == "POST":
         channelname = request.form.get('chanName')
-        c = Channel(name=channelname, module="mail", config={})
+        c = Channel(name=channelname, module="mail", config="{}")
         models_db.session.add(c)
-        models_db.commit()
+        models_db.session.commit()
         return redirect(url_for('index'))
 
 
