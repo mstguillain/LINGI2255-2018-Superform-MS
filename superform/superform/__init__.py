@@ -4,6 +4,8 @@ from flask import Flask, render_template, session, request, redirect, url_for
 import pkgutil
 import importlib
 
+from sqlalchemy import func
+
 import superform.plugins
 from superform.models import db, User, Channel, Post
 from superform.authentication import authentication_page
@@ -33,7 +35,10 @@ app.config["PLUGINS"] = {
 @app.route('/')
 def index():
     user = User.query.get(session.get("user_id", "")) if session.get("logged_in", False) else None
-    return render_template("index.html", user=user)
+    #TODO change with user id in session
+    posts = db.session.query(Post).filter(Post.user_id==1 and func.count(Post.publishings)== 0)
+    print(posts)
+    return render_template("index.html", user=user,posts = posts)
 
 
 @app.route('/records')
