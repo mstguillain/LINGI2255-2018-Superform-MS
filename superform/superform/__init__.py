@@ -1,9 +1,11 @@
+from datetime import datetime
+
 from flask import Flask, render_template, session, request, redirect, url_for
 import pkgutil
 import importlib
 
 import superform.plugins
-from superform.models import User, Channel, db as models_db
+from superform.models import User, Channel,Post, db as models_db
 from superform.authentication import authentication_page, db as authentication_db
 from superform.authorizations import authorizations_page, db as authorizations_db
 from superform.channels import channels_page, db as channels_db
@@ -43,12 +45,31 @@ def records():
     return render_template('records.html', records=records)
 
 
-@app.route('/new')
+@app.route('/new', methods=['GET','POST'])
 @login_required()
 def new_post():
+    list_of_channels = []
     if request.method == "GET":
         return render_template('new.html')
     else:
+        on_channel_post = []
+
+        def datetime_converter(str):
+            return datetime.strptime(str,"%Y-%m-%d")
+        user_id=1 #TODO change by getting id from session
+        title_post = request.form.get('titlepost')
+        descr_post = request.form.get('descrpost')
+        link_post = request.form.get('linkurlpost')
+        image_post = request.form.get('imagepost')
+        date_from = datetime_converter(request.form.get('datefrompost'))
+        date_until = datetime_converter(request.form.get('dateuntilpost'))
+        for chan in list_of_channels:
+            if(request.form.get(chan) is True):
+                on_channel_post.append(chan)
+
+        p = Post(user_id=user_id,title=title_post,description=descr_post,link_url=link_post,image_url=image_post,date_from=date_from,date_until=date_until)
+        models_db.session.add(p)
+        models_db.session.commit()
         return redirect(url_for('index'))
 
 
