@@ -49,7 +49,7 @@ def new_post():
     if request.method == "GET":
         return render_template('new.html')
     else:
-        return render_template('done.html')
+        return redirect(url_for('index'))
 
 
 @app.route('/new_channel', methods=['GET', 'POST'])
