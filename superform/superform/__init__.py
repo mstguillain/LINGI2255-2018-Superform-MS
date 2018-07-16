@@ -5,10 +5,10 @@ import pkgutil
 import importlib
 
 import superform.plugins
-from superform.models import User, Channel,Post, db as models_db
-from superform.authentication import authentication_page, db as authentication_db
-from superform.authorizations import authorizations_page, db as authorizations_db
-from superform.channels import channels_page, db as channels_db
+from superform.models import db, User, Channel, Post
+from superform.authentication import authentication_page
+from superform.authorizations import authorizations_page
+from superform.channels import channels_page
 from superform.utils import login_required
 
 app = Flask(__name__)
@@ -20,10 +20,7 @@ app.register_blueprint(authorizations_page)
 app.register_blueprint(channels_page)
 
 # Init dbs
-models_db.init_app(app)
-authentication_db.init_app(app)
-authorizations_db.init_app(app)
-channels_db.init_app(app)
+db.init_app(app)
 
 # List available channels in config
 app.config["PLUGINS"] = {
@@ -68,21 +65,8 @@ def new_post():
                 on_channel_post.append(chan)
 
         p = Post(user_id=user_id,title=title_post,description=descr_post,link_url=link_post,image_url=image_post,date_from=date_from,date_until=date_until)
-        models_db.session.add(p)
-        models_db.session.commit()
-        return redirect(url_for('index'))
-
-
-@app.route('/new_channel', methods=['GET', 'POST'])
-@login_required()
-def new_channel():
-    if request.method == "GET":
-        return render_template('new_channel.html', pluginparams={})
-    elif request.method == "POST":
-        channelname = request.form.get('chanName')
-        c = Channel(name=channelname, module="mail", config="{}")
-        models_db.session.add(c)
-        models_db.session.commit()
+        db.session.add(p)
+        db.session.commit()
         return redirect(url_for('index'))
 
 
