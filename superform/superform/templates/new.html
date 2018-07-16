@@ -1,17 +1,82 @@
 {% extends "layout.html" %}
-{% block title %}Index{% endblock %}
+{% block title %}New Post{% endblock %}
 {% block content %}
-    <h1>Index</h1>
+    <h1>New Post</h1>
     {% if session.logged_in %}
         <p>{{ user }}</p>
-        <div class="row">
-        <div class="col-md-8">
-            <p>hello</p>
+        <form method="POST" action="">
+            <div class="row">
+            <div class="col-md-8">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="titlepost">Title</label><br>
+                            <input type="text" name="titlepost" id="titlepost" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="descrpost">Description</label><br>
+                            <textarea class="form-control" rows="5" id="descrpost" name="descrpost"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="linkurlpost">Link</label><br>
+                            <input type="text" name="linkurlpost" id="linkurlpost" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="imagepost">Image</label><br>
+                            <input type="file" name="imagepost" id="imagepost" class="form-control">
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="datefrompost">Publication Date</label><br>
+                                    <input id="datefrompost" name="datefrompost" type="date" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="dateuntilpost">Publication Until</label><br>
+                                    <input id="dateuntilpost" name="dateuntilpost" type="date" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                 <div class="form-group">
+                     <label for="publishpost">Publish</label>
+                      <div class="form-check">
+                          <label class="form-check-label">
+                            <input type="checkbox" class="form-check-input" value="">Option 1
+                          </label>
+                        </div>
+                        <div class="form-check">
+                          <label class="form-check-label">
+                            <input type="checkbox" class="form-check-input" value="">Option 2
+                          </label>
+                        </div>
+                        <div class="form-check">
+                          <label class="form-check-label">
+                            <input type="checkbox" class="form-check-input" value="">Option 3
+                          </label>
+                        </div>
+                 </div>
+
+                 <div class="card">
+                  <div class="card-header">Status</div>
+                  <div class="card-body">Content</div>
+                 </div>
+                 <div style="margin-top: 1rem; ">
+                    <button class="btn btn-primary">Save</button>
+                    <button class="btn btn-success">Publish</button>
+                    <button class="btn btn-outline-primary">Abort</button>
+                 </div>
+
+            </div>
+
         </div>
-        <div class="col-md-4">
-            <p>aside</p>
-        </div>
-      </div>
+    </form>
     {% else %}
         Your are not logged in.
     {% endif %}
