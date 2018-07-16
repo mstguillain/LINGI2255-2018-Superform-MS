@@ -49,19 +49,6 @@ def new_post():
         return redirect(url_for('index'))
 
 
-@app.route('/new_channel', methods=['GET', 'POST'])
-@login_required()
-def new_channel():
-    if request.method == "GET":
-        return render_template('new_channel.html', pluginparams={})
-    elif request.method == "POST":
-        channelname = request.form.get('chanName')
-        c = Channel(name=channelname, module="mail", config="{}")
-        models_db.session.add(c)
-        models_db.session.commit()
-        return redirect(url_for('index'))
-
-
 @app.errorhandler(403)
 def forbidden(error):
     return render_template('403.html'), 403
