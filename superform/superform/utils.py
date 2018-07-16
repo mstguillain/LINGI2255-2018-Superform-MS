@@ -1,6 +1,7 @@
 from functools import wraps
 from flask import render_template, session
 
+
 def login_required(admin_required=False):
     def decorator(f):
         @wraps(f)
