@@ -1,4 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
+from enum import Enum
 import datetime
 
 db = SQLAlchemy()
@@ -73,3 +74,13 @@ class Authorization(db.Model):
 
     def __repr__(self):
         return '<Authorization {} {}>'.format(repr(self.user_id), repr(self.channel_id))
+
+
+class Permission(Enum):
+    AUTHOR = 1
+    MODERATOR = 2
+
+
+class State(Enum):
+    WAITING = 1
+    PUBLISHED = 2
