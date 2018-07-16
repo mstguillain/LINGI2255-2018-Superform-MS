@@ -37,6 +37,7 @@ def index():
 
 
 @app.route('/records')
+@login_required()
 def records():
     records = [[1, "sub1", "body1", "FB INGI"], [2, "sub2", "body2", "Portail ICTEAM"]]
     return render_template('records.html', records=records)
@@ -53,7 +54,7 @@ def new_post():
 
         def datetime_converter(str):
             return datetime.strptime(str,"%Y-%m-%d")
-        user_id=1 #TODO change by getting id from session
+        user_id=session.get("user_id", "") if session.get("logged_in", False) else -1
         title_post = request.form.get('titlepost')
         descr_post = request.form.get('descrpost')
         link_post = request.form.get('linkurlpost')
