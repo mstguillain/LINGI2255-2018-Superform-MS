@@ -3,10 +3,10 @@ import pkgutil
 import importlib
 
 import superform.plugins
-from superform.models import User, Channel, db as models_db
-from superform.authentication import authentication_page, db as authentication_db
-from superform.authorizations import authorizations_page, db as authorizations_db
-from superform.channels import channels_page, db as channels_db
+from superform.models import db, User, Channel
+from superform.authentication import authentication_page
+from superform.authorizations import authorizations_page
+from superform.channels import channels_page
 from superform.utils import login_required
 
 app = Flask(__name__)
@@ -18,10 +18,7 @@ app.register_blueprint(authorizations_page)
 app.register_blueprint(channels_page)
 
 # Init dbs
-models_db.init_app(app)
-authentication_db.init_app(app)
-authorizations_db.init_app(app)
-channels_db.init_app(app)
+db.init_app(app)
 
 # List available channels in config
 app.config["PLUGINS"] = {

@@ -2,9 +2,6 @@
 {% block title %}Channels{% endblock %}
 {% block content %}
     <h1>Channels</h1>
-    <p>
-    {{ test }}
-    </p>
     <table class="table">
         <thead class="thead-light">
             <tr>
@@ -17,31 +14,72 @@
         <tbody>
             {% for channel in channels %}
             <tr>
-                <th scope="row">{{ loop.index }}</th>
+                <th scope="row">{{ channel.id }}</th>
                 <td>{{ channel.name }}</td>
                 <td>{{ channel.module }}</td>
                 <td>
                     <div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
                         <button type="button" class="btn btn-primary"><i class="fas fa-fw fa-edit"></i> Edit</button>
-                        <button type="button" class="btn btn-danger"><i class="fas fa-fw fa-trash"></i> Delete</button>
+                        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal" data-name="{{ channel.name }}" data-id="{{ channel.id }}"><i class="fas fa-fw fa-trash"></i> Delete</button>
                     </div>
                 </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
-    <form class="form-inline">
+    <form class="form-inline" method="post">
+        <input type="hidden" name="@action" value="new">
+        <label class="sr-only" for="inlineFormInputText">Username</label>
+        <div class="input-group mr-sm-2">
+            <input name="name" type="text" class="form-control" id="inlineFormInputText" placeholder="New channel name">
+        </div>
+
         <label class="sr-only" for="inlineFormCustomSelectModule">Module</label>
         <div class="input-group mr-sm-2">
-            <select class="custom-select" id="inlineFormCustomSelectModule">
+            <select name="module" class="custom-select" id="inlineFormCustomSelectModule">
                 <option selected>Choose a module...</option>
                 {% for module in modules %}
                 <option value="{{ module }}">{{ module }}</option>
                 {% endfor %}
             </select>
         </div>
+
         <button type="submit" class="btn btn-primary">
             <i class="fas fa-fw fa-plus"></i>Add a new channel
         </button>
     </form>
+
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form method="post">
+                    <input type="hidden" name="@action" value="delete">
+                    <input id="channel-id" type="hidden" name="id" value="">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Delete channel</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Are you sure to delete channel <span id="channel-name"></span>?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+{% block scripts %}
+    <script>
+        $('#deleteModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget); // Button that triggered the modal
+            $(this).find('#channel-name').text(button.data('name'));
+            $(this).find('#channel-id').val(button.data('id'));
+        });
+    </script>
 {% endblock %}

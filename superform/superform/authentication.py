@@ -4,11 +4,9 @@ from flask_sqlalchemy import SQLAlchemy
 from onelogin.saml2.auth import OneLogin_Saml2_Auth
 from onelogin.saml2.utils import OneLogin_Saml2_Utils
 
-from superform.models import User
+from superform.models import db, User
 
 authentication_page = Blueprint('authentication', __name__)
-db = SQLAlchemy()
-
 
 def prepare_saml_request(request):
     acs_config = current_app.config["SAML"]["sp"]["assertionConsumerService"]
