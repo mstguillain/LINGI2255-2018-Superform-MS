@@ -37,8 +37,7 @@ def index():
     user = User.query.get(session.get("user_id", "")) if session.get("logged_in", False) else None
     #TODO change with user id in session
     posts = db.session.query(Post).filter(Post.user_id==1 and func.count(Post.publishings)== 0)
-    print(posts)
-    return render_template("index.html", user=user,posts = posts)
+    return render_template("index.html", user=user,posts=posts)
 
 
 @app.route('/records')

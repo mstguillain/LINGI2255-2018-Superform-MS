@@ -10,8 +10,11 @@ authorizations_page = Blueprint('authorizations', __name__)
 @login_required()
 def authorizations():
     if session["admin"]:
-        channels = Channel.query.all()
+        rw_channels = Channel.query.all()
+        ro_channels = []
     else:
         channels = Channel.query.join(Authorization).filter(Authorization.user_id == session["user_id"])
+        rw_channels = Channel.query.join(Authorization).filter(Authorization.user_id == session["user_id"]).filter(Authorization.permission == Permission.MODERATOR.value)
+        ro_channels = Channel.query.join(Authorization).filter(Authorization.user_id == session["user_id"]).filter(Authorization.permission == Permission.AUTHOR.value)
 
-    return render_template("authorizations.html", channels=channels, permissions=Permission)
+    return render_template("authorizations.html", rw_channels=rw_channels, ro_channels=ro_channels, permissions=Permission)

@@ -3,7 +3,7 @@
 {% block content %}
     <h1>Authorizations</h1>
     <div id="accordion">
-        {% for channel in channels %}
+        {% for channel in rw_channels %}
             <div class="card mb-2">
                 <div class="card-header" id="heading{{ loop.index }}">
                     <h5 class="mb-0">
@@ -25,22 +25,41 @@
                             </thead>
                             <tbody>
                                 {% for authorization in channel.authorizations %}
+                                    {% set is_session_user = authorization.user_id == session["user_id"] %}
+                                    <tr>
+                                        <td>
+                                            {% set user = authorization.user %}
+                                            {{ user.first_name }} {{ user.name }} [{{ user.id }}]
+                                        </td>
+                                        <td>
+                                            <select class="form-control" id="sel1" {{ 'disabled' if is_session_user else '' }}>
+                                                {% for permission in permissions %}
+                                                    <option value="{{ permission.value }}" {{ 'selected' if authorization.permission == permission.value else '' }}>{{ permission }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </td>
+                                        <td>
+                                            {% if not is_session_user %}
+                                                <button class="btn btn-danger">Delete</button>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
                                 <tr>
                                     <td>
-                                        {{ authorization.user_id }}
+                                        <input class="form-control" type="text" placeholder="Username">
                                     </td>
                                     <td>
                                         <select class="form-control" id="sel1">
                                             {% for permission in permissions %}
-                                                <option value="{{ permission.value }}" {{ 'selected' if authorization.permission == permission.value else '' }}>{{ permission }}</option>
+                                                <option value="{{ permission.value }}">{{ permission }}</option>
                                             {% endfor %}
                                         </select>
                                     </td>
                                     <td>
-                                        <button class="btn btn-danger">Delete</button>
+                                        <button class="btn btn-success">Add</button>
                                     </td>
                                 </tr>
-                                    {% endfor %}
                             </tbody>
                         </table>
                     </div>
@@ -49,7 +68,6 @@
         {% endfor %}
     </div>
     <button class="btn btn-warning">Update</button>
-    <button class="btn btn-success">Add</button>
 {% endblock %}
 {% block scripts %}
     <script>
