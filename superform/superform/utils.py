@@ -1,3 +1,4 @@
+from datetime import datetime
 from functools import wraps
 from flask import render_template, session
 
@@ -12,3 +13,10 @@ def login_required(admin_required=False):
                 return f(*args, **kwargs)
         return decorated_function
     return decorator
+
+
+def datetime_converter(str):
+    return datetime.strptime(str, "%Y-%m-%d")
+
+def str_converter(datet):
+    return datetime.strftime(datet,"%Y-%m-%d")

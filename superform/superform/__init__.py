@@ -11,7 +11,7 @@ from superform.models import db, User, Channel, Post
 from superform.authentication import authentication_page
 from superform.authorizations import authorizations_page
 from superform.channels import channels_page
-from superform.utils import login_required
+from superform.utils import login_required,datetime_converter,str_converter
 
 app = Flask(__name__)
 app.config.from_json("config.json")
@@ -54,9 +54,6 @@ def new_post():
         return render_template('new.html')
     else:
         on_channel_post = []
-
-        def datetime_converter(str):
-            return datetime.strptime(str,"%Y-%m-%d")
         user_id=session.get("user_id", "") if session.get("logged_in", False) else -1
         title_post = request.form.get('titlepost')
         descr_post = request.form.get('descrpost')
@@ -71,6 +68,24 @@ def new_post():
         p = Post(user_id=user_id,title=title_post,description=descr_post,link_url=link_post,image_url=image_post,date_from=date_from,date_until=date_until)
         db.session.add(p)
         db.session.commit()
+        return redirect(url_for('index'))
+
+@app.route('/edit_post/<int:id>')
+@login_required()
+def edit_post(id):
+    p = db.session.query(Post).get(id)
+
+    if request.method == "GET":
+        p.date_from = str_converter(p.date_from)
+        p.date_until = str_converter(p.date_until)
+        return render_template("edit_post.html",post = p)
+    elif request.method == "POST":
+        p.title = request.form.get('titlepost')
+        p.description = request.form.get('descrpost')
+        p.link_url = request.form.get('linkurlpost')
+        p.image_url = request.form.get('imagepost')
+        p.date_from = datetime_converter(request.form.get('datefrompost'))
+        p.date_until = datetime_converter(request.form.get('dateuntilpost'))
         return redirect(url_for('index'))
 
 
