@@ -35,8 +35,7 @@ app.config["PLUGINS"] = {
 @app.route('/')
 def index():
     user = User.query.get(session.get("user_id", "")) if session.get("logged_in", False) else None
-    #TODO change with user id in session
-    posts = db.session.query(Post).filter(Post.user_id==1 and func.count(Post.publishings)== 0)
+    posts = db.session.query(Post).filter(Post.user_id==session.get("user_id", "") and func.count(Post.publishings)== 0)
     return render_template("index.html", user=user,posts=posts)
 
 
@@ -73,6 +72,14 @@ def new_post():
         db.session.add(p)
         db.session.commit()
         return redirect(url_for('index'))
+
+
+@app.route('/delete_post/<int:id>')
+@login_required()
+def delete_post(id):
+    db.session.query(Post).filter(Post.id==id).delete()
+    db.session.commit()
+    return redirect(url_for('index'))
 
 
 @app.errorhandler(403)
