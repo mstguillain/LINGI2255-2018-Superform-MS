@@ -70,7 +70,7 @@ def new_post():
         db.session.commit()
         return redirect(url_for('index'))
 
-@app.route('/edit_post/<int:id>')
+@app.route('/edit_post/<int:id>', methods=['GET','POST'])
 @login_required()
 def edit_post(id):
     p = db.session.query(Post).get(id)
