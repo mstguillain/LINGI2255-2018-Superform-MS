@@ -52,7 +52,7 @@
                          {% for chan in l_chan %}
                              <div class="form-check">
                               <label class="form-check-label">
-                                <input type="checkbox" class="form-check-input" value="{{ chan.id }}">{{ chan.name }}
+                                <input id="chan_option_{{ chan.id }}" name="chan_option_{{ chan.id }}" type="checkbox" class="form-check-input" value="{{ chan.id }}">{{ chan.name }}
                               </label>
                             </div>
                          {% endfor %}
@@ -64,8 +64,9 @@
                   <div class="card-body">Content</div>
                  </div>
                  <div style="margin-top: 1rem; ">
-                    <button class="btn btn-primary" type="button">Save</button>
-                    <button class="btn btn-success" type="submit">Publish</button>
+
+                    <button class="btn btn-primary" formaction="/new" formmethod="post" type="submit">Save</button>
+                    <button class="btn btn-success" formaction="/publish" formmethod="post" type="submit">Save & Publish</button>
                     <button class="btn btn-outline-primary" type="reset">Abort</button>
                  </div>
 

@@ -2,9 +2,24 @@ from flask import Blueprint, url_for, request, redirect, session, render_templat
 
 import users
 from superform.utils import login_required, datetime_converter, str_converter
-from superform.models import db, Post
+from superform.models import db, Post, Publishing
 
 posts_page = Blueprint('posts', __name__)
+
+def create_a_post(form):
+    user_id = session.get("user_id", "") if session.get("logged_in", False) else -1
+    title_post = form.get('titlepost')
+    descr_post = form.get('descrpost')
+    link_post = form.get('linkurlpost')
+    image_post =form.get('imagepost')
+    date_from = datetime_converter(form.get('datefrompost'))
+    date_until = datetime_converter(form.get('dateuntilpost'))
+    p= Post(user_id=user_id, title=title_post, description=descr_post, link_url=link_post, image_url=image_post,
+             date_from=date_from, date_until=date_until)
+    db.session.add(p)
+    db.session.commit()
+    return p
+
 
 @posts_page.route('/new', methods=['GET','POST'])
 @login_required()
@@ -14,21 +29,7 @@ def new_post():
     if request.method == "GET":
         return render_template('new.html', l_chan = list_of_channels)
     else:
-        on_channel_post = []
-
-        title_post = request.form.get('titlepost')
-        descr_post = request.form.get('descrpost')
-        link_post = request.form.get('linkurlpost')
-        image_post = request.form.get('imagepost')
-        date_from = datetime_converter(request.form.get('datefrompost'))
-        date_until = datetime_converter(request.form.get('dateuntilpost'))
-        for chan in list_of_channels:
-            if(request.form.get(chan) is True):
-                on_channel_post.append(chan)
-
-        p = Post(user_id=user_id,title=title_post,description=descr_post,link_url=link_post,image_url=image_post,date_from=date_from,date_until=date_until)
-        db.session.add(p)
-        db.session.commit()
+        create_a_post(request.form)
         return redirect(url_for('index'))
 
 @posts_page.route('/edit_post/<int:id>', methods=['GET','POST'])
@@ -54,6 +55,24 @@ def edit_post(id):
 @login_required()
 def delete_post(id):
     db.session.query(Post).filter(Post.id==id).delete()
+    db.session.commit()
+    return redirect(url_for('index'))
+
+@posts_page.route('/publish', methods= ['POST'])
+@login_required()
+def publish_from_new_post():
+    #First create the post
+    p = create_a_post(request.form)
+    #then treat the publish part
+    if request.method=="POST":
+        print(request.form)
+        for elem in request.form:
+            if elem.startswith("chan_option_"):
+                #for each selected channel options
+                #create the publication
+                pub = Publishing(post_id=p.id,channel_id=request.form.get(elem),state=0)
+                db.session.add(pub)
+
     db.session.commit()
     return redirect(url_for('index'))
 
