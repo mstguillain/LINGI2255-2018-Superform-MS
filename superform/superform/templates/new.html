@@ -46,21 +46,17 @@
             <div class="col-md-4">
                  <div class="form-group">
                      <label for="publishpost">Publish</label>
-                      <div class="form-check">
-                          <label class="form-check-label">
-                            <input type="checkbox" class="form-check-input" value="">Option 1
-                          </label>
-                        </div>
-                        <div class="form-check">
-                          <label class="form-check-label">
-                            <input type="checkbox" class="form-check-input" value="">Option 2
-                          </label>
-                        </div>
-                        <div class="form-check">
-                          <label class="form-check-label">
-                            <input type="checkbox" class="form-check-input" value="">Option 3
-                          </label>
-                        </div>
+                     {% if l_chan|length == 0 %}
+                         <p>No channel available for this user</p>
+                     {% else %}
+                         {% for chan in l_chan %}
+                             <div class="form-check">
+                              <label class="form-check-label">
+                                <input type="checkbox" class="form-check-input" value="{{ chan.id }}">{{ chan.name }}
+                              </label>
+                            </div>
+                         {% endfor %}
+                     {% endif %}
                  </div>
 
                  <div class="card">

@@ -1,5 +1,6 @@
 from flask import Blueprint, url_for, request, redirect, session, render_template
 
+import users
 from superform.utils import login_required, datetime_converter, str_converter
 from superform.models import db, Post
 
@@ -8,12 +9,13 @@ posts_page = Blueprint('posts', __name__)
 @posts_page.route('/new', methods=['GET','POST'])
 @login_required()
 def new_post():
-    list_of_channels = []
+    user_id = session.get("user_id", "") if session.get("logged_in", False) else -1
+    list_of_channels = users.channels_available_for_user(user_id)
     if request.method == "GET":
-        return render_template('new.html')
+        return render_template('new.html', l_chan = list_of_channels)
     else:
         on_channel_post = []
-        user_id=session.get("user_id", "") if session.get("logged_in", False) else -1
+
         title_post = request.form.get('titlepost')
         descr_post = request.form.get('descrpost')
         link_post = request.form.get('linkurlpost')
