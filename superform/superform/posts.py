@@ -65,7 +65,6 @@ def publish_from_new_post():
     p = create_a_post(request.form)
     #then treat the publish part
     if request.method=="POST":
-        print(request.form)
         for elem in request.form:
             if elem.startswith("chan_option_"):
                 #for each selected channel options
