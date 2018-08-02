@@ -1,7 +1,7 @@
 from flask import Blueprint, url_for, request, redirect, session, render_template
 
-import users
-from superform.utils import login_required, datetime_converter, str_converter
+from superform.users import channels_available_for_user
+from superform.utils import login_required, datetime_converter, str_converter, get_instance_from_module_path
 from superform.models import db, Post, Publishing
 
 posts_page = Blueprint('posts', __name__)
@@ -9,7 +9,7 @@ posts_page = Blueprint('posts', __name__)
 def create_a_post(form):
     user_id = session.get("user_id", "") if session.get("logged_in", False) else -1
     title_post = form.get('titlepost')
-    descr_post = form.get('descrpost')
+    descr_post = form.get('descriptionpost')
     link_post = form.get('linkurlpost')
     image_post =form.get('imagepost')
     date_from = datetime_converter(form.get('datefrompost'))
@@ -25,7 +25,13 @@ def create_a_post(form):
 @login_required()
 def new_post():
     user_id = session.get("user_id", "") if session.get("logged_in", False) else -1
-    list_of_channels = users.channels_available_for_user(user_id)
+    list_of_channels = channels_available_for_user(user_id)
+    for elem in list_of_channels:
+        m = elem.module
+        clas = get_instance_from_module_path(m)
+        unaivalable_fields = ','.join(clas.FIELDS_UNAVAILABLE)
+        setattr(elem,"unavailablefields",unaivalable_fields)
+
     if request.method == "GET":
         return render_template('new.html', l_chan = list_of_channels)
     else:
