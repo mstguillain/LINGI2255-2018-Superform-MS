@@ -1,11 +1,11 @@
 # To run : Be sure to be in Superform/superform folder and then 'pytest -v' in your terminal
-
+import datetime
 import os
 import tempfile
 
 import pytest
 
-from superform import app, db, Post
+from superform import app, db, Post, datetime_converter, str_converter
 
 
 @pytest.fixture
@@ -137,6 +137,16 @@ def test_forbidden(client):
     rv = client.get('/channels', follow_redirects=True)
     assert rv.status_code == 200
     assert "Forbidden" not in rv.data.decode()
+
+def test_date_converters():
+    t = datetime_converter("2017-06-02")
+    assert t.day == 2
+    assert t.month == 6
+    assert t.year == 2017
+    assert isinstance(t, datetime.datetime)
+    st = str_converter(t)
+    assert isinstance(st,str)
+
 
     
 
