@@ -26,11 +26,15 @@ def client():
 def login(client, login):
     with client as c:
         with c.session_transaction() as sess:
+            if login is not "myself":
+                sess["admin"] = True
+            else:
+                sess["admin"] = False
+
             sess["logged_in"] = True
             sess["first_name"] = "gen_login"
             sess["name"] = "myname_gen"
             sess["email"] = "hello@genemail.com"
-            sess["admin"] = False
             sess['user_id'] = login
 
 ## Testing Functions ##
@@ -110,6 +114,31 @@ def test_delete_post(client):
     posts = db.session.query(Post).all()
     assert len(posts) == size_posts-1
     assert db.session.query(Post).get(post.id) is None
+    
+def test_not_found(client):
+    login(client,"myself")
+    rv = client.get('/unknownpage')
+    assert rv.status_code == 404
+    assert "Page not found" in rv.data.decode()
+
+
+def test_forbidden(client):
+    # Not connected
+    rv = client.get('/channels', follow_redirects=True)
+    assert rv.status_code == 403
+    assert "Forbidden" in rv.data.decode()
+    # myself is not admin
+    login(client, "myself")
+    rv = client.get('/channels', follow_redirects=True)
+    assert rv.status_code == 403
+    assert "Forbidden" in rv.data.decode()
+    # an_admin is admin
+    login(client, "an_admin")
+    rv = client.get('/channels', follow_redirects=True)
+    assert rv.status_code == 200
+    assert "Forbidden" not in rv.data.decode()
+
+    
 
 
 
