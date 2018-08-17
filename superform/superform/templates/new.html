@@ -65,7 +65,7 @@
                                  {% for chan in l_chan %}
                                      <div class="form-check">
                                       <label class="form-check-label">
-                                        <input id="chan_option_{{ chan.id }}" data-namechan="{{ chan.name }} " data-unavailablefields="{{ chan.unavailablefields }}" name="chan_option_{{ chan.id }}" type="checkbox" class="form-check-input checkbox" value="{{ chan.id }}">{{ chan.name }}
+                                        <input id="chan_option_{{ chan.id }}" data-namechan="{{ chan.name }}" data-unavailablefields="{{ chan.unavailablefields }}" name="chan_option_{{ chan.id }}" type="checkbox" class="form-check-input checkbox" value="{{ chan.id }}">{{ chan.name }}
                                       </label>
                                     </div>
                                  {% endfor %}
@@ -76,12 +76,7 @@
                           <div class="card-header">Status</div>
                           <div class="card-body">Content</div>
                          </div>
-                         <div style="margin-top: 1rem; ">
 
-                            <button class="btn btn-primary" formaction="/new" formmethod="post" type="submit">Save</button>
-                            <button class="btn btn-success" formaction="/publish" formmethod="post" type="submit">Save & Publish</button>
-                            <button class="btn btn-outline-primary" type="reset">Abort</button>
-                         </div>
 
                     </div>
 
@@ -89,8 +84,74 @@
 
               </div>
               {% for chan in l_chan %}
-                  <div class="tab-pane container-fluid fade" id="menu{{ chan.id }}">...</div>
+                  <div class="tab-pane container-fluid fade" id="menu{{ chan.id }}">
+
+                    <div class="row">
+                    <div class="col-md-8">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="{{ chan.name }}_titlepost">Title</label><br>
+                                    <input type="text" name="titlepost" id="{{ chan.name }}_titlepost" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label for="{{ chan.name }}_descriptionpost">Description</label><br>
+                                    <textarea class="form-control" rows="5" id="{{ chan.name }}_descriptionpost" name="descriptionpost"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="{{ chan.name }}_linkurlpost">Link</label><br>
+                                    <input type="text" name="linkurlpost" id="{{ chan.name }}_linkurlpost" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label for="{{ chan.name }}_imagepost">Image</label><br>
+                                    <input type="file" name="imagepost" id="{{ chan.name }}_imagepost" class="form-control">
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="{{ chan.name }}_datefrompost">Publication Date</label><br>
+                                            <input id="{{ chan.name }}_datefrompost" name="datefrompost" type="date" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="{{ chan.name }}_dateuntilpost">Publication Until</label><br>
+                                            <input id="{{ chan.name }}_dateuntilpost" name="dateuntilpost" type="date" class="form-control">
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                         <div class="form-group">
+                             <label for="publishpost">Publish</label>
+                             <div>
+                              <label class="form-check-label">
+                               {{ chan.name }}
+                              </label>
+                             </div>
+                         </div>
+
+                         <div class="card">
+                          <div class="card-header">Status</div>
+                          <div class="card-body">Content</div>
+                         </div>
+
+
+                    </div>
+
+                </div>
+
+
+                  </div>
               {% endfor %}
+            </div>
+            <div align="right" style="margin-top: 1rem; ">
+               <button class="btn btn-primary" formaction="/new" formmethod="post" type="submit">Save</button>
+               <button class="btn btn-success" formaction="/publish" formmethod="post" type="submit">Save & Publish</button>
+               <button class="btn btn-outline-primary" type="reset">Abort</button>
             </div>
 
         </form>
@@ -103,29 +164,90 @@
 
 {% block scripts %}
     <script>
+        // This manage if a channel is selected or not:
+        //  it hides/shows a tab for a channel
+        //  it adds an information bullet to unavailable fields for each channel
         $('input.checkbox').change(function () {
+            nameC=$(this).attr('data-namechan');
+            fields = $(this).attr('data-unavailablefields');
+            split = fields.split(',');
             if ($(this).is(':checked')) {
+                //If the channel is selected
                 $(this).addClass('checked');
-                //alert("I'm cheked");
-                nameC=$(this).attr('data-namechan');
-                fields = $(this).attr('data-unavailablefields');
-                split = fields.split(',');
                 for(var i = 0; i < split.length; i++) {
-                    $("label[for='" + $('#'+split[i].toLowerCase()+'post').attr('id') + "']").append('<a href="#" data-toggle="popover" title="Unavailable field" data-content="This field is unavailable for channel ' + nameC +'"><i class="fas fa-exclamation-circle" style="color:orange"></i></a>');
+                    $("label[for='"+nameC+"_"+ $('#'+split[i].toLowerCase()+'post').attr('id') + "']").append('<a href="#" data-toggle="popover" title="Unavailable field" data-content="This field is unavailable for channel ' + nameC +'"><i class="fas fa-exclamation-circle" style="color:orange"></i></a>');
 
                 }
                 $('[data-toggle="popover"]').popover();
                 $('#li_'+nameC).show();
             } else {
+                //If the channel is not selected
                 $(this).removeClass('checked');
-                fields = $(this).attr('data-unavailablefields');
-                split = fields.split(',');
                 for(var i = 0; i < split.length; i++) {
-                    $("label[for='" + $('#'+split[i].toLowerCase()+'post').attr('id') + "'] > a").remove();
+                    $("label[for='"+nameC+"_"+ $('#'+split[i].toLowerCase()+'post').attr('id') + "'] > a").remove();
                 }
                 $('#li_'+nameC).hide();
             }
         });
+        // From here, I copy a field ONCE from general to all the equivalent fields of each channel
+        //It works but it's not really sexy to rewrite this for all fields of general tab
+        $('#titlepost').one("change",function(event){
+            text = ($(this).val());
+            //This is a subselect of input that match with the regex .*titlepost
+            $('input')
+                .filter(function() {
+                    return this.id.match(/.*titlepost/);
+                })
+                .val(text);
+        });
+        $('#descriptionpost').one("change",function(event){
+            text = ($(this).val());
+            //This is a subselect of input that match with the regex .*descriptionpost
+            $('textarea')
+                .filter(function() {
+                    return this.id.match(/.*descriptionpost/);
+                })
+                .val(text);
+        });
+        $('#linkurlpost').one("change",function(event){
+            text = ($(this).val());
+            //This is a subselect of input that match with the regex .*linkurlpost
+            $('input')
+                .filter(function() {
+                    return this.id.match(/.*linkurlpost/);
+                })
+                .val(text);
+        });
+        $('#imagepost').one("change",function(event){
+            text = ($(this).val());
+            //This is a subselect of input that match with the regex .*imagepost
+            $('input')
+                .filter(function() {
+                    return this.id.match(/.*imagepost/);
+                })
+                .val(text);
+        });
+        $('#dateuntilpost').one("change",function(event){
+            text = ($(this).val());
+            //This is a subselect of input that match with the regex .*dateuntilpost
+            $('input')
+                .filter(function() {
+                    return this.id.match(/.*dateuntilpost/);
+                })
+                .val(text);
+        });
+        $('#datefrompost').one("change",function(event){
+            text = ($(this).val());
+            //This is a subselect of input that match with the regex .*datefrompost
+            $('input')
+                .filter(function() {
+                    return this.id.match(/.*datefrompost/);
+                })
+                .val(text);
+        });
+
+
+
     </script>
 
 {% endblock %}
