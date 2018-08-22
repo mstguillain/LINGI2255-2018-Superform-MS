@@ -24,6 +24,12 @@ def channel_list():
             if channel:
                 db.session.delete(channel)
                 db.session.commit()
+        elif action == "edit":
+            channel_id = request.form.get("id")
+            channel = Channel.query.get(channel_id)
+            name = request.form.get('name')
+            channel.name = name
+            db.session.commit()
 
     channels = Channel.query.all()
     return render_template("channels.html", channels=channels, modules=current_app.config["PLUGINS"].keys())
