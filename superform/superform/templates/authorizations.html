@@ -2,72 +2,74 @@
 {% block title %}Authorizations{% endblock %}
 {% block content %}
     <h1>Authorizations</h1>
-    <div id="accordion">
-        {% for channel in rw_channels %}
-            <div class="card mb-2">
-                <div class="card-header" id="heading{{ loop.index }}">
-                    <h5 class="mb-0">
-                        <i class="fas fa-fw fa-chevron-right"></i>
-                        <button type=button class="btn btn-link" data-toggle="collapse" data-target="#collapse{{ loop.index }}" aria-expanded="true" aria-controls="collapseOne">
-                            {{ channel.name }}
-                        </button>
-                    </h5>
-                </div>
-                <div id="collapse{{ loop.index }}" class="collapse" aria-labelledby="heading{{ loop.index }}" data-parent="#accordion">
-                    <div class="card-body p-0">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Person</th>
-                                    <th>Permission</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for authorization in channel.authorizations %}
-                                    {% set is_session_user = authorization.user_id == session["user_id"] %}
+    <form method="post">
+        <div id="accordion">
+            {% for channel in rw_channels %}
+                <div class="card mb-2">
+                    <div class="card-header" id="heading{{ loop.index }}">
+                        <h5 class="mb-0">
+                            <i class="fas fa-fw fa-chevron-right"></i>
+                            <button type=button class="btn btn-link" data-toggle="collapse" data-target="#collapse{{ loop.index }}" aria-expanded="true" aria-controls="collapseOne">
+                                {{ channel.name }}
+                            </button>
+                        </h5>
+                    </div>
+                    <div id="collapse{{ loop.index }}" class="collapse" aria-labelledby="heading{{ loop.index }}" data-parent="#accordion">
+                        <div class="card-body p-0">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Person</th>
+                                        <th>Permission</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for authorization in channel.authorizations %}
+                                        {% set is_session_user = authorization.user_id == session["user_id"] %}
+                                        <tr>
+                                            <td>
+                                                {{ authorization.user_id }}
+                                            </td>
+                                            <td>
+                                                <select class="form-control" id="sel1" {{ 'disabled' if is_session_user else '' }}>
+                                                    {% for permission in permissions %}
+                                                        <option value="{{ permission.value }}" {{ 'selected' if authorization.permission == permission.value else '' }}>{{ permission }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </td>
+                                            <td>
+                                                {% if not is_session_user %}
+                                                    <a type="button" href="{{ url_for('authorizations.delete_authorization',id=authorization.user_id,cid=authorization.channel_id) }}" class="btn btn-danger">Delete</a>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
                                     <tr>
                                         <td>
-                                            {% set user = authorization.user %}
-                                            {{ user.first_name }} {{ user.name }} [{{ user.id }}]
+                                            <input type="hidden" name="channel_id0" value="{{ channel.id }}">
+                                            <input class="form-control" type="text" placeholder="Username" name="username0">
                                         </td>
                                         <td>
-                                            <select class="form-control" id="sel1" {{ 'disabled' if is_session_user else '' }}>
+                                            <select class="form-control" id="sel1" name="permission0">
                                                 {% for permission in permissions %}
-                                                    <option value="{{ permission.value }}" {{ 'selected' if authorization.permission == permission.value else '' }}>{{ permission }}</option>
+                                                    <option value="{{ permission.value }}">{{ permission }}</option>
                                                 {% endfor %}
                                             </select>
                                         </td>
                                         <td>
-                                            {% if not is_session_user %}
-                                                <button class="btn btn-danger">Delete</button>
-                                            {% endif %}
+                                            <a href="#" type="button" data-channelid="{{ channel.id }}" class="add btn btn-success">Add</a>
                                         </td>
                                     </tr>
-                                {% endfor %}
-                                <tr>
-                                    <td>
-                                        <input class="form-control" type="text" placeholder="Username">
-                                    </td>
-                                    <td>
-                                        <select class="form-control" id="sel1">
-                                            {% for permission in permissions %}
-                                                <option value="{{ permission.value }}">{{ permission }}</option>
-                                            {% endfor %}
-                                        </select>
-                                    </td>
-                                    <td>
-                                        <button class="add btn btn-success">Add</button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
-            </div>
-        {% endfor %}
-    </div>
-    <button class="btn btn-warning">Update</button>
+            {% endfor %}
+        </div>
+        <button class="btn btn-warning">Update</button>
+    </form>
 {% endblock %}
 {% block scripts %}
     <script>
@@ -80,7 +82,9 @@
         }
 
         $('.add').on('click',function(){
-           $(this).parent().parent().parent().append('<tr><td><input class="form-control" type="text" placeholder="Username"></td><td><select class="form-control" id="sel1">\n' +
+           var nbinput = ($('input').length)/2;
+           var chanid = $(this).data("channelid")
+           $(this).parent().parent().parent().append('<tr><td><input type="hidden" name="channel_id'+nbinput+'" value="'+chanid+'"><input class="form-control" type="text" placeholder="Username" name="username'+nbinput+'"></td><td><select class="form-control" id="sel1"name="permission'+nbinput+'">\n' +
                '{% for permission in permissions %}\n'+
                    '<option value="{{ permission.value }}">{{ permission }}</option>\n'
                    +
