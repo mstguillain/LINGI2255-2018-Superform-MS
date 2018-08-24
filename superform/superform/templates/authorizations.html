@@ -32,7 +32,7 @@
                                                 {{ authorization.user_id }}
                                             </td>
                                             <td>
-                                                <select class="form-control" id="sel1" {{ 'disabled' if is_session_user else '' }}>
+                                                <select class="form-control" id="sel1" name="permission_edit#{{ authorization.user_id }}#{{ channel.id }}" {{ 'disabled' if is_session_user else '' }}>
                                                     {% for permission in permissions %}
                                                         <option value="{{ permission.value }}" {{ 'selected' if authorization.permission == permission.value else '' }}>{{ permission }}</option>
                                                     {% endfor %}
