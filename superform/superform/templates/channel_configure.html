@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+{% block title %}Configure Channel{% endblock %}
+{% block content %}
+    <h1>Configuration</h1>
+    {% if session.logged_in %}
+        <form method="POST" action="">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="row">
+                        <div class="col-md-12">
+                            {% for field in config_fields %}
+                                <div class="form-group">
+                                    <label for="{{ field }}">{{ field }}</label><br>
+                                    <input type="text" name="{{ field }}" id="{{ field }}" class="form-control" value="{{ channel.config_dict.get(field) }}">
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button class="btn btn-success" type="submit">Save Configuration</button>
+            <a type="button" class="btn btn-outline-primary" href="{{ url_for('channels.channel_list') }}">Abort</a>
+        </form>
+    {% else %}
+        Your are not logged in.
+    {% endif %}
+
+{% endblock %}
