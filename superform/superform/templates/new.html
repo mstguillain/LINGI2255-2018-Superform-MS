@@ -175,6 +175,9 @@
                 //If the channel is selected
                 $(this).addClass('checked');
                 for(var i = 0; i < split.length; i++) {
+                    $("input[id='"+nameC+"_"+ $('#'+split[i].toLowerCase()+'post').attr('id') + "']").prop('disabled', true);
+                    $("textarea[id='"+nameC+"_"+ $('#'+split[i].toLowerCase()+'post').attr('id') + "']").prop('disabled', true);
+
                     $("label[for='"+nameC+"_"+ $('#'+split[i].toLowerCase()+'post').attr('id') + "']").append('<a href="#" data-toggle="popover" title="Unavailable field" data-content="This field is unavailable for channel ' + nameC +'"><i class="fas fa-exclamation-circle" style="color:orange"></i></a>');
 
                 }
@@ -184,6 +187,8 @@
                 //If the channel is not selected
                 $(this).removeClass('checked');
                 for(var i = 0; i < split.length; i++) {
+                    $("input[id='"+nameC+"_"+ $('#'+split[i].toLowerCase()+'post').attr('id') + "']").prop('disabled', false);
+                    $("textarea[id='"+nameC+"_"+ $('#'+split[i].toLowerCase()+'post').attr('id') + "']").prop('disabled', false);
                     $("label[for='"+nameC+"_"+ $('#'+split[i].toLowerCase()+'post').attr('id') + "'] > a").remove();
                 }
                 $('#li_'+nameC).hide();
