@@ -42,6 +42,12 @@ class Publishing(db.Model):
     post_id = db.Column(db.Integer, db.ForeignKey("post.id"), nullable=False)
     channel_id = db.Column(db.Integer, db.ForeignKey("channel.id"), nullable=False)
     state = db.Column(db.Integer, nullable=False)
+    title = db.Column(db.Text, nullable=False)
+    description = db.Column(db.Text)
+    link_url = db.Column(db.Text)
+    image_url = db.Column(db.Text)
+    date_from = db.Column(db.DateTime)
+    date_until = db.Column(db.DateTime)
 
     __table_args__ = (db.PrimaryKeyConstraint('post_id', 'channel_id'),)
 

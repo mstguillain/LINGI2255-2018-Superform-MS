@@ -2,7 +2,7 @@ from flask import Blueprint, url_for, request, redirect, session, render_templat
 
 from superform.users import channels_available_for_user
 from superform.utils import login_required, datetime_converter, str_converter, get_instance_from_module_path
-from superform.models import db, Post, Publishing
+from superform.models import db, Post, Publishing, Channel
 
 posts_page = Blueprint('posts', __name__)
 
@@ -19,6 +19,23 @@ def create_a_post(form):
     db.session.add(p)
     db.session.commit()
     return p
+
+def create_a_publishing(post,chn,form):
+    chan = str(chn.name)
+    print(form)
+    title_post = form.get(chan+'_titlepost') if (form.get(chan+'_titlepost') is not None) else post.title
+    descr_post = form.get(chan+'_descriptionpost') if form.get(chan+'_descriptionpost') is not None else post.description
+    link_post = form.get(chan+'_linkurlpost') if form.get(chan+'_linkurlpost') is not None else post.link_url
+    image_post = form.get(chan+'_imagepost') if form.get(chan+'_imagepost') is not None else post.image_url
+    date_from = datetime_converter(form.get(chan+'_datefrompost')) if datetime_converter(form.get(chan+'_datefrompost')) is not None else post.date_from
+    date_until = datetime_converter(form.get(chan+'_dateuntilpost')) if datetime_converter(form.get(chan+'_dateuntilpost')) is not None else post.date_until
+    pub = Publishing(post_id=post.id, channel_id=chan, state=0, title=title_post, description=descr_post, link_url=link_post, image_url=image_post,
+             date_from=date_from, date_until=date_until)
+
+    db.session.add(pub)
+    db.session.commit()
+    return pub
+
 
 
 @posts_page.route('/new', methods=['GET','POST'])
@@ -73,10 +90,14 @@ def publish_from_new_post():
     if request.method=="POST":
         for elem in request.form:
             if elem.startswith("chan_option_"):
+
+                def substr(elem):
+                    import re
+                    return re.sub('^chan\_option\_', '', elem)
+                c = Channel.query.get(substr(elem))
                 #for each selected channel options
                 #create the publication
-                pub = Publishing(post_id=p.id,channel_id=request.form.get(elem),state=0)
-                db.session.add(pub)
+                pub = create_a_publishing(p,c,request.form)
 
     db.session.commit()
     return redirect(url_for('index'))

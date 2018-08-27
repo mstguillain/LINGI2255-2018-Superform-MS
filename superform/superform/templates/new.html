@@ -92,31 +92,31 @@
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label for="{{ chan.name }}_titlepost">Title</label><br>
-                                    <input type="text" name="titlepost" id="{{ chan.name }}_titlepost" class="form-control">
+                                    <input type="text" name="{{ chan.name }}_titlepost" id="{{ chan.name }}_titlepost" class="form-control">
                                 </div>
                                 <div class="form-group">
                                     <label for="{{ chan.name }}_descriptionpost">Description</label><br>
-                                    <textarea class="form-control" rows="5" id="{{ chan.name }}_descriptionpost" name="descriptionpost"></textarea>
+                                    <textarea class="form-control" rows="5" id="{{ chan.name }}_descriptionpost" name="{{ chan.name }}_descriptionpost"></textarea>
                                 </div>
                                 <div class="form-group">
                                     <label for="{{ chan.name }}_linkurlpost">Link</label><br>
-                                    <input type="text" name="linkurlpost" id="{{ chan.name }}_linkurlpost" class="form-control">
+                                    <input type="text" name="{{ chan.name }}_linkurlpost" id="{{ chan.name }}_linkurlpost" class="form-control">
                                 </div>
                                 <div class="form-group">
                                     <label for="{{ chan.name }}_imagepost">Image</label><br>
-                                    <input type="file" name="imagepost" id="{{ chan.name }}_imagepost" class="form-control">
+                                    <input type="file" name="{{ chan.name }}_imagepost" id="{{ chan.name }}_imagepost" class="form-control">
                                 </div>
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="{{ chan.name }}_datefrompost">Publication Date</label><br>
-                                            <input id="{{ chan.name }}_datefrompost" name="datefrompost" type="date" class="form-control">
+                                            <input id="{{ chan.name }}_datefrompost" name="{{ chan.name }}_datefrompost" type="date" class="form-control">
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="{{ chan.name }}_dateuntilpost">Publication Until</label><br>
-                                            <input id="{{ chan.name }}_dateuntilpost" name="dateuntilpost" type="date" class="form-control">
+                                            <input id="{{ chan.name }}_dateuntilpost" name="{{ chan.name }}_dateuntilpost" type="date" class="form-control">
                                         </div>
                                     </div>
                                 </div>
@@ -149,7 +149,7 @@
               {% endfor %}
             </div>
             <div align="right" style="margin-top: 1rem; ">
-               <button class="btn btn-primary" formaction="/new" formmethod="post" type="submit">Save</button>
+               <button class="btn btn-primary" formaction="/new" formmethod="post" type="submit">Save as draft</button>
                <button class="btn btn-success" formaction="/publish" formmethod="post" type="submit">Save & Publish</button>
                <button class="btn btn-outline-primary" type="reset">Abort</button>
             </div>

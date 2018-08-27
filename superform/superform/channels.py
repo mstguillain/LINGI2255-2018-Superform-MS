@@ -1,6 +1,6 @@
 from flask import Blueprint, current_app, url_for, request, make_response, redirect, session, render_template
 
-from superform.utils import login_required, get_instance_from_module_path
+from superform.utils import login_required, get_instance_from_module_path, get_modules_names, get_module_full_name
 from superform.models import db, Channel
 import ast
 
@@ -15,8 +15,8 @@ def channel_list():
         if action == "new":
             name = request.form.get('name')
             module = request.form.get('module')
-            if module in current_app.config["PLUGINS"].keys():
-                channel = Channel(name=name, module=module, config="{}")
+            if module in get_modules_names(current_app.config["PLUGINS"].keys()):
+                channel = Channel(name=name, module=get_module_full_name(module), config="{}")
                 db.session.add(channel)
                 db.session.commit()
         elif action == "delete":
@@ -33,7 +33,7 @@ def channel_list():
             db.session.commit()
 
     channels = Channel.query.all()
-    return render_template("channels.html", channels=channels, modules=current_app.config["PLUGINS"].keys())
+    return render_template("channels.html", channels=channels, modules=get_modules_names(current_app.config["PLUGINS"].keys()))
 
 
 @channels_page.route("/configure/<int:id>", methods=['GET','POST'])

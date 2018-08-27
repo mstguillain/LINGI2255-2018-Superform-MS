@@ -16,7 +16,7 @@
             <tr>
                 <th scope="row">{{ channel.id }}</th>
                 <td>{{ channel.name }}</td>
-                <td>{{ channel.module }}</td>
+                <td>{{ channel.module.split('.')[2] }}</td>
                 <td>
                     <div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
                         <a href="{{ url_for('channels.configure_channel',id=channel.id) }}" class="btn btn-secondary" type="button">Configure</a>
