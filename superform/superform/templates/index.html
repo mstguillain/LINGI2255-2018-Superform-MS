@@ -4,8 +4,6 @@
     <h1>Index</h1>
 
     {% if session.logged_in %}
-        <p>{{ user }}</p>
-        <p>{{ user.admin }}</p>
 
         <div class="row">
         <div class="col-md-12">
@@ -45,7 +43,6 @@
                         <a href="/edit_post/{{ item.id }}" class="btn btn-outline-primary" role="button">Edit</a>
                         <button type="button" class="btn btn-outline-primary">Copy</button>
                         <a href="/delete_post/{{ item.id }}" class="btn btn-outline-warning" role="button">Delete</a>
-                        <!--<button type="button" class="btn btn-outline-primary" contenteditable="true">Delete</button>-->
                     </td>
                 </tr>
                 {% endfor %}

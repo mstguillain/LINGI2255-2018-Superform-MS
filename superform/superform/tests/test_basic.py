@@ -67,7 +67,6 @@ def test_other_pages_not_logged_in(client):
 def test_index_logged_in(client):
     login(client, "myself")
     rv2 = client.get('/', follow_redirects=True)
-    print(rv2.data.decode())
     assert rv2.status_code == 200
     assert "Your are not logged in." not in rv2.data.decode()
 

@@ -22,7 +22,6 @@ def create_a_post(form):
 
 def create_a_publishing(post,chn,form):
     chan = str(chn.name)
-    print(form)
     title_post = form.get(chan+'_titlepost') if (form.get(chan+'_titlepost') is not None) else post.title
     descr_post = form.get(chan+'_descriptionpost') if form.get(chan+'_descriptionpost') is not None else post.description
     link_post = form.get(chan+'_linkurlpost') if form.get(chan+'_linkurlpost') is not None else post.link_url

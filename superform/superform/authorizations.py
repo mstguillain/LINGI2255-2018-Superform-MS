@@ -25,18 +25,18 @@ def authorizations():
         i = 0
         while i < (round(len(request.form) / 3)):
             user_id = request.form.get('username' + str(i))
-            print(user_id)
+
             if user_id is not "":
                 channel_id = request.form.get('channel_id'+str(i))
-                print(channel_id)
+
                 permission = request.form.get('permission' + str(i))
-                print(permission)
+
                 a = Authorization(channel_id=channel_id, user_id=user_id, permission=permission)
                 db.session.add(a)
             i = i + 1
 
         edit_list = [[elem,elem.split('#')] for elem in request.form if elem.startswith("permission_edit")]
-        print(edit_list)
+
         for e in edit_list:
             auth = request.form.get(e[0])
             chan_id = e[1][2]
