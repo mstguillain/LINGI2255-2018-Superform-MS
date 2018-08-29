@@ -2,6 +2,8 @@ from datetime import datetime
 from functools import wraps
 from flask import render_template, session, current_app
 
+from superform.models import Authorization, Channel
+
 
 def login_required(admin_required=False):
     def decorator(f):
@@ -36,3 +38,12 @@ def get_module_full_name(module_name):
     for m in current_app.config["PLUGINS"].keys():
         if(m.split('.')[2] == module_name):
             return m
+
+def get_moderate_channels_for_user(u):
+    auth = Authorization.query.filter(Authorization.user_id == u.id, Authorization.permission == 2)
+    chan = [Channel.query.get(a.channel_id) for a in auth]
+    return chan
+
+def is_moderator(user):
+    auth = Authorization.query.filter(Authorization.user_id == user.id, Authorization.permission == 2)
+    return auth.count() > 0

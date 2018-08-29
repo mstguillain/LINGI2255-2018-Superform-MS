@@ -7,7 +7,51 @@
 
         <div class="row">
         <div class="col-md-12">
-          <table class="table table-bordered">
+            {% if user.is_moderator %}
+                <h2>Unmoderated Publishings</h2>
+                <table class="table table-bordered">
+                <thead>
+                  <tr>
+                    <th>
+                      Channel
+                    </th>
+                    <th>
+                      Subject
+                    </th>
+                    <th>
+                      Body
+                    </th>
+                    <th>
+                        Action
+                    </th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                {% for p in publishings %}
+                    <tr>
+                        <td>
+                            {{ p.channel_id }}
+                        </td>
+                        <td>
+                            {{ p.title }}
+                        </td>
+                        <td>
+                            <div class="row">
+                                <div class="col">{{ p.description }}</div>
+                            </div>
+                        </td>
+                        <td>
+                            <a href="#" class="btn btn-outline-primary" role="button">Moderate</a>
+
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+                </table>
+            {% endif %}
+            <h2>Posts you made</h2>
+            <table class="table table-bordered">
             <thead>
               <tr>
                 <th>
@@ -47,7 +91,7 @@
                 </tr>
                 {% endfor %}
             </tbody>
-          </table>
+            </table>
         </div>
       </div>
     {% else %}

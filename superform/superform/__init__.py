@@ -1,18 +1,16 @@
-from datetime import datetime
-
-from flask import Flask, render_template, session, request, redirect, url_for
+from flask import Flask, render_template, session
 import pkgutil
 import importlib
 
 from sqlalchemy import func
 
 import superform.plugins
-from superform.models import db, User, Channel, Post
+from superform.models import db, User, Post,Publishing
 from superform.authentication import authentication_page
 from superform.authorizations import authorizations_page
 from superform.channels import channels_page
 from superform.posts import posts_page
-from superform.utils import login_required,datetime_converter,str_converter
+from superform.utils import login_required, get_moderate_channels_for_user, is_moderator
 
 app = Flask(__name__)
 app.config.from_json("config.json")
@@ -37,8 +35,16 @@ app.config["PLUGINS"] = {
 @app.route('/')
 def index():
     user = User.query.get(session.get("user_id", "")) if session.get("logged_in", False) else None
-    posts = db.session.query(Post).filter(Post.user_id==session.get("user_id", "") and func.count(Post.publishings)== 0)
-    return render_template("index.html", user=user,posts=posts)
+    posts=[]
+    flattened_list_pubs =[]
+    if user is not None:
+        setattr(user,'is_mod',is_moderator(user))
+        posts = db.session.query(Post).filter(Post.user_id==session.get("user_id", ""))
+        chans = get_moderate_channels_for_user(user)
+        pubs_per_chan = (db.session.query(Publishing).filter(Publishing.post_id == c.id).all() for c in chans)
+        flattened_list_pubs = [y for x in pubs_per_chan for y in x]
+
+    return render_template("index.html", user=user,posts=posts,publishings = flattened_list_pubs)
 
 
 @app.route('/records')
