@@ -5,7 +5,10 @@ import tempfile
 
 import pytest
 
-from superform import app, db, Post, datetime_converter, str_converter
+from superform.models import Authorization, Channel
+from superform import app, db, Post, User
+from superform.utils import datetime_converter, str_converter, get_module_full_name
+from superform.users import  is_moderator, get_moderate_channels_for_user,channels_available_for_user
 
 
 @pytest.fixture
@@ -69,6 +72,15 @@ def test_index_logged_in(client):
     rv2 = client.get('/', follow_redirects=True)
     assert rv2.status_code == 200
     assert "Your are not logged in." not in rv2.data.decode()
+
+def test_log_out(client):
+    login(client,"myself")
+    rv2 = client.get('/', follow_redirects=True)
+    assert rv2.status_code == 200
+    rv2 = client.get('/logout',follow_redirects=True)
+    assert rv2.status_code == 200
+    assert "Your are not logged in." in rv2.data.decode()
+
 
 def test_new_post(client):
     login(client,"myself")
@@ -146,8 +158,43 @@ def test_date_converters():
     st = str_converter(t)
     assert isinstance(st,str)
 
+def test_get_module_name():
+    module_name ="mail"
+    m = get_module_full_name(module_name)
+    assert m == "superform.plugins.mail"
+    module_name =""
+    m = get_module_full_name(module_name)
+    assert m is None
 
+def test_is_moderator():
+    user = User(id=1, name="test", first_name="utilisateur", email="utilisateur.test@uclouvain.be")
+    db.session.add(user)
+    u = User.query.get(1)
+    assert is_moderator(u) == False
+    a= Authorization(channel_id=1,user_id=1,permission=2)
+    db.session.add(a)
+    assert is_moderator(u) == True
+
+def test_get_moderate_channels_for_user():
+    u = User.query.get(1)
+    channel = Channel(name="test", module=get_module_full_name("mail"), config="{}")
+    db.session.add(channel)
+    assert get_moderate_channels_for_user(u) is not None
+    user = User(id=2, name="test", first_name="utilisateur2", email="utilisateur2.test@uclouvain.be")
+    db.session.add(user)
+    assert len(get_moderate_channels_for_user(user)) == 0
+    a = Authorization(channel_id=1, user_id=2, permission=2)
+    db.session.add(a)
+    assert len(get_moderate_channels_for_user(user)) == 1
     
+def test_channels_available_for_user():
+    u = User.query.get(1)
+    assert len(channels_available_for_user(u.id))==1
+    user = User(id=3, name="test", first_name="utilisateur3", email="utilisateur3.test@uclouvain.be")
+    db.session.add(user)
+    assert len(channels_available_for_user(user.id)) == 0
+
+
 
 
 

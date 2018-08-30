@@ -17,8 +17,8 @@ def login_required(admin_required=False):
     return decorator
 
 
-def datetime_converter(str):
-    return datetime.strptime(str, "%Y-%m-%d")
+def datetime_converter(stri):
+    return datetime.strptime(stri, "%Y-%m-%d")
 
 def str_converter(datet):
     return datetime.strftime(datet,"%Y-%m-%d")
@@ -38,12 +38,3 @@ def get_module_full_name(module_name):
     for m in current_app.config["PLUGINS"].keys():
         if(m.split('.')[2] == module_name):
             return m
-
-def get_moderate_channels_for_user(u):
-    auth = Authorization.query.filter(Authorization.user_id == u.id, Authorization.permission == 2)
-    chan = [Channel.query.get(a.channel_id) for a in auth]
-    return chan
-
-def is_moderator(user):
-    auth = Authorization.query.filter(Authorization.user_id == user.id, Authorization.permission == 2)
-    return auth.count() > 0
