@@ -37,11 +37,22 @@ class Post(db.Model):
     def __repr__(self):
         return '<Post {}>'.format(repr(self.id))
 
+    def is_a_record(self):
+        if (len(self.publishings) == 0):
+            return False
+        else:
+            # check if all the publications from a post are archived
+            for pub in self.publishings:
+                if (pub.state != 3):
+                    # state 3 is archived.
+                    return False
+            return True
+
 
 class Publishing(db.Model):
     post_id = db.Column(db.Integer, db.ForeignKey("post.id"), nullable=False)
     channel_id = db.Column(db.Integer, db.ForeignKey("channel.id"), nullable=False)
-    state = db.Column(db.Integer, nullable=False)
+    state = db.Column(db.Integer, nullable=False, default=-1)
     title = db.Column(db.Text, nullable=False)
     description = db.Column(db.Text)
     link_url = db.Column(db.Text)
@@ -53,6 +64,9 @@ class Publishing(db.Model):
 
     def __repr__(self):
         return '<Publishing {} {}>'.format(repr(self.post_id), repr(self.channel_id))
+
+    def get_author(self):
+        return db.session.query(Post).get(self.post_id).user_id
 
 
 class Channel(db.Model):

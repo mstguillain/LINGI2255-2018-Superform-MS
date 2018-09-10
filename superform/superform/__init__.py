@@ -2,15 +2,13 @@ from flask import Flask, render_template, session
 import pkgutil
 import importlib
 
-from sqlalchemy import func
-
 import superform.plugins
+from superform.publishings import pub_page
 from superform.models import db, User, Post,Publishing
 from superform.authentication import authentication_page
 from superform.authorizations import authorizations_page
 from superform.channels import channels_page
 from superform.posts import posts_page
-from superform.utils import login_required
 from superform.users import get_moderate_channels_for_user, is_moderator
 
 app = Flask(__name__)
@@ -21,6 +19,7 @@ app.register_blueprint(authentication_page)
 app.register_blueprint(authorizations_page)
 app.register_blueprint(channels_page)
 app.register_blueprint(posts_page)
+app.register_blueprint(pub_page)
 
 # Init dbs
 db.init_app(app)
@@ -46,13 +45,6 @@ def index():
         flattened_list_pubs = [y for x in pubs_per_chan for y in x]
 
     return render_template("index.html", user=user,posts=posts,publishings = flattened_list_pubs)
-
-
-@app.route('/records')
-@login_required()
-def records():
-    records = [[1, "sub1", "body1", "FB INGI"], [2, "sub2", "body2", "Portail ICTEAM"]]
-    return render_template('records.html', records=records)
 
 @app.errorhandler(403)
 def forbidden(error):

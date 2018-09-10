@@ -22,6 +22,9 @@
                       Body
                     </th>
                     <th>
+                        Author
+                    </th>
+                    <th>
                         Action
                     </th>
                   </tr>
@@ -42,6 +45,9 @@
                             </div>
                         </td>
                         <td>
+                            {{ p.get_author() }}
+                        </td>
+                        <td>
                             <a href="#" class="btn btn-outline-primary" role="button">Moderate</a>
 
                         </td>
@@ -50,7 +56,7 @@
                 </tbody>
                 </table>
             {% endif %}
-            <h2>Posts you made</h2>
+            <h2>All my posts</h2>
             <table class="table table-bordered">
             <thead>
               <tr>

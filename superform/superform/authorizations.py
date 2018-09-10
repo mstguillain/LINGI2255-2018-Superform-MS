@@ -16,9 +16,9 @@ def authorizations():
         else:
             channels = Channel.query.join(Authorization).filter(Authorization.user_id == session["user_id"])
             rw_channels = Channel.query.join(Authorization).filter(Authorization.user_id == session["user_id"]).filter(
-                Authorization.permission == Permission.MODERATOR.value)
+                Authorization.permission == Permission.MODERATOR.value).all()
             ro_channels = Channel.query.join(Authorization).filter(Authorization.user_id == session["user_id"]).filter(
-                Authorization.permission == Permission.AUTHOR.value)
+                Authorization.permission == Permission.AUTHOR.value).all()
         return render_template("authorizations.html", rw_channels=rw_channels, ro_channels=ro_channels,
                                permissions=Permission)
     elif request.method == "POST":

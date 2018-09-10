@@ -105,20 +105,7 @@ def publish_from_new_post():
 @login_required()
 def records():
     posts = db.session.query(Post).filter(Post.user_id==session.get("user_id", ""))
-    records = [(p) for p in posts if is_a_record(p.id)]
+    records = [(p) for p in posts if p.is_a_record()]
     return render_template('records.html', records=records)
-
-
-def is_a_record(pid):
-    post = db.session.query(Post).get(pid)
-    if (len(post.publishings)==0):
-        return False
-    else:
-        for pub in post.publishings:
-            if(pub.state != 2):
-                #TODO change value. ftm state 2 is published.
-                return False
-        return True
-
 
 
