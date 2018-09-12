@@ -35,7 +35,8 @@ TODO
 
 ## Tests
 
-TODO
+Be in Superform/superform folder and then 'pytest -v' in your terminal.
+All tests are under superform/tests.
 
 ## Contributors
 
