@@ -60,33 +60,6 @@ def new_post():
         return redirect(url_for('index'))
 
 
-@posts_page.route('/edit_post/<int:id>', methods=['GET', 'POST'])
-@login_required()
-def edit_post(id):
-    p = db.session.query(Post).get(id)
-
-    if request.method == "GET":
-        p.date_from = str_converter(p.date_from)
-        p.date_until = str_converter(p.date_until)
-        return render_template("edit_post.html", post=p)
-    elif request.method == "POST":
-        p.title = request.form.get('titlepost')
-        p.description = request.form.get('descrpost')
-        p.link_url = request.form.get('linkurlpost')
-        p.image_url = request.form.get('imagepost')
-        p.date_from = datetime_converter(request.form.get('datefrompost'))
-        p.date_until = datetime_converter(request.form.get('dateuntilpost'))
-        return redirect(url_for('index'))
-
-
-@posts_page.route('/delete_post/<int:id>')
-@login_required()
-def delete_post(id):
-    db.session.query(Post).filter(Post.id == id).delete()
-    db.session.commit()
-    return redirect(url_for('index'))
-
-
 @posts_page.route('/publish', methods=['POST'])
 @login_required()
 def publish_from_new_post():
