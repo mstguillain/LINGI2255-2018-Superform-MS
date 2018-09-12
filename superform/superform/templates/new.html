@@ -150,7 +150,7 @@
             </div>
             <div align="right" style="margin-top: 1rem; ">
                <button class="btn btn-primary" formaction="/new" formmethod="post" type="submit">Save as draft</button>
-               <button class="btn btn-success" formaction="/publish" formmethod="post" type="submit">Save & Publish</button>
+               <button id="publish-button" class="btn btn-success" formaction="/publish" formmethod="post" type="submit" disabled>Save & Publish</button>
                <button class="btn btn-outline-primary" type="reset">Abort</button>
             </div>
 
@@ -168,6 +168,13 @@
         //  it hides/shows a tab for a channel
         //  it adds an information bullet to unavailable fields for each channel
         $('input.checkbox').change(function () {
+            var nbselected = $('input.checkbox:checked').length;
+            if(nbselected ==0){
+               $("#publish-button").prop('disabled', true);
+            }else{
+               $("#publish-button").prop('disabled', false);
+            }
+
             nameC=$(this).attr('data-namechan');
             fields = $(this).attr('data-unavailablefields');
             split = fields.split(',');
