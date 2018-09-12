@@ -45,7 +45,7 @@ Nicolas Detienne - @NDetienne
 
 Anthony Gego - @anthonygego
 
-Ludovic Taffin - @Drumor
+Ludovic Taffin - @Drumor/@ltaffin
 
 ## License
 
