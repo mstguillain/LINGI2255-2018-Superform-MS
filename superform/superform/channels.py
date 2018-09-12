@@ -50,8 +50,12 @@ def configure_channel(id):
             setattr(c, "config_dict", d)
         return render_template("channel_configure.html",channel = c, config_fields = config_fields)
     str_conf="{"
+    cfield =0
     for field in config_fields:
-        str_conf = str_conf+"'"+field+"' : '"+request.form.get(field)+"',"
+        if cfield > 0:
+            str_conf = str_conf +","
+        str_conf = str_conf+"\""+field+"\" : \""+request.form.get(field)+"\""
+        cfield = cfield +1
     str_conf = str_conf+"}"
     c.config=str_conf
     db.session.commit()

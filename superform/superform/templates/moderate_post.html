@@ -1,6 +1,7 @@
 {% extends "layout.html" %}
 {% block title %}Moderate{% endblock %}
 {% block content %}
+    <h1>Moderate this publication</h1>
     {% if session.logged_in %}
         <form method="POST" action="">
             <div class="row">
@@ -38,7 +39,7 @@
 
                 </div>
             </div>
-            <button class="btn btn-warning">Update</button>
+            <button class="btn btn-success">Publish</button>
         </form>
     {% else %}
         Your are not logged in.
