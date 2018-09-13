@@ -19,7 +19,8 @@ def moderate_publishing(id,idc):
         pub.image_url = request.form.get('imagepost')
         pub.date_from = datetime_converter(request.form.get('datefrompost'))
         pub.date_until = datetime_converter(request.form.get('dateuntilpost'))
-        pub.state = 2
+        #state is shared & validated
+        pub.state = 1
         db.session.commit()
         #running the plugin here
         c=db.session.query(Channel).filter(Channel.name == pub.channel_id).first()
