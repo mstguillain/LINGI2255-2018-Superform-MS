@@ -38,6 +38,15 @@ TODO
 Be in Superform/superform folder and then 'pytest -v' in your terminal.
 All tests are under superform/tests.
 
+## How to write a plugin/module
+
+A plugin is a simple python file (called a module) that needs some function and variables to work in our Superform system.
+This file should contain :
+
+* a variable called FIELDS_UNAVAILABLE. This is a list of field names that are not used by your module. This names must match with post variables.
+* a variable called CONFIG_FIELDS.This is also a python list. This lets the manager of your module enter data that are used to communicate with other services. Example : The mail where the information must be send.
+* a function called run with as many arguments as you want (**kwargs).
+
 ## Contributors
 
 Kim Mens - @kimmens 
