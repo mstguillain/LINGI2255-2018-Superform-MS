@@ -56,12 +56,6 @@ def test_other_pages_not_logged_in(client):
     rv = client.get('/new', follow_redirects=True)
     assert rv.status_code == 403
     assert "Forbidden" in rv.data.decode()
-    rv = client.get('/edit_post/1', follow_redirects=True)
-    assert rv.status_code == 403
-    assert "Forbidden" in rv.data.decode()
-    rv = client.get('/delete_post/1', follow_redirects=True)
-    assert rv.status_code == 403
-    assert "Forbidden" in rv.data.decode()
     rv = client.get('/channels', follow_redirects=True)
     assert rv.status_code == 403
     assert "Forbidden" in rv.data.decode()
@@ -92,39 +86,6 @@ def test_new_post(client):
     assert last_add.title == 'A new test post'
     db.session.query(Post).filter(Post.id == last_add.id).delete()
     db.session.commit()
-    
-def test_edit_post(client):
-    login(client, "myself")
-    rv = client.post('/new', data=dict(titlepost='A new test post', descrpost="A description",
-                                       linkurlpost="http://www.test.com", imagepost="image.jpg",
-                                       datefrompost="2018-07-01", dateuntilpost="2018-07-01"))
-    assert rv.status_code == 302
-    post = db.session.query(Post).all()[-1]
-    newtitle = "aaaa"
-    assert post.title != newtitle
-    rv = client.post('/edit_post/'+str(post.id), data=dict(titlepost=newtitle, descrpost="A description",
-                                       linkurlpost="http://www.test.com", imagepost="image.jpg",
-                                       datefrompost="2018-07-01", dateuntilpost="2018-07-01"))
-
-    assert rv.status_code == 302
-    assert post.title == newtitle
-    db.session.query(Post).filter(Post.id == post.id).delete()
-    db.session.commit()
-
-def test_delete_post(client):
-    login(client, "myself")
-    rv = client.post('/new', data=dict(titlepost='A new test post', descrpost="A description",
-                                       linkurlpost="http://www.test.com", imagepost="image.jpg",
-                                       datefrompost="2018-07-01", dateuntilpost="2018-07-01"))
-    assert rv.status_code == 302
-    posts = db.session.query(Post).all()
-    size_posts = len(posts)
-    post = posts[-1]
-    rv = client.get('/delete_post/'+str(post.id))
-    assert rv.status_code ==302
-    posts = db.session.query(Post).all()
-    assert len(posts) == size_posts-1
-    assert db.session.query(Post).get(post.id) is None
     
 def test_not_found(client):
     login(client,"myself")
