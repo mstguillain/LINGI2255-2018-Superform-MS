@@ -42,10 +42,6 @@ models.db.create_all()
 
 ```
 
-## API Reference
-
-TODO
-
 ## Tests
 
 Be in Superform/superform folder and then 'pytest -v' in your terminal.
