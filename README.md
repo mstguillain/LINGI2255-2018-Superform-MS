@@ -29,6 +29,19 @@ SuperForm has the following dependencies:
 * Setuptools 39.1.0
 * Onelogin 1.4.0
 
+## How to run it?
+
+Superform needs some instructions before to run the app:
+
+```python
+
+from superform import models
+from superform import app
+app.app_context().push()
+models.db.create_all()
+
+```
+
 ## API Reference
 
 TODO
@@ -56,7 +69,3 @@ Nicolas Detienne - @NDetienne
 Anthony Gego - @anthonygego
 
 Ludovic Taffin - @Drumor/@ltaffin
-
-## License
-
-Under licence - TODO 
