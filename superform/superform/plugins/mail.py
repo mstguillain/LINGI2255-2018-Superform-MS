@@ -9,16 +9,7 @@ FIELDS_UNAVAILABLE = ['Title','Description']
 
 CONFIG_FIELDS = ["sender","receiver"]
 
-def run(**kwargs):
-    publishing= None
-    channel_config= None
-    for name, value in kwargs.items():
-        if name is "publishing":
-            publishing = value
-        elif name is "channel_config":
-            channel_config = value
-
-
+def run(publishing,channel_config):
     json_data = json.loads(channel_config)
     sender = json_data['sender']
     receivers = json_data['receiver']
