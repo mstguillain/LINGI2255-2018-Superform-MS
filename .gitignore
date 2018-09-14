@@ -5,3 +5,5 @@
 /superform/superform/config.json
 .cache/*
 .pytest_cache/*
+/superform/.cache/*
+/superform/.pytest_cache/*
