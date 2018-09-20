@@ -23,7 +23,6 @@ def authorizations():
                                permissions=Permission)
     elif request.method == "POST":
         i = 1
-        print(request.form)
         while i <= (round(len(request.form) / 3)):
             user_id = request.form.get('username' + str(i))
 
