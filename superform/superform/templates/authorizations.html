@@ -50,11 +50,11 @@
                                         {% endfor %}
                                         <tr>
                                             <td>
-                                                <input type="hidden" name="channel_id0" value="{{ channel.id }}">
-                                                <input class="form-control" type="text" placeholder="Username" name="username0">
+                                                <input type="hidden" name="channel_id{{ channel.id }}" value="{{ channel.id }}">
+                                                <input class="form-control" type="text" placeholder="Username" name="username{{ channel.id }}">
                                             </td>
                                             <td>
-                                                <select class="form-control" id="sel1" name="permission0">
+                                                <select class="form-control" id="sel1" name="permission{{ channel.id }}">
                                                     {% for permission in permissions %}
                                                         <option value="{{ permission.value }}">{{ permission }}</option>
                                                     {% endfor %}

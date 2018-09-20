@@ -22,8 +22,9 @@ def authorizations():
         return render_template("authorizations.html", rw_channels=rw_channels, ro_channels=ro_channels,
                                permissions=Permission)
     elif request.method == "POST":
-        i = 0
-        while i < (round(len(request.form) / 3)):
+        i = 1
+        print(request.form)
+        while i <= (round(len(request.form) / 3)):
             user_id = request.form.get('username' + str(i))
 
             if user_id is not "":
@@ -32,6 +33,7 @@ def authorizations():
                 permission = request.form.get('permission' + str(i))
 
                 a = Authorization(channel_id=channel_id, user_id=user_id, permission=permission)
+                print(a)
                 db.session.add(a)
             i = i + 1
 
