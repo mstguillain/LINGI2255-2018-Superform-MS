@@ -1,0 +1,10 @@
+créer un compte Facebook dev
+pip3 install requests
+tokens temporaires : https://developers.facebook.com/tools/explorer?method=GET&path=me%3Ffields%3Did%2Cname&version=v3.1
+user tokens : https://developers.facebook.com/docs/facebook-login/access-tokens/#usertokens
+Page access tokens  : https://developers.facebook.com/docs/pages/access-tokens#roles
+Analytics : https://gwu-libraries.github.io/sfm-ui/posts/2018-01-02-facebook
+
+Long-lived access page token : EAAHcEGT1yyEBALfIQJFSemOIA1WpSoxfbkMBd6IZBvG7KESDXhUexT8ZAmUbp5ugGhZCL3bhkxiZBATlZC1PG90YejTfNX4V0zFllMxMDMDnZB3lxINy2at3RMT0WQx3z8JhhnYlYxGYRnFNZBfAvEFUBB1Qce4WjWbwrf6uVP9cgCLYsQUykJ9vHrHn1wukfUZD
+App-id : 523437948128033
+Secret-key : 3155b3b8991c58e8219e9574ab3b2984
