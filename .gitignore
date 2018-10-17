@@ -7,3 +7,13 @@
 .pytest_cache/*
 /superform/.cache/*
 /superform/.pytest_cache/*
+*.pyc
+*.xml
+superform.db
+*.cert
+*.key
+*.aux
+*.log
+*.out
+d4_report.pdf
+*.toc

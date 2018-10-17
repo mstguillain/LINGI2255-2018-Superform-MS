@@ -3,7 +3,12 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from smtplib import SMTPException
 from flask import current_app
+from linkedin import linkedin
 import json
+
+#######################
+# Copied from mail.py #
+#######################
 
 FIELDS_UNAVAILABLE = ['Title', 'Description']
 
@@ -33,3 +38,17 @@ def run(publishing, channel_config):
     except SMTPException as e:
         # TODO should add log here
         print(e)
+
+
+########################################################
+# Taken from https://pypi.org/project/python-linkedin/ #
+########################################################
+
+API_KEY = "77p0caweo4t3t9"
+API_SECRET = "uQVYTN3pDewuOb7d"
+RETURN_URL = "http://localhost:8000"
+authentication = linkedin.LinkedInAuthentication(API_KEY, API_SECRET,
+                                                 RETURN_URL,
+                                                 linkedin.PERMISSIONS.enums.values())
+print(authentication.authorization_url)
+application = linkedin.LinkedInApplication(authentication)
