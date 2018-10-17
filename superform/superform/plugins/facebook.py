@@ -11,14 +11,17 @@ def run(publishing,channel_config):
 
     # Fill in the values noted in previous steps here
     cfg = {
-    "page_id"      : "2262600217294292",  # Step 1
-    "access_token" : "EAAHcEGT1yyEBALfIQJFSemOIA1WpSoxfbkMBd6IZBvG7KESDXhUexT8ZAmUbp5ugGhZCL3bhkxiZBATlZC1PG90YejTfNX4V0zFllMxMDMDnZB3lxINy2at3RMT0WQx3z8JhhnYlYxGYRnFNZBfAvEFUBB1Qce4WjWbwrf6uVP9cgCLYsQUykJ9vHrHn1wukfUZD"   # Step 3
+    "page_id"      : "285844238930581",  # Step 1
+    "access_token" : "EAAHcEGT1yyEBAHfHfxCjN5Fj8YRQ9ygvqCtBzQFBEYOdLe9YmSZCfwQUHPsfNhBI51MZBPZBoX7GIcyCswOZBwMQIycmeeLTNoOrxMjiqjOjZCWoidaPe4ZCFiLAThoZCWXFc1SSjQkfz11v8kXwxUBMZA9qftCa3XFhZCElVVd9i7UE8UW0LueDdHW007hPhNffjgXGXiH5v558ZBKYGfEeCpBKb4mzn3vy4ZD"   # Step 3
     }
 
     api = get_api(cfg)
     #msg a custom, choper le contenu du champ dans le post 
-    msg = "Hello, world!" 
-    status = api.put_object(parent_object='me',connection_name='feed',message=msg)
+    
+    #On chope le message dans le champ description du post.
+    body = publishing.description
+    #msg = "Hello, world!" 
+    status = api.put_object(parent_object='me',connection_name='feed',message=body)
 
 def get_api(cfg):
     graph = facebook.GraphAPI(cfg['access_token'])
