@@ -8,7 +8,7 @@ class FacebookTest(unittest.TestCase):
         msg = 'Ceci est une publication !'
         cfg = {
             "page_id"      : "285844238930581",  # Step 1
-            "access_token" : "EAAHcEGT1yyEBAOrJr07ZC71bLrPryUUY2luLaLgC7jrycFDLbJ857W3RVLvIru0Sh8WyR4Udr8YA2OCtDDEWEtJrNoBKYMTZAjIMwZAW9ZAtaLvh76cX7xCZBrBFEq3w2B7NdjCPI2z7tAiyGzZCaLsFx4mPyFoSQZCkYCnbaXOpAZDZD"   # Step 3
+            "access_token" : "EAAHcEGT1yyEBAAMbUIDx31kDlC3zi8heSI84KWakZBwAaf4fRVnMPSNrZA47gsS2vzdOdq656mlvqVAdCb0kXK1hE4LH68x8MyDWWCZBgAmvCmPvmbIaI5TkgV3t4mvFPup40oCYmjS59e3OmKi4aos9TZAIBvazarZBZCMTD8pdNvWZAiZCRTmmuy198NEZC8vJOuMGGTygsHQZDZD"   # Step 3
         }
 
         api = get_api(cfg)
@@ -16,6 +16,6 @@ class FacebookTest(unittest.TestCase):
         pub = api.get_object(id=publication_id, fields='message')
         self.assertEquals(msg, pub['message'])
         delete(publication_id)
-
+ 
 if __name__ == '__main__':
     unittest.main()
