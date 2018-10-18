@@ -12,7 +12,7 @@ def run(publishing,channel_config):
     # Fill in the values noted in previous steps here
     cfg = {
     "page_id"      : "285844238930581",  # Step 1
-    "access_token" : "EAAHcEGT1yyEBAHfHfxCjN5Fj8YRQ9ygvqCtBzQFBEYOdLe9YmSZCfwQUHPsfNhBI51MZBPZBoX7GIcyCswOZBwMQIycmeeLTNoOrxMjiqjOjZCWoidaPe4ZCFiLAThoZCWXFc1SSjQkfz11v8kXwxUBMZA9qftCa3XFhZCElVVd9i7UE8UW0LueDdHW007hPhNffjgXGXiH5v558ZBKYGfEeCpBKb4mzn3vy4ZD"   # Step 3
+    "access_token" : "EAAHcEGT1yyEBAMMmOCYrWGJAfJZCmlZAxlTc4hDNQ6HrW0r5Od65KrHDsAU2IzCWp2IqTp8JPXwgkbU3DvHRwfTj6j8uZBI4w4pvD0Lrma1cOE2oVTUm3PST9qpGzR2sgB6n8yCshzUSbDBbZA0hROfafsLRZB3M4XwDfoVrOOSS6SGZALizRriZBkZAsI2prtXf9jmVWiZCa3t5pl6DhLV2v"   # Step 3
     }
 
     api = get_api(cfg)
