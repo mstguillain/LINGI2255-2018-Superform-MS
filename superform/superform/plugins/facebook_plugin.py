@@ -1,27 +1,41 @@
 import facebook
 from flask import current_app
 import json
+import time
 
 FIELDS_UNAVAILABLE = ['Title','Description']
 
 CONFIG_FIELDS = ["sender","receiver"]
 
-def run(publishing,channel_config):
-    #json_data = json.loads(channel_config)
-
-    # Fill in the values noted in previous steps here
-    cfg = {
-    "page_id"      : "285844238930581",  # Step 1
-    "access_token" : "EAAHcEGT1yyEBAHfHfxCjN5Fj8YRQ9ygvqCtBzQFBEYOdLe9YmSZCfwQUHPsfNhBI51MZBPZBoX7GIcyCswOZBwMQIycmeeLTNoOrxMjiqjOjZCWoidaPe4ZCFiLAThoZCWXFc1SSjQkfz11v8kXwxUBMZA9qftCa3XFhZCElVVd9i7UE8UW0LueDdHW007hPhNffjgXGXiH5v558ZBKYGfEeCpBKb4mzn3vy4ZD"   # Step 3
+CFG = {
+        "page_id"      : "285844238930581",  # Step 1
+        "access_token" : "EAAHcEGT1yyEBAOrJr07ZC71bLrPryUUY2luLaLgC7jrycFDLbJ857W3RVLvIru0Sh8WyR4Udr8YA2OCtDDEWEtJrNoBKYMTZAjIMwZAW9ZAtaLvh76cX7xCZBrBFEq3w2B7NdjCPI2z7tAiyGzZCaLsFx4mPyFoSQZCkYCnbaXOpAZDZD"   # Step 3
     }
 
-    api = get_api(cfg)
+def run(publishing, channel_config):
+    api = get_api(CFG)
     #msg a custom, choper le contenu du champ dans le post 
     
     #On chope le message dans le champ description du post.
     body = publishing.description
     #msg = "Hello, world!" 
-    status = api.put_object(parent_object='me',connection_name='feed',message=body)
+    id = publish(body)
+
+
+def publish(message):
+    """ 
+    Publie sur le compte et renvoie l'id de la publication
+    """   
+    api = get_api(CFG)
+    status = api.put_object(parent_object='me', connection_name='feed', message=message)
+    return status['id']
+
+def delete(id):
+    """
+    Supprime la publication
+    """ 
+    api = get_api(CFG)
+    api.delete_object(id)
 
 def get_api(cfg):
     graph = facebook.GraphAPI(cfg['access_token'])
