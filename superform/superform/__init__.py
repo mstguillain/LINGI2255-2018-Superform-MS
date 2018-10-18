@@ -41,7 +41,7 @@ def index():
         setattr(user,'is_mod',is_moderator(user))
         posts = db.session.query(Post).filter(Post.user_id==session.get("user_id", ""))
         chans = get_moderate_channels_for_user(user)
-        pubs_per_chan = (db.session.query(Publishing).filter((Publishing.channel_id == c.name) & (Publishing.state == 0)) for c in chans)
+        pubs_per_chan = (db.session.query(Publishing).filter((Publishing.channel_id == c.id) & (Publishing.state == 0)) for c in chans)
         flattened_list_pubs = [y for x in pubs_per_chan for y in x]
 
     return render_template("index.html", user=user,posts=posts,publishings = flattened_list_pubs)
