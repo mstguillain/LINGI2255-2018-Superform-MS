@@ -1,7 +1,6 @@
 import facebook
 from flask import current_app
 import json
-import time
 
 FIELDS_UNAVAILABLE = ['Title','Description']
 
@@ -11,35 +10,18 @@ def run(publishing,channel_config):
     #json_data = json.loads(channel_config)
 
     # Fill in the values noted in previous steps here
-    CFG = {
+    cfg = {
     "page_id"      : "285844238930581",  # Step 1
-    "access_token" : "EAAHcEGT1yyEBAPVIW29dO82UOf7IyRDEudfq82mclk4wKQzni41xcmVxpSXQWWehGq1Rj3qj2ZAJUZBf9GSexnqJNjs81IO3hwr6trtujxSVffUgffPxLJjsYuuFCqDH7NuzwPuwxJ6yqO3Ib8ZCaKdCCBUwQdo9qhDeYSOk2DTH2lND5yl"   # Step 3
+    "access_token" : "EAAHcEGT1yyEBAHfHfxCjN5Fj8YRQ9ygvqCtBzQFBEYOdLe9YmSZCfwQUHPsfNhBI51MZBPZBoX7GIcyCswOZBwMQIycmeeLTNoOrxMjiqjOjZCWoidaPe4ZCFiLAThoZCWXFc1SSjQkfz11v8kXwxUBMZA9qftCa3XFhZCElVVd9i7UE8UW0LueDdHW007hPhNffjgXGXiH5v558ZBKYGfEeCpBKb4mzn3vy4ZD"   # Step 3
     }
 
-def run(publishing, channel_config):
-    api = get_api(CFG)
+    api = get_api(cfg)
     #msg a custom, choper le contenu du champ dans le post 
     
     #On chope le message dans le champ description du post.
     body = publishing.description
     #msg = "Hello, world!" 
-    id = publish(body)
-
-
-def publish(message):
-    """ 
-    Publie sur le compte et renvoie l'id de la publication
-    """   
-    api = get_api(CFG)
-    status = api.put_object(parent_object='me', connection_name='feed', message=message)
-    return status['id']
-
-def delete(id):
-    """
-    Supprime la publication
-    """ 
-    api = get_api(CFG)
-    api.delete_object(id)
+    status = api.put_object(parent_object='me',connection_name='feed',message=body)
 
 def get_api(cfg):
     graph = facebook.GraphAPI(cfg['access_token'])
@@ -49,11 +31,10 @@ def get_api(cfg):
     page_access_token = None
     for page in resp['data']:
         if page['id'] == cfg['page_id']:
-            page_access_token = page['access_token']
-    """
+        page_access_token = page['access_token']
+        """
     graph = facebook.GraphAPI(cfg['access_token'])
     return graph
-    
     # You can also skip the above if you get a page token:
     # http://stackoverflow.com/questions/8231877/facebook-access-token-for-pages
     # and make that long-lived token as in Step 3
