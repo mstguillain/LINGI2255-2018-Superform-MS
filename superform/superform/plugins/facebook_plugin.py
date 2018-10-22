@@ -1,6 +1,7 @@
 import facebook
 from flask import current_app
 import json
+import time
 
 FIELDS_UNAVAILABLE = ['Title','Description']
 
@@ -10,18 +11,35 @@ def run(publishing,channel_config):
     #json_data = json.loads(channel_config)
 
     # Fill in the values noted in previous steps here
-    cfg = {
+    CFG = {
     "page_id"      : "285844238930581",  # Step 1
     "access_token" : "EAAHcEGT1yyEBAPVIW29dO82UOf7IyRDEudfq82mclk4wKQzni41xcmVxpSXQWWehGq1Rj3qj2ZAJUZBf9GSexnqJNjs81IO3hwr6trtujxSVffUgffPxLJjsYuuFCqDH7NuzwPuwxJ6yqO3Ib8ZCaKdCCBUwQdo9qhDeYSOk2DTH2lND5yl"   # Step 3
     }
 
-    api = get_api(cfg)
+def run(publishing, channel_config):
+    api = get_api(CFG)
     #msg a custom, choper le contenu du champ dans le post 
     
     #On chope le message dans le champ description du post.
     body = publishing.description
     #msg = "Hello, world!" 
-    status = api.put_object(parent_object='me',connection_name='feed',message=body)
+    id = publish(body)
+
+
+def publish(message):
+    """ 
+    Publie sur le compte et renvoie l'id de la publication
+    """   
+    api = get_api(CFG)
+    status = api.put_object(parent_object='me', connection_name='feed', message=message)
+    return status['id']
+
+def delete(id):
+    """
+    Supprime la publication
+    """ 
+    api = get_api(CFG)
+    api.delete_object(id)
 
 def get_api(cfg):
     graph = facebook.GraphAPI(cfg['access_token'])
