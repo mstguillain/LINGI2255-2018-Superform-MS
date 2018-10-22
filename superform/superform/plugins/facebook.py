@@ -12,7 +12,7 @@ def run(publishing,channel_config):
     # Fill in the values noted in previous steps here
     cfg = {
     "page_id"      : "285844238930581",  # Step 1
-    "access_token" : "EAAHcEGT1yyEBAHfHfxCjN5Fj8YRQ9ygvqCtBzQFBEYOdLe9YmSZCfwQUHPsfNhBI51MZBPZBoX7GIcyCswOZBwMQIycmeeLTNoOrxMjiqjOjZCWoidaPe4ZCFiLAThoZCWXFc1SSjQkfz11v8kXwxUBMZA9qftCa3XFhZCElVVd9i7UE8UW0LueDdHW007hPhNffjgXGXiH5v558ZBKYGfEeCpBKb4mzn3vy4ZD"   # Step 3
+    "access_token" : "EAAHcEGT1yyEBAPVIW29dO82UOf7IyRDEudfq82mclk4wKQzni41xcmVxpSXQWWehGq1Rj3qj2ZAJUZBf9GSexnqJNjs81IO3hwr6trtujxSVffUgffPxLJjsYuuFCqDH7NuzwPuwxJ6yqO3Ib8ZCaKdCCBUwQdo9qhDeYSOk2DTH2lND5yl"   # Step 3
     }
 
     api = get_api(cfg)
@@ -31,10 +31,11 @@ def get_api(cfg):
     page_access_token = None
     for page in resp['data']:
         if page['id'] == cfg['page_id']:
-        page_access_token = page['access_token']
-        """
+            page_access_token = page['access_token']
+    """
     graph = facebook.GraphAPI(cfg['access_token'])
     return graph
+    
     # You can also skip the above if you get a page token:
     # http://stackoverflow.com/questions/8231877/facebook-access-token-for-pages
     # and make that long-lived token as in Step 3
