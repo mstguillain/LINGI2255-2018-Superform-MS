@@ -2,6 +2,7 @@ import json
 import twitter
 import datetime
 
+import datetime
 
 FIELDS_UNAVAILABLE = ['Title']
 CONFIG_FIELDS = ["consumer_key","consumer_secret","access_token_key","access_token_secret"]
@@ -29,6 +30,11 @@ def run(publishing,channel_config):
                       access_token_key = json_data['access_token_key'],
                       access_token_secret = json_data['access_token_secret'])
     tweet = publishing.description
-    if is_valid_tweet(tweet) and is_time_to_publish(publishing): # For the moment, we avoid the tweet if it's not valid
-        api.PostUpdate(publishing.description)
 
+
+
+    if publishing.link_url :
+        tweet = tweet + ' ' + publishing.link_url
+
+    if is_valid_tweet(tweet) and is_time_to_publish(publishing): # For the moment, we avoid the tweet if it's not valid
+        api.PostUpdate(tweet)
