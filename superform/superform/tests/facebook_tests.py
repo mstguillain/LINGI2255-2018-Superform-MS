@@ -1,10 +1,7 @@
 import sys
 sys.path.append("..")
-<<<<<<< HEAD
 from plugins.facebook import *
-=======
 from plugins.facebook_plugin import *
->>>>>>> 4b1d737f7bfd0426641483a9980ea33ff9f4aced
 import unittest
 
 class FacebookTest(unittest.TestCase):
@@ -22,8 +19,4 @@ class FacebookTest(unittest.TestCase):
         delete(publication_id)
  
 if __name__ == '__main__':
-<<<<<<< HEAD
     unittest.main()
-=======
-    unittest.main()
->>>>>>> 4b1d737f7bfd0426641483a9980ea33ff9f4aced
