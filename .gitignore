@@ -18,3 +18,8 @@ superform.db
 d4_report.pdf
 *.toc
 *.webloc
+pip
+superform/build/lib/
+superform/dist/
+superform/superform.egg-info/dependency_links.txt
+superform/superform.egg-info/
