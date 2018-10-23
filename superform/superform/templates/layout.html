@@ -33,6 +33,8 @@
                         <li class="nav-item">
                             <a class="nav-link" href="{{ url_for('posts.new_post')}}">New post</a>
                         </li>
+                        
+
                         <li class="nav-item">
                             <a class="nav-link" href="{{ url_for('posts.records')}}">Archives</a>
                         </li>
@@ -64,7 +66,8 @@
         <div class="container-fluid">
             {% block content %}{% endblock %}
         </div>
-                <script>
+        <script>
+            
         // This is called with the results from from FB.getLoginStatus().
         function statusChangeCallback(response) {
             console.log('statusChangeCallback');
@@ -79,13 +82,13 @@
             } else {
                 console.log('passe dans le else')
             // The person is not logged into your app or we are unable to tell.
-            //document.getElementById('status').innerHTML = 'Please log ' +
-            //    'into this app.';
-            //}
-            loginWithPermissions();
+            document.getElementById('status').innerHTML = 'Please log ' +
+                'into this app.';
+            }
+            //loginWithPermissions();
 
         }
-
+        
         // This function is called when someone finishes with the Login
         // Button.  See the onlogin handler attached to it in the sample
         // code below.
@@ -96,7 +99,7 @@
             
             );
         }
-
+        
         window.fbAsyncInit = function() {
             FB.init({
             appId      : '523437948128033',
@@ -118,9 +121,10 @@
             //
             // These three cases are handled in the callback function.
 
-            FB.getLoginStatus(function(response) {
+            /*FB.getLoginStatus(function(response) {
                 statusChangeCallback(response);
             });
+            */
             
 
         };
@@ -144,14 +148,39 @@
                 'Thanks for logging in, ' + response.name + '!';
                 
             });
-
             
         }
         function loginWithPermissions(){
             FB.login(function(response) {
-            // handle the response
-            }, {scope: 'public_profile,email,publish_to_groups,business_management,manage_pages,publish_pages'});
+                console.log("in loginWithPermissions()");
+                console.log(response);
+            }, {
+                scope: 'email, manage_pages, pages_show_list, publish_pages, business_management, publish_to_groups, public_profile', 
+                return_scopes: true
+            });
+            FB.getLoginStatus (function (response) {
+                if(response.status === 'connected'){
+                    console.log("DAAAANS GET LOOOOGIIIIN")
+
+                    console.log (response);
+                }
+            });
         }
+        function requestPermissionsForPage(){
+            FB.api (
+                "/me/accounts",
+                function (response) {
+                    console.log("DEVANT LE IIIIIIFFFF")
+                    console.log(response);
+                    if(response &&! Response.error){
+                        console.log("DAAAANS APIIIIII")
+                        console.log (response);
+                    }
+                }
+            ), {Scope: "manage_pages"};
+        }
+
+
         
         
         </script>
