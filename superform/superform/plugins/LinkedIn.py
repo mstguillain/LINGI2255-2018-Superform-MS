@@ -5,7 +5,7 @@ from smtplib import SMTPException
 from flask import current_app
 import json
 
-#from linkedin import linkedin
+# from flask_oauthlib.client import OAuth
 
 #######################
 # Copied from mail.py #
@@ -17,7 +17,7 @@ CONFIG_FIELDS = ["Account", "Login", "Link to authentication"]
 
 
 # TODO to change according to the api
-#def run(publishing, channel_config):
+# def run(publishing, channel_config):
 #    json_data = json.loads(channel_config)
 #    account = json_data['account']
 #    login = json_data['login']
@@ -25,10 +25,10 @@ CONFIG_FIELDS = ["Account", "Login", "Link to authentication"]
 #    msg['From'] = account
 #    msg['To'] = login
 #    msg['Subject'] = publishing.title
-
+#
 #    body = publishing.description
 #    msg.attach(MIMEText(body, 'plain'))
-
+#
 #    try:
 #        smtpObj = smtplib.SMTP(current_app.config["SMTP_HOST"],
 #                               current_app.config["SMTP_PORT"])
@@ -42,58 +42,64 @@ CONFIG_FIELDS = ["Account", "Login", "Link to authentication"]
 #        print(e)
 
 
-########################################################
+#########################################################
 # Taken from https://pypi.org/project/python3-linkedin/ #
-########################################################
+#########################################################
 
 def login():
-    client_ID = '77p0caweo4t3t9'
-    client_secret = 'uQVYTN3pDewuOb7d'
+    CLIENT_ID = '77p0caweo4t3t9'
+    CLIENT_SECRET = 'uQVYTN3pDewuOb7d'
     RETURN_URL = 'http://localhost:5000/'  # TODO the configure url, to be changed on the LinkeIn Application service
     state = '12345'
-    redirect1 = 'https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=77p0caweo4t3t9&redirect_uri=http://localhost:5000/%2Fauth%2Flinkedin&state=987654321&'
-    redirect1bis = "https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=", client_ID, "&redirect_uri=", RETURN_URL, "%2Fauth%2Flinkedin&state=", state, "&"
-    # TODO user redirected to redirect1bis
+
+    redirection = "https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=77p0caweo4t3t9&redirect_uri=http://localhost:5000/&state=12345"
+
+    # TODO user redirected to redirection
     # TODO testing the returned state value
 
-    authentication = linkedin.LinkedInAuthentication(client_ID, client_secret,
-                                                     RETURN_URL,
-                                                     linkedin.PERMISSIONS.enums.values())
-    print(authentication.authorization_url)
-    application = linkedin.LinkedInApplication(authentication)
+##########################
+# keep this just in case #
+##########################
+# redirect1 = 'https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=77p0caweo4t3t9&redirect_uri=http://localhost:5000/%2Fauth%2Flinkedin&state=987654321&'
+# redirect1bis = "https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=", CLIENT_ID, "&redirect_uri=", RETURN_URL, "%2Fauth%2Flinkedin&state=", state, "&"
+# redirect2 = "https://www.linkedin.com/oauth/v2/accessToken?grant_type=client_credentials&client_id=77p0caweo4t3t9&client_secret=uQVYTN3pDewuOb7d"
 
-#    CONSUMER_KEY = ""
-#    CONSUMER_SECRET = ""
-#    USER_SECRET="" ?
-#    USER_TOKEN="" ?
-#    RETURN_URL = 'http://localhost:5000'
+#########################################################
+# Taken from https://pypi.org/project/python3-linkedin/ #
+#########################################################
 #
+# from linkedin import linkedin
+#
+# authentication = linkedin.LinkedInAuthentication(CLIENT_ID, CLIENT_SECRET,
+#                                                 RETURN_URL,
+#                                                 linkedin.PERMISSIONS.enums.values())
+# print(authentication.authorization_url)
+# application = linkedin.LinkedInApplication(authentication)
 #
 # Define CONSUMER_KEY, CONSUMER_SECRET,
 # USER_TOKEN, and USER_SECRET from the credentials
 # provided in your LinkedIn application
-
+#
 # Instantiate the developer authentication class
-
-# authentication = linkedin.LinkedInDeveloperAuthentication(
-#                    CONSUMER_KEY,
-#                    CONSUMER_SECRET,
-#                    USER_TOKEN,
-#                    USER_SECRET,
-#                    RETURN_URL,
-#                    linkedin.PERMISSIONS.enums.values()
-#                )
-
+#
+#   authentication = linkedin.LinkedInDeveloperAuthentication(
+#      CONSUMER_KEY,
+#      CONSUMER_SECRET,
+#      USER_SECRET,
+#   RETURN_URL,
+# linkedin.PERMISSIONS.enums.values()
+# )
+#
 # Optionally one can send custom "state" value that will be returned from OAuth server
 # It can be used to track your user state or something else (it's up to you)
 # Be aware that this value is sent to OAuth server AS IS - make sure to encode or hash it
-
+#
 # authorization.state = 'your_encoded_message'
-
+#
 # Pass it in to the app...
-
-# application = linkedin.LinkedInApplication(authentication)
+#
+#   application = linkedin.LinkedInApplication(authentication)
 
 # Use the app....
 
-# application.get_profile()
+#  application.get_profile()
