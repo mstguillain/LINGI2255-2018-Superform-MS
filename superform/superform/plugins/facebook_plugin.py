@@ -6,22 +6,35 @@ FIELDS_UNAVAILABLE = ['Title','Description']
 
 CONFIG_FIELDS = ["sender","receiver"]
 
-def run(publishing,channel_config):
-    #json_data = json.loads(channel_config)
-
-    # Fill in the values noted in previous steps here
-    cfg = {
-    "page_id"      : "285844238930581",  # Step 1
-    "access_token" : "EAAHcEGT1yyEBANozfvjw32CEkgz5zkXtpZB6NiAd2ZBR17FXmA2QeBV6t9QRpWrkfeYqmD9yZCLkxKTTtrLoYNdiR4hYgnzeGOPZBIZAdZBi9SpkqvSVu4ySMGCuXvXsBCtunntpJvzdZCxu1AZCgM8W1XPBo90WoeFs257ik9btn1U2wQOaGZAwAYXTGzXID7Q0WK4fW9mVePAZDZD"   # Step 3
+CFG = {
+        "page_id"      : "285844238930581",  # Step 1
+        "access_token" : "EAAHcEGT1yyEBAOSo50WUiM0563zVZCxnZCdd2XVJRAll0wIFztF4m1pPfw5hqlDwbvqZBCMNlnqzlTZC2RSkzDSTzwJZBhJuyZBcyAIgyIiSBqEZBV4GbyVhKJLWlCuZByRyn6AxgTFtGMeJwEQqvBCjZCHGZBfb5qBy2H27x2z6dMygDbJiltxSZCRLMSYAWE4QYrUwLgQIVxUHgZDZD"
     }
 
-    api = get_api(cfg)
+def run(publishing, channel_config):
+    api = get_api(CFG)
     #msg a custom, choper le contenu du champ dans le post 
     
     #On chope le message dans le champ description du post.
     body = publishing.description
     #msg = "Hello, world!" 
-    status = api.put_object(parent_object='me',connection_name='feed',message=body)
+    id = publish(body)
+
+
+def publish(message):
+    """ 
+    Publie sur le compte et renvoie l'id de la publication
+    """   
+    api = get_api(CFG)
+    status = api.put_object(parent_object='me', connection_name='feed', message=message)
+    return status['id']
+
+def delete(id):
+    """
+    Supprime la publication
+    """ 
+    api = get_api(CFG)
+    api.delete_object(id)
 
 def get_api(cfg):
     graph = facebook.GraphAPI(cfg['access_token'])
