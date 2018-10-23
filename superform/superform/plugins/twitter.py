@@ -1,5 +1,7 @@
+# -*-coding: utf-8 -*
 import json
 import twitter
+from twitter import twitter_utils
 
 FIELDS_UNAVAILABLE = ['Title']
 CONFIG_FIELDS = ["consumer_key","consumer_secret","access_token_key","access_token_secret"]
@@ -10,7 +12,7 @@ def tweet_too_big(tweet):
     :param tweet: (string) the message the user wants to publish in Twitter
     :return: True if the message is longer than 280 characters, False otherwise
     '''
-    if len(tweet) > 280:
+    if twitter_utils.calc_expected_status_length(tweet) > 280:
         return True
     else:
         return False
@@ -34,7 +36,10 @@ def run(publishing,channel_config):
 
     if publishing.link_url :
         tweet = tweet + ' ' + publishing.link_url
-    if tweet_too_big(tweet): # For the moment, we avoid the tweet if it's not valid
-        api.PostUpdates(status=publishing.description, continuation="[...]")
+
+    if len(publishing.description)==0 :
+        return False
+    if tweet_too_big(tweet):
+        return api.PostUpdates(status=publishing.description, continuation="[...]", verify_status_length=True)
     else :
-        api.PostUpdate(status = publishing.description)
+        return api.PostUpdate(status = publishing.description)
