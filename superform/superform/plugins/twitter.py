@@ -22,6 +22,9 @@ def run(publishing,channel_config):
                       access_token_key = json_data['access_token_key'],
                       access_token_secret = json_data['access_token_secret'])
     tweet = publishing.description
+    if publishing.link_url:
+        tweet = tweet + ' ' + publishing.link_url
     if is_valid_tweet(tweet): # For the moment, we avoid the tweet if it's not valid
-        api.PostUpdate(publishing.description)
-
+        api.PostUpdate(status=publishing.description)
+    else :
+        api.PostUpdates(status  = publishing.description, continuation="[...]")
