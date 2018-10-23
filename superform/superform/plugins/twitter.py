@@ -18,17 +18,21 @@ def is_valid_tweet(tweet):
     else:
         return True
 
-def is_time_to_publish(publishing) :
-    date=publishing.date_from
-    return  date <= datetime.datetime.now()
+
 
 
 def run(publishing,channel_config):
-    json_data = json.loads(channel_config)
-    api = twitter.Api(consumer_key = json_data['consumer_key'],
-                      consumer_secret = json_data['consumer_secret'],
-                      access_token_key = json_data['access_token_key'],
-                      access_token_secret = json_data['access_token_secret'])
+    try:
+        json_data = json.loads(channel_config)
+
+        api = twitter.Api(consumer_key = json_data['consumer_key'],
+                  consumer_secret = json_data['consumer_secret'],
+                  access_token_key = json_data['access_token_key'],
+                  access_token_secret = json_data['access_token_secret'])
+    except json.decoder.JSONDecodeError  as e:
+        return "uncorrect credentials"
+
+
     tweet = publishing.description
 
 
@@ -36,5 +40,7 @@ def run(publishing,channel_config):
     if publishing.link_url :
         tweet = tweet + ' ' + publishing.link_url
 
-    if is_valid_tweet(tweet) and is_time_to_publish(publishing): # For the moment, we avoid the tweet if it's not valid
-        api.PostUpdate(tweet)
+    if is_valid_tweet(tweet) : # For the moment, we avoid the tweet if it's not valid
+         return api.PostUpdate(tweet)
+    else :
+        return False
