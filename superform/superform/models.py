@@ -38,12 +38,12 @@ class Post(db.Model):
         return '<Post {}>'.format(repr(self.id))
 
     def is_a_record(self):
-        if (len(self.publishings) == 0):
+        if len(self.publishings) == 0:
             return False
         else:
             # check if all the publications from a post are archived
             for pub in self.publishings:
-                if (pub.state != 2):
+                if pub.state != 2:
                     # state 2 is archived.
                     return False
             return True

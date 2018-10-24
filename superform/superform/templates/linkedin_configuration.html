@@ -1,0 +1,35 @@
+{% extends "channel_configure.html" %}
+{% block content %}
+    <h1>Configuration</h1>
+    {% if session.logged_in %}
+        <form method="POST" action="">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <!-- {//% for field in config_fields %}
+                                <div class="form-group">
+                                    <label for="{{ field }}">{{ field }}</label><br>
+                                    <input type="text" name="{{ field }}"
+                                           id="{{ field }}"
+                                           class="form-control"
+                                           value="{{ channel.config_dict.get(field) }}">
+                                </div>
+                            {//% endfor %} -->
+                            <a type="button" class="btn btn-info"
+                               href="https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=77p0caweo4t3t9&redirect_uri=http://localhost:5000/&state=12345">Link
+                                in your LinkedIn</a> <br/> <br/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button class="btn btn-success" type="submit">Save Configuration
+            </button>
+            <a type="button" class="btn btn-outline-primary"
+               href="{{ url_for('channels.channel_list') }}">Abort</a>
+        </form>
+    {% else %}
+        Your are not logged in.
+    {% endif %}
+
+{% endblock %}
