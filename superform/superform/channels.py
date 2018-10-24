@@ -59,6 +59,9 @@ def configure_channel(id):
                 return render_template("linkedin_configuration.html",
                                        channel = c,
                                        config_fields = config_fields)
+            # TODO find a way to read the url and store the code
+            # request.get() ?
+
         return render_template("channel_configure.html", channel = c,
                                config_fields = config_fields)
     str_conf = "{"
