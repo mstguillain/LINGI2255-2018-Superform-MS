@@ -4,7 +4,7 @@ from email.mime.text import MIMEText
 from smtplib import SMTPException
 from flask import current_app
 import json
-import  traceback
+import traceback
 from linkedin import linkedin
 
 from flask import Blueprint, current_app, url_for, request, make_response, \
@@ -43,9 +43,9 @@ def linkedin_plugin(id, c, m, clas, config_fields):
         pass  # TODO take what's after the code
     RETURN_URL += str(id)
     return render_template("linkedin_configuration.html",
-                           channel = c,
-                           config_fields = config_fields,
-                           redirect = REDIRECT_LINK)
+                           channel=c,
+                           config_fields=config_fields,
+                           redirect=REDIRECT_LINK)
     # TODO find a way to read the url and store the code
     # request.get() ?
 
@@ -55,10 +55,8 @@ def linkedin_plugin(id, c, m, clas, config_fields):
     # TODO testing the returned state value
 
 
-
-
 def linkedin_use(code):
-    print("From linkedin.py: "+code)
+    print("From linkedin.py: " + code)
     CLIENT_ID = '77p0caweo4t3t9'
     CLIENT_SECRET = 'uQVYTN3pDewuOb7d'
     RETURN_URL = 'http://localhost:5000/configure/linkedin'
@@ -75,8 +73,8 @@ def linkedin_use(code):
     if acces_token is not None:
         print("Access Token:", acces_token.access_token)
         print("Expires in (seconds):", acces_token.expires_in)
-
-
+        return acces_token
+    return None
 
 
 def get_access_token(authentication):
@@ -88,31 +86,33 @@ def get_access_token(authentication):
         traceback.print_exc()
         return None
 
-# TODO to change according to the api
-# def run(publishing, channel_config):
-#    json_data = json.loads(channel_config)
-#    account = json_data['account']
-#    login = json_data['login']
-#    msg = MIMEMultipart()
-#    msg['From'] = account
-#    msg['To'] = login
-#    msg['Subject'] = publishing.title
-#
-#    body = publishing.description
-#    msg.attach(MIMEText(body, 'plain'))
-#
-#    try:
-#        smtpObj = smtplib.SMTP(current_app.config["SMTP_HOST"],
-#                               current_app.config["SMTP_PORT"])
-#        if current_app.config["SMTP_STARTTLS"]:
-#            smtpObj.starttls()
-#        text = msg.as_string()
-#        smtpObj.sendmail(account, login, text)
-#        smtpObj.quit()
-#    except SMTPException as e:
-#        # TODO should add log here
-#        print(e)
 
+# TODO to change according to the api
+def run(publishing, channel_config):
+    json_data = json.loads(channel_config)
+    # login = json_data['login']
+    # password = json_data['password']
+    token = json_data['token']
+
+
+    body = publishing.description  # a quoi tu sers?
+    print("Body: ",body)
+    # msg.attach(MIMEText(body, 'plain'))
+    try:
+        print("")
+    except Exception as e:
+        # TODO should add log here
+        print(e)
+
+def post(authentication,access_token,message='Testing the api'):
+    import collections
+    AccessToken = collections.namedtuple('AccessToken', ['access_token', 'expires_in'])
+    authentication.token = AccessToken(access_token, "99999999")
+    application = linkedin.LinkedInApplication(authentication)
+    profile = application.get_profile()
+    print("Profile",profile)
+    resp = application.submit_share( "Test 2 ",message,"https://i.imgur.com/gKLNX3S.jpg" ,"https://i.imgur.com/gKLNX3S.jpg","https://i.imgur.com/gKLNX3S.jpg")
+    return  True
 ##########################
 # keep this just in case #
 ##########################
@@ -120,43 +120,3 @@ def get_access_token(authentication):
 # redirect1bis = "https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=", CLIENT_ID, "&redirect_uri=", RETURN_URL, "%2Fauth%2Flinkedin&state=", state, "&"
 # redirect2 = "https://www.linkedin.com/oauth/v2/accessToken?grant_type=client_credentials&client_id=77p0caweo4t3t9&client_secret=uQVYTN3pDewuOb7d"
 # not allowed to create application tokens
-
-#########################################################
-# Taken from https://pypi.org/project/python3-linkedin/ #
-#########################################################
-#
-# from linkedin import linkedin
-#
-# authentication = linkedin.LinkedInAuthentication(CLIENT_ID, CLIENT_SECRET,
-#                                                 RETURN_URL,
-#                                                 linkedin.PERMISSIONS.enums.values())
-# print(authentication.authorization_url)
-# application = linkedin.LinkedInApplication(authentication)
-#
-# Define CONSUMER_KEY, CONSUMER_SECRET,
-# USER_TOKEN, and USER_SECRET from the credentials
-# provided in your LinkedIn application
-#
-# Instantiate the developer authentication class
-#
-#   authentication = linkedin.LinkedInDeveloperAuthentication(
-#      CONSUMER_KEY,
-#      CONSUMER_SECRET,
-#      USER_SECRET,
-#   RETURN_URL,
-# linkedin.PERMISSIONS.enums.values()
-# )
-#
-# Optionally one can send custom "state" value that will be returned from OAuth server
-# It can be used to track your user state or something else (it's up to you)
-# Be aware that this value is sent to OAuth server AS IS - make sure to encode or hash it
-#
-# authorization.state = 'your_encoded_message'
-#
-# Pass it in to the app...
-#
-#   application = linkedin.LinkedInApplication(authentication)
-
-# Use the app....
-
-#  application.get_profile()

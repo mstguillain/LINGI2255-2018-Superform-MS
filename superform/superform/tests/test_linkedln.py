@@ -102,7 +102,7 @@ def post(authentication,message='Testing the api'):
     profile = application.get_profile()
     print("Profile",profile)
     resp = application.submit_share( "Test 2 ",message,"https://i.imgur.com/gKLNX3S.jpg" ,"https://i.imgur.com/gKLNX3S.jpg","https://i.imgur.com/gKLNX3S.jpg")
-    pass
+    return  True
 def login():
     ## application = linkedin.LinkedInApplication(authentication)
     ## Check if connected
