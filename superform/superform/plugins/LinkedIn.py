@@ -31,7 +31,7 @@ CONFIG_FIELDS = ["Account", "Login", "Link to authentication"]
 
 def linkedin_plugin(id, c, m, clas, config_fields):
     """Launched by channels.configure_channel(id)"""
-    state = "id=" + str(id) + "12345"
+    state = "id_" + str(id) + "rest_12345"
     RETURN_URL = 'http://localhost:5000/configure/linkedin'
     CLIENT_ID = '77p0caweo4t3t9'
     CLIENT_SECRET = 'uQVYTN3pDewuOb7d'

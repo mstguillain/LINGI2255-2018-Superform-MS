@@ -79,5 +79,9 @@ def configure_channel(id):
 @login_required(admin_required = True)
 def linkedin_return():
     ref = request.url
-
+    code = ""
+    if ref.startswith("http://localhost:5000/configure/linkedin?code"):
+        i = ref.find("state", 46)
+        code = ref[46:i - 1]
+        print('The code is: ' + code)
     return redirect(url_for('channels.channel_list'))
