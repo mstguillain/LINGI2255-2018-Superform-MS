@@ -52,9 +52,16 @@ def configure_channel(id):
     config_fields = clas.CONFIG_FIELDS
 
     if request.method == 'GET':
-        if (c.config is not ""):
+        if c.config is not "":
             d = ast.literal_eval(c.config)
             setattr(c, "config_dict", d)
+            if str(m)=="superform.plugins.LinkedIn":
+                return render_template("linkedin_configuration.html",
+                                       channel = c,
+                                       config_fields = config_fields)
+            # TODO find a way to read the url and store the code
+            # request.get() ?
+
         return render_template("channel_configure.html", channel = c,
                                config_fields = config_fields)
     str_conf = "{"

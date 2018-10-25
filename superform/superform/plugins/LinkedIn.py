@@ -16,6 +16,27 @@ FIELDS_UNAVAILABLE = ['Title', 'Description']
 CONFIG_FIELDS = ["Account", "Login", "Link to authentication"]
 
 
+#########################################################
+# Taken from https://pypi.org/project/python3-linkedin/ #
+#########################################################
+
+def linkedin_plugin():
+    pass
+
+
+def login():
+    CLIENT_ID = '77p0caweo4t3t9'
+    CLIENT_SECRET = 'uQVYTN3pDewuOb7d'
+    RETURN_URL = 'http://localhost:5000/configure'
+    # TODO the configure url, to be changed on the LinkeIn Application service
+    # Is it possible to return to the /configure/<id> webpage? Where to analyse the GET request (request.get() ?)
+    state = '12345'
+
+    redirection = "https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=77p0caweo4t3t9&redirect_uri=http://localhost:5000/&state=12345"
+
+    # TODO user redirected to redirection
+    # TODO testing the returned state value
+
 # TODO to change according to the api
 # def run(publishing, channel_config):
 #    json_data = json.loads(channel_config)
@@ -41,28 +62,13 @@ CONFIG_FIELDS = ["Account", "Login", "Link to authentication"]
 #        # TODO should add log here
 #        print(e)
 
-
-#########################################################
-# Taken from https://pypi.org/project/python3-linkedin/ #
-#########################################################
-
-def login():
-    CLIENT_ID = '77p0caweo4t3t9'
-    CLIENT_SECRET = 'uQVYTN3pDewuOb7d'
-    RETURN_URL = 'http://localhost:5000/'  # TODO the configure url, to be changed on the LinkeIn Application service
-    state = '12345'
-
-    redirection = "https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=77p0caweo4t3t9&redirect_uri=http://localhost:5000/&state=12345"
-
-    # TODO user redirected to redirection
-    # TODO testing the returned state value
-
 ##########################
 # keep this just in case #
 ##########################
 # redirect1 = 'https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=77p0caweo4t3t9&redirect_uri=http://localhost:5000/%2Fauth%2Flinkedin&state=987654321&'
 # redirect1bis = "https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=", CLIENT_ID, "&redirect_uri=", RETURN_URL, "%2Fauth%2Flinkedin&state=", state, "&"
 # redirect2 = "https://www.linkedin.com/oauth/v2/accessToken?grant_type=client_credentials&client_id=77p0caweo4t3t9&client_secret=uQVYTN3pDewuOb7d"
+# not allowed to create application tokens
 
 #########################################################
 # Taken from https://pypi.org/project/python3-linkedin/ #
