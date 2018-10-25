@@ -24,3 +24,4 @@ superform/build/lib/
 superform/dist/
 superform/superform.egg-info/dependency_links.txt
 superform/superform.egg-info/
+.flooignore
