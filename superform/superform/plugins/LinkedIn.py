@@ -22,7 +22,7 @@ import ast
 
 FIELDS_UNAVAILABLE = ['Title', 'Description']
 
-CONFIG_FIELDS = ["Account", "Login", "Link to authentication"]
+CONFIG_FIELDS = ["Login", "Password"]  # TODO do we keep it?
 
 
 # The return_url must be changed on the LinkedIn Application service
