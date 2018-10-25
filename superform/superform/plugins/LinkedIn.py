@@ -4,6 +4,15 @@ from email.mime.text import MIMEText
 from smtplib import SMTPException
 from flask import current_app
 import json
+from flask import Blueprint, current_app, url_for, request, make_response, \
+    redirect, session, render_template
+
+from superform.utils import login_required, get_instance_from_module_path, \
+    get_modules_names, get_module_full_name
+from superform.models import db, Channel
+import ast
+
+# channels_page = Blueprint('channels', __name__)
 
 # from flask_oauthlib.client import OAuth
 
@@ -16,23 +25,28 @@ FIELDS_UNAVAILABLE = ['Title', 'Description']
 CONFIG_FIELDS = ["Account", "Login", "Link to authentication"]
 
 
-#########################################################
-# Taken from https://pypi.org/project/python3-linkedin/ #
-#########################################################
-
-def linkedin_plugin():
-    pass
+# The return_url must be changed on the LinkedIn Application service
+# Is it possible to return to the /configure/<id> webpage? Where to analyse the GET request (request.get() ?)
 
 
-def login():
+def linkedin_plugin(id, c, m, clas, config_fields):
+    """Launched by channels.configure_channel(id)"""
+    state = "id=" + str(id) + "12345"
+    RETURN_URL = 'http://localhost:5000/configure/linkedin'
     CLIENT_ID = '77p0caweo4t3t9'
     CLIENT_SECRET = 'uQVYTN3pDewuOb7d'
-    RETURN_URL = 'http://localhost:5000/configure'
-    # TODO the configure url, to be changed on the LinkeIn Application service
-    # Is it possible to return to the /configure/<id> webpage? Where to analyse the GET request (request.get() ?)
-    state = '12345'
+    REDIRECT_LINK = "https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=" + CLIENT_ID + "&redirect_uri=" + RETURN_URL + "&state=" + state
+    if request.url.startswith("yolo"):
+        pass  # TODO take what's after the code
+    RETURN_URL += str(id)
+    return render_template("linkedin_configuration.html",
+                           channel = c,
+                           config_fields = config_fields,
+                           redirect = REDIRECT_LINK)
+    # TODO find a way to read the url and store the code
+    # request.get() ?
 
-    redirection = "https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=77p0caweo4t3t9&redirect_uri=http://localhost:5000/&state=12345"
+    # redirection = "https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=" + CLIENT_ID + "&redirect_uri=" + RETURN_URL + "&state=" + state
 
     # TODO user redirected to redirection
     # TODO testing the returned state value

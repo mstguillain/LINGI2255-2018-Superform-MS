@@ -4,6 +4,7 @@ from flask import Blueprint, current_app, url_for, request, make_response, \
 from superform.utils import login_required, get_instance_from_module_path, \
     get_modules_names, get_module_full_name
 from superform.models import db, Channel
+from superform.plugins.LinkedIn import linkedin_plugin
 import ast
 
 channels_page = Blueprint('channels', __name__)
@@ -51,17 +52,14 @@ def configure_channel(id):
     clas = get_instance_from_module_path(m)
     config_fields = clas.CONFIG_FIELDS
 
+    print("This is the request.url : " + request.url)
+
     if request.method == 'GET':
         if c.config is not "":
             d = ast.literal_eval(c.config)
             setattr(c, "config_dict", d)
-            if str(m)=="superform.plugins.LinkedIn":
-                return render_template("linkedin_configuration.html",
-                                       channel = c,
-                                       config_fields = config_fields)
-            # TODO find a way to read the url and store the code
-            # request.get() ?
-
+            if str(m) == "superform.plugins.LinkedIn":
+                return linkedin_plugin(id, c, m, clas, config_fields)
         return render_template("channel_configure.html", channel = c,
                                config_fields = config_fields)
     str_conf = "{"
@@ -74,4 +72,12 @@ def configure_channel(id):
     str_conf += "}"
     c.config = str_conf
     db.session.commit()
+    return redirect(url_for('channels.channel_list'))
+
+
+@channels_page.route("/configure/linkedin", methods = ['GET', 'POST'])
+@login_required(admin_required = True)
+def linkedin_return():
+    ref = request.url
+
     return redirect(url_for('channels.channel_list'))
