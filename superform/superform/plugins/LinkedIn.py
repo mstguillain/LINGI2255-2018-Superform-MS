@@ -55,8 +55,7 @@ def linkedin_plugin(id, c, m, clas, config_fields):
     # TODO testing the returned state value
 
 
-def linkedin_use(code):
-    print("From linkedin.py: " + code)
+def get_basic_autantication():
     CLIENT_ID = '77p0caweo4t3t9'
     CLIENT_SECRET = 'uQVYTN3pDewuOb7d'
     RETURN_URL = 'http://localhost:5000/configure/linkedin'
@@ -67,6 +66,13 @@ def linkedin_use(code):
         RETURN_URL,
         linkedin.PERMISSIONS.enums.values()
     )
+    return authentication
+
+
+def linkedin_use(code):
+    print("From linkedin.py: " + code)
+
+    authentication = get_basic_autantication()
     print("code I put in authentification", code)
     authentication.authorization_code = code
     acces_token = get_access_token(authentication)
@@ -93,26 +99,37 @@ def run(publishing, channel_config):
     # login = json_data['login']
     # password = json_data['password']
     token = json_data['token']
-
-
+    title = publishing.title
     body = publishing.description  # a quoi tu sers?
-    print("Body: ",body)
-    # msg.attach(MIMEText(body, 'plain'))
-    try:
-        print("")
-    except Exception as e:
-        # TODO should add log here
-        print(e)
 
-def post(authentication,access_token,message='Testing the api'):
+    print("Body: ", body)
+    # msg.attach(MIMEText(body, 'plain'))
+
+    posted = post(token, title, title, body)
+    if posted:
+        print("Post sucessfull")
+    else:
+        print("The post failed")
+
+
+def post(access_token, comment=None, title=None, description=None,
+         submitted_url=None, submitted_image_url=None,
+         visibility_code='anyone'):
     import collections
     AccessToken = collections.namedtuple('AccessToken', ['access_token', 'expires_in'])
+    authentication = get_basic_autantication()
     authentication.token = AccessToken(access_token, "99999999")
     application = linkedin.LinkedInApplication(authentication)
     profile = application.get_profile()
-    print("Profile",profile)
-    resp = application.submit_share( "Test 2 ",message,"https://i.imgur.com/gKLNX3S.jpg" ,"https://i.imgur.com/gKLNX3S.jpg","https://i.imgur.com/gKLNX3S.jpg")
-    return  True
+    print("User Profile", profile)
+    try:
+        resp = application.submit_share(comment, title, description, submitted_url, submitted_image_url,
+                                        visibility_code)
+        return True
+    except Exception as e:
+        print(e)
+        return False
+
 ##########################
 # keep this just in case #
 ##########################
