@@ -7,7 +7,7 @@ from superform.models import db, Publishing, Channel
 pub_page = Blueprint('publishings', __name__)
 
 
-@pub_page.route('/moderate/<int:id>/<string:idc>', methods=["GET", "POST"])
+@pub_page.route('/moderate/<int:id>/<string:idc>', methods = ["GET", "POST"])
 @login_required()
 def moderate_publishing(id, idc):
     pub = db.session.query(Publishing).filter(Publishing.post_id == id,
@@ -15,7 +15,7 @@ def moderate_publishing(id, idc):
     pub.date_from = str_converter(pub.date_from)
     pub.date_until = str_converter(pub.date_until)
     if request.method == "GET":
-        return render_template('moderate_post.html', pub=pub)
+        return render_template('moderate_post.html', pub = pub)
     else:
         pub.title = request.form.get('titlepost')
         pub.description = request.form.get('descrpost')
@@ -28,7 +28,7 @@ def moderate_publishing(id, idc):
         db.session.commit()
         # running the plugin here
         c = db.session.query(Channel).filter(
-            Channel.name == pub.channel_id).first()
+            Channel.id == pub.channel_id).first()
         plugin_name = c.module
         c_conf = c.config
         from importlib import import_module
