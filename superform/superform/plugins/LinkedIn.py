@@ -4,9 +4,6 @@ from email.mime.text import MIMEText
 from smtplib import SMTPException
 from flask import current_app
 import json
-import  traceback
-from linkedin import linkedin
-
 from flask import Blueprint, current_app, url_for, request, make_response, \
     redirect, session, render_template
 
@@ -55,38 +52,9 @@ def linkedin_plugin(id, c, m, clas, config_fields):
     # TODO testing the returned state value
 
 
-
-
 def linkedin_use(code):
     print("From linkedin.py: "+code)
-    CLIENT_ID = '77p0caweo4t3t9'
-    CLIENT_SECRET = 'uQVYTN3pDewuOb7d'
-    RETURN_URL = 'http://localhost:5000/configure/linkedin'
-
-    authentication = linkedin.LinkedInAuthentication(
-        CLIENT_ID,
-        CLIENT_SECRET,
-        RETURN_URL,
-        linkedin.PERMISSIONS.enums.values()
-    )
-    print("code I put in authentification", code)
-    authentication.authorization_code = code
-    acces_token = get_access_token(authentication)
-    if acces_token is not None:
-        print("Access Token:", acces_token.access_token)
-        print("Expires in (seconds):", acces_token.expires_in)
-
-
-
-
-def get_access_token(authentication):
-    try:
-        access_token = authentication.get_access_token()
-        return access_token
-    except linkedin.LinkedInError as err:
-        print("A fault occurred while getting the acess token")
-        traceback.print_exc()
-        return None
+    pass
 
 # TODO to change according to the api
 # def run(publishing, channel_config):

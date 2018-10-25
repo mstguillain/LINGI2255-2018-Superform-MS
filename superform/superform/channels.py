@@ -4,7 +4,7 @@ from flask import Blueprint, current_app, url_for, request, make_response, \
 from superform.utils import login_required, get_instance_from_module_path, \
     get_modules_names, get_module_full_name
 from superform.models import db, Channel
-from superform.plugins.LinkedIn import linkedin_plugin
+from superform.plugins.LinkedIn import linkedin_plugin, linkedin_use
 import ast
 
 channels_page = Blueprint('channels', __name__)
@@ -79,5 +79,11 @@ def configure_channel(id):
 @login_required(admin_required = True)
 def linkedin_return():
     ref = request.url
-
-    return redirect(url_for('channels.channel_list'))
+    code = ""
+    if ref.startswith("http://localhost:5000/configure/linkedin?code"):
+        i = ref.find("state", 46)
+        code = ref[46:i - 1]
+        ch_id = ref[i+9:ref.find("rest")]
+        print('The id is: ' + ch_id)
+        linkedin_use(code)
+    return redirect(url_for('channels.configure_channel', id=ch_id))
