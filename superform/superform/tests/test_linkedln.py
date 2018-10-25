@@ -65,8 +65,6 @@ def set_acess_token(authentication):
         return True
     except linkedin.exceptions.LinkedInError as err:
         print("A fault occurred while getting the acess token")
-        print("Fault code: %d" % err.faultCode)
-        print("Fault string: %s" % err.faultString)
         traceback.print_exc()
         return False
 
@@ -103,7 +101,7 @@ def post(authentication,message='Testing the api'):
     application = linkedin.LinkedInApplication(authentication)
     profile = application.get_profile()
     print("Profile",profile)
-    resp = application.submit_group_post(profile["id"], "Test ", "A small test for the api","https://i.imgur.com/gKLNX3S.jpg" ,"https://i.imgur.com/gKLNX3S.jpg","my Image","an image testes")
+    resp = application.submit_share( "Test 2 ",message,"https://i.imgur.com/gKLNX3S.jpg" ,"https://i.imgur.com/gKLNX3S.jpg","https://i.imgur.com/gKLNX3S.jpg")
     pass
 def login():
     ## application = linkedin.LinkedInApplication(authentication)
