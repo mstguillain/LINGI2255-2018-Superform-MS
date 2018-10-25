@@ -32,21 +32,14 @@ def client():
 authorization_code = "=AQTPNbuFxfPw7REPJppr-1m3erCFDDJek21lsLWoLX1cDKdCB7fdjYyfGlBfGxippwiL2blrubQZyxo17HISoOayzHQ2fMlkPLlUxFMRoAntFbEJxMkbZMJyHsVe2uJx8eK1HjbpXTFhcsik8Pa_9Jneb1DqBWYgP9YZbZpVRgNs2yFT7O1LftZ6PbK5yQ"
 acces_token = ""
 
-"""
-    Return true if acess_token is present and not expired
-"""
-
 
 def is_connected():
+    """Return true if acess_token is present and not expired"""
     return len(get_access_token()) > 1
 
 
-"""
-    Return true if there is an authorizaton code, allowing us to direclty get the acess_token if not expired
-"""
-
-
 def has_authorization_code():
+    """ Return true if there is an authorizaton code, allowing us to direclty get the acess_token if not expired"""
     return len(authorization_code) > 1
 
 
@@ -54,22 +47,14 @@ def get_authorization_code():
     return authorization_code
 
 
-"""
-    The url the user should be redirected to for login in
-"""
-
-
-def get_authentication_url(redirect_url="http://localhost:5000"):
+def get_authentication_url(redirect_url = "http://localhost:5000"):
+    """The url the user should be redirected to for login in"""
     redirection = "https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=77p0caweo4t3t9&redirect_uri=" + redirect_url + "/&state=12345"
     return redirection
 
 
-"""
-    Redirect the user to the given url
-"""
-
-
 def redirect_to(url):
+    """Redirect the user to the given url"""
     ## TODO : use something like window.redirect or window.pop_up
     pass
 
@@ -90,7 +75,7 @@ def get_access_token():
     return acces_token
 
 
-def get_basic_authentication(RETURN_URL='http://localhost:5000/'):
+def get_basic_authentication(RETURN_URL = 'http://localhost:5000/'):
     CLIENT_ID = '77p0caweo4t3t9'
     CLIENT_SECRET = 'uQVYTN3pDewuOb7d'
     # TODO the configure url, to be changed on the LinkeIn Application service
