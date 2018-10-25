@@ -19,6 +19,8 @@ import ast
 
 # from flask_oauthlib.client import OAuth
 
+#THIS IT THE GOOD ONE
+
 #######################
 # Copied from mail.py #
 #######################
@@ -55,9 +57,7 @@ def linkedin_plugin(id, c, m, clas, config_fields):
     # TODO testing the returned state value
 
 
-
 def get_basic_autantication():
-
     CLIENT_ID = '77p0caweo4t3t9'
     CLIENT_SECRET = 'uQVYTN3pDewuOb7d'
     RETURN_URL = 'http://localhost:5000/configure/linkedin'
@@ -68,7 +68,9 @@ def get_basic_autantication():
         RETURN_URL,
         linkedin.PERMISSIONS.enums.values()
     )
-    return  authentication
+    return authentication
+
+
 def linkedin_use(code):
     print("From linkedin.py: " + code)
 
@@ -102,27 +104,34 @@ def run(publishing, channel_config):
     title = publishing.title
     body = publishing.description  # a quoi tu sers?
 
-    print("Body: ",body)
+    print("Body: ", body)
     # msg.attach(MIMEText(body, 'plain'))
-    try:
-        post(token,title,title,body)
-        print("Trying to post")
-    except Exception as e:
-        # TODO should add log here
-        print(e)
 
-def post(access_token,comment=None, title=None, description=None,
-                     submitted_url=None, submitted_image_url=None,
-                     visibility_code='anyone'):
+    posted = post(token, title, title, body)
+    if posted:
+        print("Post sucessfull")
+    else:
+        print("The post failed")
+
+
+def post(access_token, comment=None, title=None, description=None,
+         submitted_url=None, submitted_image_url=None,
+         visibility_code='anyone'):
     import collections
     AccessToken = collections.namedtuple('AccessToken', ['access_token', 'expires_in'])
     authentication = get_basic_autantication()
     authentication.token = AccessToken(access_token, "99999999")
     application = linkedin.LinkedInApplication(authentication)
     profile = application.get_profile()
-    print("Profile",profile)
-    resp = application.submit_share( comment,title,description,submitted_url,submitted_image_url,visibility_code)
-    return  True
+    print("User Profile", profile)
+    try:
+        resp = application.submit_share(comment, title, description, submitted_url, submitted_image_url,
+                                        visibility_code)
+        return True
+    except Exception as e:
+        print(e)
+        return False
+
 ##########################
 # keep this just in case #
 ##########################
