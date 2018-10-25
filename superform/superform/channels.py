@@ -83,6 +83,7 @@ def linkedin_return():
     if ref.startswith("http://localhost:5000/configure/linkedin?code"):
         i = ref.find("state", 46)
         code = ref[46:i - 1]
-        print('The code is: ' + code)
+        ch_id = ref[i+9:ref.find("rest")]
+        print('The id is: ' + ch_id)
         linkedin_use(code)
-    return redirect(url_for('channels.channel_list'))
+    return redirect(url_for('channels.configure_channel', id=ch_id))
