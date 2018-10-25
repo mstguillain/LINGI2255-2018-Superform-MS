@@ -10,7 +10,8 @@
                             {% for field in config_fields %}
                                 <div class="form-group">
                                     <label for="{{ field }}">{{ field }}</label><br>
-                                    <input type="{{'password' if field == 'Password' else 'text'}}" name="{{ field }}"
+                                    <input type="{{ 'password' if field == 'Password' else 'text' }}"
+                                           name="{{ field }}"
                                            id="{{ field }}"
                                            class="form-control"
                                            value="{{ channel.config_dict.get(field) }}">
@@ -19,7 +20,6 @@
                             <a type="button" class="btn btn-info"
                                href="{{ redirect }}">Link
                                 in your LinkedIn</a> <br/> <br/>
-        <!-- Link should be given by the LinkedIn plugin -->
                         </div>
                     </div>
                 </div>
@@ -32,5 +32,4 @@
     {% else %}
         Your are not logged in.
     {% endif %}
-
 {% endblock %}

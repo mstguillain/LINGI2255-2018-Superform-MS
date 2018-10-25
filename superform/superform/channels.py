@@ -1,25 +1,27 @@
-from flask import Blueprint, current_app, url_for, request, make_response, \
-    redirect, session, render_template
-
-from superform.utils import login_required, get_instance_from_module_path, \
-    get_modules_names, get_module_full_name
-from superform.models import db, Channel
-from superform.plugins.LinkedIn import linkedin_plugin, linkedin_use
 import ast
 import datetime
+
+from flask import Blueprint, current_app, url_for, request, redirect, \
+    render_template
+
+from superform.models import db, Channel
+from superform.plugins.LinkedIn import linkedin_plugin, linkedin_use
+from superform.utils import login_required, get_instance_from_module_path, \
+    get_modules_names, get_module_full_name
 
 channels_page = Blueprint('channels', __name__)
 
 """
-    Final static variables for the cookies keys related to the linkdin plugin
+    Final static variables for the cookies keys related to the LinkedIn 
+    plugin.
 """
 LAST_ACCESS_TOKEN = "last_access_token"
 LAST_CREATION_TIME = "last_creation_time"
 LAST_CHANNEL_ID = "last_channel_id"
 
 
-@channels_page.route("/channels", methods=['GET', 'POST'])
-@login_required(admin_required=True)
+@channels_page.route("/channels", methods = ['GET', 'POST'])
+@login_required(admin_required = True)
 def channel_list():
     if request.method == "POST":
         action = request.form.get('@action', '')
@@ -28,9 +30,9 @@ def channel_list():
             module = request.form.get('module')
             if module in get_modules_names(
                     current_app.config["PLUGINS"].keys()):
-                channel = Channel(name=name,
-                                  module=get_module_full_name(module),
-                                  config="{}")
+                channel = Channel(name = name,
+                                  module = get_module_full_name(module),
+                                  config = "{}")
                 db.session.add(channel)
                 db.session.commit()
         elif action == "delete":
@@ -47,13 +49,13 @@ def channel_list():
             db.session.commit()
 
     channels = Channel.query.all()
-    return render_template("channels.html", channels=channels,
-                           modules=get_modules_names(
+    return render_template("channels.html", channels = channels,
+                           modules = get_modules_names(
                                current_app.config["PLUGINS"].keys()))
 
 
-@channels_page.route("/configure/<int:id>", methods=['GET', 'POST'])
-@login_required(admin_required=True)
+@channels_page.route("/configure/<int:id>", methods = ['GET', 'POST'])
+@login_required(admin_required = True)
 def configure_channel(id):
     c = Channel.query.get(id)
     m = c.module
@@ -69,8 +71,8 @@ def configure_channel(id):
             if str(m) == "superform.plugins.LinkedIn":
                 return linkedin_plugin(id, c, m, clas, config_fields)
             #
-        return render_template("channel_configure.html", channel=c,
-                               config_fields=config_fields)
+        return render_template("channel_configure.html", channel = c,
+                               config_fields = config_fields)
     str_conf = "{"
     cfield = 0
     for field in config_fields:
@@ -80,12 +82,14 @@ def configure_channel(id):
         cfield += 1
 
     """
-        If any linkdin session cookie is present we add them to the data-base
+        If any LinkedIn session cookie is present we add them to the 
+        data-base.
     """
     last_access_token = request.cookies.get(LAST_ACCESS_TOKEN)
     last_creation_time = request.cookies.get(LAST_CREATION_TIME)
     last_chanel_id = request.cookies.get(LAST_CHANNEL_ID)
-    if str(m) == "superform.plugins.LinkedIn" and str(last_chanel_id) == str(id) and  last_access_token is not None and last_creation_time is not None:
+    if str(m) == "superform.plugins.LinkedIn" and str(last_chanel_id) == str(
+            id) and last_access_token is not None and last_creation_time is not None:
         print("je suis dans la boucle")
         str_conf += ","
         str_conf += "\"" + "token" + "\" : \"" + last_access_token + "\""
@@ -98,11 +102,12 @@ def configure_channel(id):
     return redirect(url_for('channels.channel_list'))
 
 
-@channels_page.route("/configure/linkedin", methods=['GET', 'POST'])
-@login_required(admin_required=True)
+@channels_page.route("/configure/linkedin", methods = ['GET', 'POST'])
+@login_required(admin_required = True)
 def linkedin_return():
-    """"
-        Redirected route manager for the linkdin pluging,  set the nessesary cookies to continue the session
+    """
+        Redirected route manager for the LinkedIn plugin, sets the necessary
+        cookies to continue the session.
     """
     ref = request.url
     code = ""
@@ -118,7 +123,7 @@ def linkedin_return():
         if last_access_token is None:
             print("no token !")
 
-    resp = redirect(url_for('channels.configure_channel', id=ch_id))
+    resp = redirect(url_for('channels.configure_channel', id = ch_id))
     resp.set_cookie(LAST_ACCESS_TOKEN, last_access_token.access_token)
     resp.set_cookie(LAST_CHANNEL_ID, last_channel_id)
     resp.set_cookie(LAST_CREATION_TIME, last_creation_time)
