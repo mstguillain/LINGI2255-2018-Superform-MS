@@ -51,6 +51,11 @@ def linkedin_plugin(id, c, m, clas, config_fields):
     # TODO user redirected to redirection
     # TODO testing the returned state value
 
+
+def linkedin_use(code):
+    print("From linkedin.py: "+code)
+    pass
+
 # TODO to change according to the api
 # def run(publishing, channel_config):
 #    json_data = json.loads(channel_config)
