@@ -19,7 +19,7 @@ import ast
 
 # from flask_oauthlib.client import OAuth
 
-#THIS IT THE GOOD ONE
+# THIS IT THE GOOD ONE
 
 #######################
 # Copied from mail.py #
@@ -104,10 +104,11 @@ def run(publishing, channel_config):
     title = publishing.title
     body = publishing.description  # a quoi tu sers?
 
+
     print("Body: ", body)
     # msg.attach(MIMEText(body, 'plain'))
 
-    posted = post(token, title, title, body)
+    posted = post(token, comment=body, title=title, description=body, submitted_url=None, submitted_image_url=None)
     if posted:
         print("Post sucessfull")
     else:
@@ -127,7 +128,7 @@ def post(access_token, comment=None, title=None, description=None,
     try:
         resp = application.submit_share(comment, title, description, submitted_url, submitted_image_url,
                                         visibility_code)
-        return True
+        return resp
     except Exception as e:
         print(e)
         return False
