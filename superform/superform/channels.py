@@ -52,7 +52,7 @@ def configure_channel(id):
     clas = get_instance_from_module_path(m)
     config_fields = clas.CONFIG_FIELDS
 
-    print("This is the request.url : "+request.url)
+    print("This is the request.url : " + request.url)
 
     if request.method == 'GET':
         if c.config is not "":
@@ -72,4 +72,12 @@ def configure_channel(id):
     str_conf += "}"
     c.config = str_conf
     db.session.commit()
+    return redirect(url_for('channels.channel_list'))
+
+
+@channels_page.route("/configure/linkedin", methods = ['GET', 'POST'])
+@login_required(admin_required = True)
+def linkedin_return():
+    ref = request.url
+
     return redirect(url_for('channels.channel_list'))

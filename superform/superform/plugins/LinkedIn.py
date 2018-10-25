@@ -29,19 +29,13 @@ CONFIG_FIELDS = ["Account", "Login", "Link to authentication"]
 # Is it possible to return to the /configure/<id> webpage? Where to analyse the GET request (request.get() ?)
 
 
-@login_required(admin_required = True)
-def linkedin_return():
-    ref = request.url
-
-
 def linkedin_plugin(id, c, m, clas, config_fields):
     """Launched by channels.configure_channel(id)"""
     state = "id=" + str(id) + "12345"
-    RETURN_URL = 'http://localhost:5000/configure/'
+    RETURN_URL = 'http://localhost:5000/configure/linkedin'
     CLIENT_ID = '77p0caweo4t3t9'
     CLIENT_SECRET = 'uQVYTN3pDewuOb7d'
     REDIRECT_LINK = "https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=" + CLIENT_ID + "&redirect_uri=" + RETURN_URL + "&state=" + state
-    print("Ceci passe")
     if request.url.startswith("yolo"):
         pass  # TODO take what's after the code
     RETURN_URL += str(id)
