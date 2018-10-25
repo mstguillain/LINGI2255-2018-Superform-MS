@@ -29,8 +29,8 @@ def client():
     os.unlink(app.config['DATABASE'])
 
 
-authorization_code = "=AQTPNbuFxfPw7REPJppr-1m3erCFDDJek21lsLWoLX1cDKdCB7fdjYyfGlBfGxippwiL2blrubQZyxo17HISoOayzHQ2fMlkPLlUxFMRoAntFbEJxMkbZMJyHsVe2uJx8eK1HjbpXTFhcsik8Pa_9Jneb1DqBWYgP9YZbZpVRgNs2yFT7O1LftZ6PbK5yQ"
-acces_token = ""
+authorization_code = "AQTPNbuFxfPw7REPJppr-1m3erCFDDJek21lsLWoLX1cDKdCB7fdjYyfGlBfGxippwiL2blrubQZyxo17HISoOayzHQ2fMlkPLlUxFMRoAntFbEJxMkbZMJyHsVe2uJx8eK1HjbpXTFhcsik8Pa_9Jneb1DqBWYgP9YZbZpVRgNs2yFT7O1LftZ6PbK5yQ"
+acces_token = "AQXDaUq7kmBz1CvrShflgk_mFRlXYq9tHHVgUzgGnGcvQEt7Pag2XtGgZiEnenjlZk1zrQXiEAB-U92SBoQVdNWKfx6LDcPVCJX4yRNyM7c0icEGexYqAQcFKRTnyflTgBuFo2ozTeuTwOY4xFe1iW51-Ph9cD25GVEHFapMVRj2oz-o2dkxanAW-cnzrQSkccOiW_aIrJqH-WsS37viS91mTRK9syXJbvCMHu4GwI4BwUsUJ9pfaal3X1U0Dmy-LmgnvHNW7utMZQdhUa2v7mTaIebdkXYJ__39p-OzIUXnDA_KtFHMsCj14PZ1lQTkGSO4dnkP7kx2VP8pLJRoyKuQWoUONA"
 
 
 def is_connected():
@@ -96,12 +96,24 @@ def has_been_redirected(uri):
     pass
 
 
+def post(authentication,message='Testing the api'):
+    import collections
+    AccessToken = collections.namedtuple('AccessToken', ['access_token', 'expires_in'])
+    authentication.token = AccessToken(get_access_token(), "99999999")
+    application = linkedin.LinkedInApplication(authentication)
+    profile = application.get_profile()
+    print("Profile",profile)
+    resp = application.submit_group_post(profile["id"], "Test ", "A small test for the api","https://i.imgur.com/gKLNX3S.jpg" ,"https://i.imgur.com/gKLNX3S.jpg","my Image","an image testes")
+    pass
 def login():
     ## application = linkedin.LinkedInApplication(authentication)
     ## Check if connected
     if is_connected():
+        authentication = get_basic_authentication()
+        authentication.authorization_code = get_authorization_code()
+        post(authentication)
         return True
-
+    print("Not connected")
     ## Check if can be connected rapidly
 
     if has_authorization_code():
