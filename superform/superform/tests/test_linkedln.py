@@ -108,6 +108,7 @@ def post(authentication, message='Testing the api'):
 
 
 def login():
+    print("enter login")
     ## application = linkedin.LinkedInApplication(authentication)
     ## Check if connected
     if is_connected():
@@ -133,7 +134,7 @@ def login():
     ## The code follows in has_been_redirected
 
 
-def test_run_linkedinl(client):
+def test_run_linkedinl(client=None):
     # Is there a way to test a send mail function?
     login()
 
@@ -142,3 +143,6 @@ def test_run_linkedinl(client):
     print("token :", get_access_token())
     print("======================")
     assert True == True
+
+
+test_run_linkedinl() # will share a publication on LinkedIn with "Title", "comment", "description"
