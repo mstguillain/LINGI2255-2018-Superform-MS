@@ -10,6 +10,9 @@ import datetime
 
 channels_page = Blueprint('channels', __name__)
 
+"""
+    Final static variables for the cookies keys related to the linkdin plugin
+"""
 LAST_ACCESS_TOKEN = "last_access_token"
 LAST_CREATION_TIME = "last_creation_time"
 LAST_CHANNEL_ID = "last_channel_id"
@@ -76,14 +79,12 @@ def configure_channel(id):
         str_conf += "\"" + field + "\" : \"" + request.form.get(field) + "\""
         cfield += 1
 
+    """
+        If any linkdin session cookie is present we add them to the data-base
+    """
     last_access_token = request.cookies.get(LAST_ACCESS_TOKEN)
     last_creation_time = request.cookies.get(LAST_CREATION_TIME)
     last_chanel_id = request.cookies.get(LAST_CHANNEL_ID)
-    print("access Token From cookies : ", last_access_token is not None)
-    print("last_creation_time ", last_creation_time is not None)
-    print("las_chanel_id ", last_chanel_id == id )
-    print("str(m)", str(m) == "superform.plugins.LinkedIn" )
-    print("id", id)
     if str(m) == "superform.plugins.LinkedIn" and str(last_chanel_id) == str(id) and  last_access_token is not None and last_creation_time is not None:
         print("je suis dans la boucle")
         str_conf += ","
@@ -100,8 +101,9 @@ def configure_channel(id):
 @channels_page.route("/configure/linkedin", methods=['GET', 'POST'])
 @login_required(admin_required=True)
 def linkedin_return():
-    """"""
-    print("A")
+    """"
+        Redirected route manager for the linkdin pluging,  set the nessesary cookies to continue the session
+    """
     ref = request.url
     code = ""
     if ref.startswith("http://localhost:5000/configure/linkedin?code"):

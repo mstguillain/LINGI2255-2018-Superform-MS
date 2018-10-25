@@ -48,16 +48,13 @@ def linkedin_plugin(id, c, m, clas, config_fields):
                            channel=c,
                            config_fields=config_fields,
                            redirect=REDIRECT_LINK)
-    # TODO find a way to read the url and store the code
-    # request.get() ?
-
-    # redirection = "https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=" + CLIENT_ID + "&redirect_uri=" + RETURN_URL + "&state=" + state
-
-    # TODO user redirected to redirection
-    # TODO testing the returned state value
 
 
 def get_basic_autantication():
+    """
+
+    :return:
+    """
     CLIENT_ID = '77p0caweo4t3t9'
     CLIENT_SECRET = 'uQVYTN3pDewuOb7d'
     RETURN_URL = 'http://localhost:5000/configure/linkedin'
@@ -72,6 +69,11 @@ def get_basic_autantication():
 
 
 def linkedin_use(code):
+    """
+    Use the authorization token to generate the
+    :param code: the authorization_code gotten from the api
+    :return: the gotten access token
+    """
     print("From linkedin.py: " + code)
 
     authentication = get_basic_autantication()
@@ -103,13 +105,16 @@ def run(publishing, channel_config):
     token = json_data['token']
     title = publishing.title
     body = publishing.description  # a quoi tu sers?
+    link = publishing.link_url
 
-
+    comment = title + "\n" + body + "\n" + link
     print("Body: ", body)
+    print("Title: ", title)
+    print("Link: ", link)
     # msg.attach(MIMEText(body, 'plain'))
 
-    posted = post(token, comment=body, title=title, description=body, submitted_url=None, submitted_image_url=None)
-    if posted:
+    posted = post(token, comment=comment, title=None, description=None, submitted_url=None, submitted_image_url=None)
+    if posted is not None:
         print("Post sucessfull")
     else:
         print("The post failed")
@@ -118,6 +123,17 @@ def run(publishing, channel_config):
 def post(access_token, comment=None, title=None, description=None,
          submitted_url=None, submitted_image_url=None,
          visibility_code='anyone'):
+    """
+
+    :param access_token: the access token which allows publishing
+    :param comment: the body of the article
+    :param title: the title of the related image or link
+    :param description: the over
+    :param submitted_url: the link
+    :param submitted_image_url: the
+    :param visibility_code:
+    :return:
+    """
     import collections
     AccessToken = collections.namedtuple('AccessToken', ['access_token', 'expires_in'])
     authentication = get_basic_autantication()

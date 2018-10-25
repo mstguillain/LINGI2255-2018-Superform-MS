@@ -47,7 +47,7 @@ def get_authorization_code():
     return authorization_code
 
 
-def get_authentication_url(redirect_url = "http://localhost:5000"):
+def get_authentication_url(redirect_url="http://localhost:5000"):
     """The url the user should be redirected to for login in"""
     redirection = "https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=77p0caweo4t3t9&redirect_uri=" + redirect_url + "/&state=12345"
     return redirection
@@ -73,7 +73,7 @@ def get_access_token():
     return acces_token
 
 
-def get_basic_authentication(RETURN_URL = 'http://localhost:5000/'):
+def get_basic_authentication(RETURN_URL='http://localhost:5000/'):
     CLIENT_ID = '77p0caweo4t3t9'
     CLIENT_SECRET = 'uQVYTN3pDewuOb7d'
     # TODO the configure url, to be changed on the LinkeIn Application service
@@ -94,15 +94,19 @@ def has_been_redirected(uri):
     pass
 
 
-def post(authentication,message='Testing the api'):
+def post(authentication, message='Testing the api'):
     import collections
     AccessToken = collections.namedtuple('AccessToken', ['access_token', 'expires_in'])
     authentication.token = AccessToken(get_access_token(), "99999999")
     application = linkedin.LinkedInApplication(authentication)
     profile = application.get_profile()
-    print("Profile",profile)
-    resp = application.submit_share( "Test 2 ",message,"https://i.imgur.com/gKLNX3S.jpg" ,"https://i.imgur.com/gKLNX3S.jpg","https://i.imgur.com/gKLNX3S.jpg")
-    return  True
+    print("Profile", profile)
+    resp = application.submit_share("comment", "title", "description", None,
+                                    None)
+    print("Resp", resp)
+    return True
+
+
 def login():
     ## application = linkedin.LinkedInApplication(authentication)
     ## Check if connected
