@@ -77,7 +77,7 @@
 
                           <div class="card-body">Content</div>
                             <a class="btn btn-primary" onclick="loginWithPermissions()">Login Custom</a>
-                            <a class="btn btn-primary" onclick="requestPermissionsForPage()">Request Permissions</a>
+                            <a href=# id=fbcred class="btn btn-primary">Request Permissions</a>
 
                          </div>
 
@@ -164,11 +164,54 @@
     {% else %}
         Your are not logged in.
     {% endif %}
-
+        
 
 {% endblock %}
 
 {% block scripts %}
+
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
+    
+    <script type=text/javascript>
+    /*
+            $(function() {
+            $('a#fbcred').bind('click', function() {
+                $.getJSON('/facebook_credentials',
+                    function(data) {
+                        //nothing to do here
+                });
+                return requestPermissionsForPage();
+            });
+            });
+    */
+    
+
+            $('a#fbcred').click(async function(){
+                //var data = requestPermissionsForPage();
+                var data = "This is a test string"
+                await sleep(3000);
+                console.log("DATA AS RETURNED")
+                console.log(data)
+                $.ajax({
+                    type: "POST",
+                    contentType:"application/json;charset=utf-8",
+                    url:"/facebook_credentials",
+                    traditional: "true",
+                    data: JSON.stringify({data}),
+                    dataType: "json"
+                });
+            });
+    </script>
+    
+    <script type=text/javascript>
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+    </script> 
+
+
     <script>
         
         // This manage if a channel is selected or not:

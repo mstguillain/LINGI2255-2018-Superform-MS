@@ -3,6 +3,10 @@ from flask import Blueprint, url_for, request, redirect, session, render_templat
 from superform.users import channels_available_for_user
 from superform.utils import login_required, datetime_converter, str_converter, get_instance_from_module_path
 from superform.models import db, Post, Publishing, Channel
+import facebook
+import json
+import http 
+import urllib.request
 
 posts_page = Blueprint('posts', __name__)
 
@@ -54,7 +58,7 @@ def new_post():
         setattr(elem, "unavailablefields", unaivalable_fields)
 
     if request.method == "GET":
-        return render_template('new.html', l_chan=list_of_channels)
+        return render_template('new.html', l_chan=list_of_channels, response="")
     else:
         create_a_post(request.form)
         return redirect(url_for('index'))
@@ -88,3 +92,18 @@ def records():
     posts = db.session.query(Post).filter(Post.user_id == session.get("user_id", ""))
     records = [(p) for p in posts if p.is_a_record()]
     return render_template('records.html', records=records)
+
+
+@posts_page.route('/facebook_credentials', methods=['POST'])
+@login_required()
+def getFBdata():
+    names = request.get_json()
+    print(len(names))
+    for name in names:
+        print(name)
+    return "OK" 
+
+    
+
+
+

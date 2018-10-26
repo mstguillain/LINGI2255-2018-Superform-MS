@@ -172,10 +172,15 @@
                 function (response) {
                     console.log("DEVANT LE IIIIIIFFFF")
                     console.log(response);
-                    if(response &&! Response.error){
+                    
+                    if(response && !response.error){
                         console.log("DAAAANS APIIIIII")
                         console.log (response);
+                        return response;
                     }
+
+                    
+                    
                 }
             ), {Scope: "manage_pages"};
         }
