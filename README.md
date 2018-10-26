@@ -58,7 +58,7 @@ This file should contain :
 
 ## Facebook plugin : 
 in order to run facebook login plugin, ou must run the app on https://localhost:5000/
-* in order to run it, please generate you .key and .pem : file https://medium.freecodecamp.org/how-to-get-https-working-on-your-local-development-environment-in-5-minutes-7af615770eec
+* in order to run it, please generate your .key and .pem : files https://medium.freecodecamp.org/how-to-get-https-working-on-your-local-development-environment-in-5-minutes-7af615770eec (only the two first commands)
 * to resolve the https testshib bug, you first need to login in http mode (only login with testshib then kill the app)
 ```shell
 
@@ -79,7 +79,7 @@ flask run --cert rootCA.pem --key rootCA.key
 
 * Once the token has been pasted on facebook_plugin.py, restart your app 
 
-* It's only the beginning, we will automate this process for the next pushes.
+* It's only the beginning, we will automate this process for the next pushes. We are currently working on the ajax branch to get the result of the FB.api() async function. We are not mastering JS yet so it will be done for the next iteration.
 
 ## Contributors
 
