@@ -97,11 +97,15 @@ def records():
 @posts_page.route('/facebook_credentials', methods=['POST'])
 @login_required()
 def getFBdata():
-    names = request.get_json()
-    print(len(names))
-    for name in names:
-        print(name)
-    return "OK" 
+    response = request.get_json()
+    data = response['credentials']['data']
+    for elem in data:
+        print(elem['access_token'])
+        print("IS THE TOKEN OF PAGE (ID) :")
+        print("==================================================")
+        print(elem['id'])
+    print("HIT FLASK")
+    return "OK"
 
     
 
