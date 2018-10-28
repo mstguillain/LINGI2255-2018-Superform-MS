@@ -101,6 +101,7 @@ def getFBdata():
     data = response['credentials']['data']
     for elem in data:
         print(elem['access_token'])
+        # Faire une methode GET pour allonger le token (à l'API GRAPH), puis append "|page_id|user_access_token_rallongé" au champ fb_cred de l'utilisateur loggé.
         print("IS THE TOKEN OF PAGE (ID) :")
         print("==================================================")
         print(elem['id'])

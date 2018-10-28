@@ -1,5 +1,6 @@
 import facebook
-from flask import current_app
+from flask import current_app, session
+from superform.models import db, User
 import json
 
 FIELDS_UNAVAILABLE = ['Title','Description']
@@ -8,11 +9,20 @@ CONFIG_FIELDS = ["sender","receiver"]
 
 CFG = {
         "page_id"      : "285844238930581",  # Step 1
-        "access_token" : "EAAHcEGT1yyEBAOSo50WUiM0563zVZCxnZCdd2XVJRAll0wIFztF4m1pPfw5hqlDwbvqZBCMNlnqzlTZC2RSkzDSTzwJZBhJuyZBcyAIgyIiSBqEZBV4GbyVhKJLWlCuZByRyn6AxgTFtGMeJwEQqvBCjZCHGZBfb5qBy2H27x2z6dMygDbJiltxSZCRLMSYAWE4QYrUwLgQIVxUHgZDZD"
+        "access_token" : "EAAHcEGT1yyEBAHhR2TqDm5tbTtuX7pCFMPcLC6xW4bEFAaXjN43pDEoiuzhUr5X9YT8cVYjP2hxu6cJBJrgBMipMO7JmAI06FEgPcVD0ZCkBimOYwts8Wl4KqZAZBOekYdvtZBWWK2fuJ8XTFkLPvit3Ulm8S9X0OOvRomOr35f7ZCZAnFeYdH4U2V7WTyDpimraZA7xLw5PABb4RZC35zEO"
     }
+    
 
 def run(publishing, channel_config):
     api = get_api(CFG)
+    #user_string_tokens = db.session.query(User).filter(User.id==session.get("fb_cred",""))
+    #Acces à la base de donnée pour récuperer les differents couples page_id|page_access_token_rallongé
+    #verify this request
+    user = User.query.get(session.get("fb_cred", ""))
+    print("==============================================")
+    print(user)
+    print("==============================================")
+
     #msg a custom, choper le contenu du champ dans le post 
     
     #On chope le message dans le champ description du post.

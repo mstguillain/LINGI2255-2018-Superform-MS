@@ -1,23 +1,69 @@
-from flask_sqlalchemy import SQLAlchemy
+from flask_sqlalchemy import SQLAlchemy, inspect
+from sqlalchemy import create_engine
 from enum import Enum
 import datetime
+import sqlite3
+import os.path
+
+
 
 db = SQLAlchemy()
 
-
 class User(db.Model):
+    #function to add the column fb_cred to the database
+    
+    def columnFacebookAdded():
+        db_uri = 'sqlite:///superform/superform.db'
+        
+        engine = create_engine(db_uri)
+        inspector = inspect(engine)
+        #print(inspector.get_columns("user")[5]['name'])
+        try:    
+            verif = inspector.get_columns('user')[5]['name']
+        except IndexError:
+            verif = "bad"
+        
+        if verif == "fb_cred":
+            return True
+        else: 
+            return False
+        
+    def add_column(database_name, table_name, column_name, data_type):
+        connection = sqlite3.connect(database_name)
+        cursor = connection.cursor()
+        
+        if data_type == "Integer":
+            data_type_formatted = "INTEGER"
+        elif data_type == "String":
+            data_type_formatted = "VARCHAR(6000)"
+        base_command = ("ALTER TABLE '{table_name}' ADD column '{column_name}' '{data_type}'")
+        sql_command = base_command.format(table_name=table_name, column_name=column_name, data_type=data_type_formatted)
+
+        cursor.execute(sql_command)
+        connection.commit()
+        connection.close()
+    
+
     id = db.Column(db.String(80), primary_key=True, unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     name = db.Column(db.String(120), nullable=False)
     first_name = db.Column(db.String(120), nullable=False)
     admin = db.Column(db.Boolean, default=False)
-
+    #Check if the column fb_cred is already added in the db. If not, add it
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    db_path = os.path.join(BASE_DIR, "superform.db")
+    if not columnFacebookAdded() :
+        add_column(db_path,"user","fb_cred","String")
+    
+    
+    fb_cred = db.Column(db.String(5000),nullable=False)
     posts = db.relationship("Post", backref="user", lazy=True)
     authorizations = db.relationship("Authorization", backref="user", lazy=True)
 
     def __repr__(self):
         return '<User {}>'.format(repr(self.id))
-
+    
+    
 
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True, unique=True, nullable=False)
