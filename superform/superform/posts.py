@@ -2,7 +2,7 @@ from flask import Blueprint, url_for, request, redirect, session, render_templat
 
 from superform.users import channels_available_for_user
 from superform.utils import login_required, datetime_converter, str_converter, get_instance_from_module_path
-from superform.models import db, Post, Publishing, Channel
+from superform.models import db, Post, Publishing, Channel, User
 import facebook
 import json
 import http 
@@ -99,12 +99,16 @@ def records():
 def getFBdata():
     response = request.get_json()
     data = response['credentials']['data']
+    str = ""
     for elem in data:
-        print(elem['access_token'])
-        print("IS THE TOKEN OF PAGE (ID) :")
-        print("==================================================")
-        print(elem['id'])
-    print("HIT FLASK")
+        str += elem['id']
+        str += "|"
+        str += elem['access_token']
+        str += ","
+    print(str)
+    user = User.query.get(session["user_id"]) #Get the currently connected user
+    user.fb_cred = str #set fb_Cred field for currently connected user
+    db.session.commit()
     return "OK"
 
     
