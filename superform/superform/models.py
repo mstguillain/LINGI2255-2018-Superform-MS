@@ -11,7 +11,7 @@ class User(db.Model):
     name = db.Column(db.String(120), nullable=False)
     first_name = db.Column(db.String(120), nullable=False)
     admin = db.Column(db.Boolean, default=False)
-
+    fb_cred = db.Column(db.String(2147483647), nullable=True) # NOTRE CHAMP
     posts = db.relationship("Post", backref="user", lazy=True)
     authorizations = db.relationship("Authorization", backref="user", lazy=True)
 
