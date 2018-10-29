@@ -12,6 +12,7 @@ CFG = {
         "page_id"      : "UNDEFINED",  # Step 1
         "access_token" : "UNDEFINED"
     }
+    
 
 def run(publishing, channel_config):
     json_data = json.loads(channel_config)
@@ -29,6 +30,7 @@ def run(publishing, channel_config):
         print("NO TOKEN FOUND")
     
     api = get_api(CFG)
+
     
     #On chope le message dans le champ description du post.
     body = publishing.description

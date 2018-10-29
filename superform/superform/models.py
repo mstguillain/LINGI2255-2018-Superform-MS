@@ -1,11 +1,16 @@
-from flask_sqlalchemy import SQLAlchemy
+from flask_sqlalchemy import SQLAlchemy, inspect
+from sqlalchemy import create_engine
 from enum import Enum
 import datetime
+import sqlite3
+import os.path
+
+
 
 db = SQLAlchemy()
 
-
 class User(db.Model):
+    #function to add the column fb_cred to the database
     id = db.Column(db.String(80), primary_key=True, unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     name = db.Column(db.String(120), nullable=False)
@@ -17,7 +22,8 @@ class User(db.Model):
 
     def __repr__(self):
         return '<User {}>'.format(repr(self.id))
-
+    
+    
 
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True, unique=True, nullable=False)
