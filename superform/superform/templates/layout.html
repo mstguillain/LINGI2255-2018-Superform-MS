@@ -21,6 +21,7 @@
                 <i class="fas fa-paper-plane"></i>
                 Superform
             </a>
+            <div class="fb-login-button" data-max-rows="1" data-size="large" data-button-type="continue_with" data-show-faces="false" data-auto-logout-link="true" data-use-continue-as="true" onlogin=startConnexion()></div>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo03" aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -37,9 +38,6 @@
 
                         <li class="nav-item">
                             <a class="nav-link" href="{{ url_for('posts.records')}}">Archives</a>
-                        </li>
-                        <li class="nav-item"
-                            <a class="fb-login-button" data-max-rows="1" data-size="large" data-button-type="continue_with" data-show-faces="true" data-auto-logout-link="false" data-use-continue-as="false"></a>
                         </li>
                         <li clanknss="nav-item {{ 'active' if request.endpoint == 'authorizations.authorizations' else '' }}">
                             <a class="nav-link" href="{{ url_for('authorizations.authorizations') }}">Authorizations</a>
@@ -67,15 +65,7 @@
             {% block content %}{% endblock %}
         </div>
 
-        
-
-
-
-
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-
-
-
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
         <!-- Optional JavaScript -->
         <!-- jQuery first, then Popper.js, then Bootstrap JS -->
         

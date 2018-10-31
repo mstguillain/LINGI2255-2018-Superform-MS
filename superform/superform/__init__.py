@@ -61,6 +61,4 @@ def notfound(error):
 
 
 if __name__ == '__main__':
-    print('test')
-    context = SSL.Context(SSL.SSLv23_METHOD)
     app.run()
