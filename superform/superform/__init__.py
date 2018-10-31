@@ -63,6 +63,4 @@ def notfound(error):
 if __name__ == '__main__':
     print('test')
     context = SSL.Context(SSL.SSLv23_METHOD)
-    #context.use_privatekey_file('/home/gilles/Documents/UCL/MA1/LINGI2255 - Projet/LINGI2255-2018-Superform-MS-02/superform/superform/key.key')
-    #context.use_certificate_file('/home/gilles/Documents/UCL/MA1/LINGI2255 - Projet/LINGI2255-2018-Superform-MS-02/superform/superform/key.crt')
     app.run()
