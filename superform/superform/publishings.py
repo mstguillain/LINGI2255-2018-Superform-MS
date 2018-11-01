@@ -1,7 +1,9 @@
-from flask import Blueprint, url_for, request, redirect, render_template, session
+import json
 
-from superform.utils import login_required, datetime_converter, str_converter
+from flask import Blueprint, url_for, request, redirect, render_template
+
 from superform.models import db, Publishing, Channel
+from superform.utils import login_required, datetime_converter, str_converter
 
 pub_page = Blueprint('publishings', __name__)
 
@@ -26,14 +28,32 @@ def create_a_publishing(post, chn, form):
     return pub
 
 
-@pub_page.route('/moderate/<int:id>/<string:idc>',methods=["GET","POST"])
+def valid_conf(config, fields):
+    config_json = json.loads(config)
+    for field in fields:
+        if field not in config_json:
+            return False
+    return True
+
+
+@pub_page.route('/moderate/<int:id>/<string:idc>', methods=["GET", "POST"])
 @login_required()
-def moderate_publishing(id,idc):
-    pub = db.session.query(Publishing).filter(Publishing.post_id==id,Publishing.channel_id==idc).first()
+def moderate_publishing(id, idc):
+    pub = db.session.query(Publishing).filter(Publishing.post_id == id, Publishing.channel_id == idc).first()
+    c = db.session.query(Channel).filter(Channel.id == pub.channel_id).first()
     pub.date_from = str_converter(pub.date_from)
     pub.date_until = str_converter(pub.date_until)
-    if request.method=="GET":
-        return render_template('moderate_post.html', pub=pub)
+
+    plugin_name = c.module
+    c_conf = c.config
+    from importlib import import_module
+    plugin = import_module(plugin_name)
+
+    if request.method == "GET":
+        if valid_conf(c_conf, plugin.CONFIG_FIELDS):
+            return render_template('moderate_post.html', pub=pub)
+        else:
+            return render_template('moderate_post.html', pub=None)
     else:
         pub.title = request.form.get('titlepost')
         pub.description = request.form.get('descrpost')
@@ -45,12 +65,11 @@ def moderate_publishing(id,idc):
         pub.state = 1
         db.session.commit()
         #running the plugin here
-        c=db.session.query(Channel).filter(Channel.id == pub.channel_id).first()
-        plugin_name = c.module
-        c_conf = c.config
-        from importlib import import_module
-        plugin = import_module(plugin_name)
-        plugin.run(pub,c_conf)
+
+        if valid_conf(c_conf, plugin.CONFIG_FIELDS):
+            plugin.run(pub, c_conf)
+        else:
+            render_template('moderate_post.html', pub=None)  # FIXME: create a dedicate page for this kind of error
 
         return redirect(url_for('index'))
 
