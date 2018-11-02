@@ -2,7 +2,9 @@ import json
 
 from flask import Blueprint, url_for, request, redirect, render_template
 
-from superform.models import db, Publishing, Channel
+from superform import channels
+from superform.models import db, Publishing, Channel, Post, User
+from superform.users import get_moderate_channels_for_user, is_moderator
 from superform.utils import login_required, datetime_converter, str_converter
 
 pub_page = Blueprint('publishings', __name__)
@@ -28,14 +30,6 @@ def create_a_publishing(post, chn, form):
     return pub
 
 
-def valid_conf(config, fields):
-    config_json = json.loads(config)
-    for field in fields:
-        if field not in config_json:
-            return False
-    return True
-
-
 @pub_page.route('/moderate/<int:id>/<string:idc>', methods=["GET", "POST"])
 @login_required()
 def moderate_publishing(id, idc):
@@ -50,7 +44,7 @@ def moderate_publishing(id, idc):
     plugin = import_module(plugin_name)
 
     if request.method == "GET":
-        if valid_conf(c_conf, plugin.CONFIG_FIELDS):
+        if channels.valid_conf(c_conf, plugin.CONFIG_FIELDS):
             return render_template('moderate_post.html', pub=pub)
         else:
             return render_template('moderate_post.html', pub=None)
@@ -66,7 +60,7 @@ def moderate_publishing(id, idc):
         db.session.commit()
         #running the plugin here
 
-        if valid_conf(c_conf, plugin.CONFIG_FIELDS):
+        if channels.valid_conf(c_conf, plugin.CONFIG_FIELDS):
             plugin.run(pub, c_conf)
         else:
             render_template('moderate_post.html', pub=None)  # FIXME: create a dedicate page for this kind of error
