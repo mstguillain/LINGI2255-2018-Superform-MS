@@ -13,6 +13,7 @@
         <title>{% block title %}{% endblock %} - Superform</title>
         {% endblock %}
     </head>
+    
     <body>
     
 
@@ -61,8 +62,20 @@
                 </ul>
             </div>
         </nav>
+        
         <div class="container-fluid">
-            {% block content %}{% endblock %}
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <ul class=flashes>
+                {% for message in messages %}
+                    <div class="alert alert-danger" role="alert">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+        {% block content %}{% endblock %}
         </div>
 
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>

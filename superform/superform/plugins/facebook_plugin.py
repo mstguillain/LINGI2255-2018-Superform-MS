@@ -1,5 +1,5 @@
 import facebook
-from flask import current_app, session
+from flask import current_app, session, flash
 from superform.models import db, User 
 import json
 
@@ -33,8 +33,14 @@ def run(publishing, channel_config):
 
     
     #On chope le message dans le champ description du post.
+    title = publishing.title
     body = publishing.description
-    id = publish(body)
+    link = publishing.link_url
+    image = publishing.image_url
+    #publishing.date_from
+    #publishing.date_until
+    
+    id = publish(title+'\n'+body+'\n'+link+'\n'+image)
 
 
 def publish(message):
@@ -72,9 +78,13 @@ def get_api(cfg):
 def setToken(goal_page_id):
     user = User.query.get(session["user_id"])
     credentials = user.fb_cred
-    splitted = credentials.split(",") #Split fb_cred to give us tuple page_id|access_token
-    for elem in splitted:
-        page_and_token = elem.split("|") #Split page_id|access_token 
-        if(page_and_token[0] == goal_page_id): #If page id from credentials is the one we're looking for
+    print(credentials)
+    if credentials!=None:
+        splitted = credentials.split(",") #Split fb_cred to give us tuple page_id|access_token
+        for elem in splitted:
+            page_and_token = elem.split("|") #Split page_id|access_token 
+            if(page_and_token[0] == goal_page_id): #If page id from credentials is the one we're looking for
                 return page_and_token[1]
+    else:
+        flash('please log out and login, no facebook token found on the database')
     return "ACCESS_TOKEN_NOT_FOUND"
