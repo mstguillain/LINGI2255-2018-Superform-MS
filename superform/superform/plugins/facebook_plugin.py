@@ -1,24 +1,46 @@
 import facebook
-from flask import current_app
+from flask import current_app, session, flash
+from superform.models import db, User 
 import json
 
-FIELDS_UNAVAILABLE = ['Title','Description']
 
-CONFIG_FIELDS = ["sender","receiver"]
+FIELDS_UNAVAILABLE = ['Title']
+
+CONFIG_FIELDS = ["page_id"]
 
 CFG = {
-        "page_id"      : "285844238930581",  # Step 1
-        "access_token" : "EAAHcEGT1yyEBAOSo50WUiM0563zVZCxnZCdd2XVJRAll0wIFztF4m1pPfw5hqlDwbvqZBCMNlnqzlTZC2RSkzDSTzwJZBhJuyZBcyAIgyIiSBqEZBV4GbyVhKJLWlCuZByRyn6AxgTFtGMeJwEQqvBCjZCHGZBfb5qBy2H27x2z6dMygDbJiltxSZCRLMSYAWE4QYrUwLgQIVxUHgZDZD"
+        "page_id"      : "UNDEFINED",  # Step 1
+        "access_token" : "UNDEFINED"
     }
+    
 
 def run(publishing, channel_config):
+    json_data = json.loads(channel_config)
+
+    if(CFG['page_id'] == "UNDEFINED"):
+        CFG['page_id'] = json_data['page_id']
+
+    if(CFG['access_token'] == "UNDEFINED"):
+        CFG['access_token'] = setToken(CFG['page_id']) #Check fb_cred in table User for corresponding access_token
+
+    if(CFG['access_token'] == "ACCESS_TOKEN_NOT_FOUND"): 
+        # May happen in two cases 
+        # 1) the user has not generated its token yet
+        # 2) the user try to publish to a FB page he/she doesn't own
+        print("NO TOKEN FOUND")
+    
     api = get_api(CFG)
-    #msg a custom, choper le contenu du champ dans le post 
+
     
     #On chope le message dans le champ description du post.
+    title = publishing.title
     body = publishing.description
-    #msg = "Hello, world!" 
-    id = publish(body)
+    link = publishing.link_url
+    image = publishing.image_url
+    #publishing.date_from
+    #publishing.date_until
+    
+    id = publish(title+'\n'+body+'\n'+link+'\n'+image)
 
 
 def publish(message):
@@ -50,4 +72,19 @@ def get_api(cfg):
     return graph
     # You can also skip the above if you get a page token:
     # http://stackoverflow.com/questions/8231877/facebook-access-token-for-pages
-    # and make that long-lived token as in Step 3
+    # and make that long-lived token as in Step 3 
+
+
+def setToken(goal_page_id):
+    user = User.query.get(session["user_id"])
+    credentials = user.fb_cred
+    print(credentials)
+    if credentials!=None:
+        splitted = credentials.split(",") #Split fb_cred to give us tuple page_id|access_token
+        for elem in splitted:
+            page_and_token = elem.split("|") #Split page_id|access_token 
+            if(page_and_token[0] == goal_page_id): #If page id from credentials is the one we're looking for
+                return page_and_token[1]
+    else:
+        flash('please log out and login, no facebook token found on the database')
+    return "ACCESS_TOKEN_NOT_FOUND"
