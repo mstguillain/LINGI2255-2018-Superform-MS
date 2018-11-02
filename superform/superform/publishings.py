@@ -1,10 +1,7 @@
-import json
-
 from flask import Blueprint, url_for, request, redirect, render_template
 
 from superform import channels
-from superform.models import db, Publishing, Channel, Post, User
-from superform.users import get_moderate_channels_for_user, is_moderator
+from superform.models import db, Publishing, Channel
 from superform.utils import login_required, datetime_converter, str_converter
 
 pub_page = Blueprint('publishings', __name__)
@@ -47,7 +44,7 @@ def moderate_publishing(id, idc):
         if channels.valid_conf(c_conf, plugin.CONFIG_FIELDS):
             return render_template('moderate_post.html', pub=pub)
         else:
-            return render_template('moderate_post.html', pub=None)
+            return render_template('moderate_post.html', pub=pub, conf=True)
     else:
         pub.title = request.form.get('titlepost')
         pub.description = request.form.get('descrpost')
@@ -55,15 +52,17 @@ def moderate_publishing(id, idc):
         pub.image_url = request.form.get('imagepost')
         pub.date_from = datetime_converter(request.form.get('datefrompost'))
         pub.date_until = datetime_converter(request.form.get('dateuntilpost'))
-        #state is shared & validated
-        pub.state = 1
-        db.session.commit()
-        #running the plugin here
 
         if channels.valid_conf(c_conf, plugin.CONFIG_FIELDS):
+            # state is shared & validated
+            pub.state = 1
+            db.session.commit()
+            # running the plugin here
             plugin.run(pub, c_conf)
         else:
-            render_template('moderate_post.html', pub=None)  # FIXME: create a dedicate page for this kind of error
+            pub.state = 1
+            db.session.commit()
+            return render_template('moderate_post.html', pub=pub, conf=True)
 
         return redirect(url_for('index'))
 
