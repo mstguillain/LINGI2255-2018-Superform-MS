@@ -102,5 +102,7 @@ class Permission(Enum):
 
 
 class State(Enum):
-    WAITING = 1
+    INCOMPLETE = -1
+    NOTVALIDATED = 0
+    VALIDATED = 1
     PUBLISHED = 2
