@@ -1,3 +1,4 @@
+
 from setuptools import setup
 
 setup(
@@ -7,6 +8,6 @@ setup(
     install_requires=[
         'flask',
         'python3-saml', 'sqlalchemy',
-        'flask-sqlalchemy', 'facebook-sdk'
+        'flask-sqlalchemy', 'facebook-sdk', 'python-twitter'
     ],
 )
