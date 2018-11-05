@@ -7,7 +7,7 @@ setup(
     include_package_data=True,
     install_requires=[
         'flask',
-        'python3-saml', 'sqlalchemy', 'python-twitter'
+        'python3-saml', 'sqlalchemy',
+        'flask-sqlalchemy', 'facebook-sdk', 'python-twitter'
     ],
 )
-# flask_sqlalchemy missing
