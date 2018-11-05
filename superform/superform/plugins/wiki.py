@@ -18,20 +18,24 @@ FIELDS_UNAVAILABLE = []
 CONFIG_FIELDS = ["username","password"]
 
 
+def makeText(publishing):
+    titre = "!! " + publishing.title + "\n"
+    author = publishing.get_author()
+    date_from = publishing.date_from
+
+    suite = "Par " + author + " Publie le " + "\n"
+
+    corps = str(publishing.description) + "\n"
+
+    text = titre + "-----" + suite + corps
+    return text
 
 def run(publishing,channel_config):
     json_data = json.loads(channel_config)
+    pageName = "Main.test"
+    text = makeText(publishing)
 
-    titre="!! "+publishing.title+"\n"
-    author=publishing.get_author()
-
-    suite = "Par " + author + " Publie le "+ "\n"
-
-    corps=publishing.description+"\n"
-
-    text=titre+"-----"+suite+corps
-
-    data = {"n": "Main.Essai_Nono", "text": text, "action": "edit", "post": "1"}
+    data = {"n": pageName, "text": text, "action": "edit", "post": "1"}
     # r2 = requests.post("http://localhost/pmwiki-2.2.109/pmwiki.php?n=Main.Essai_nono&action=edit&text=Hello%20World&post=1", data)
 
     r2 = requests.post("http://localhost/pmwiki-2.2.109/pmwiki.php", data)
