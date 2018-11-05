@@ -73,13 +73,11 @@ flask run --cert rootCA.pem --key rootCA.key
 
 ```
 
-* You're now logged in, you can use facebook login. To log in, create a new post, you'll see two new buttons on the right, use the first one first to log in, then use the second one to obtain your access page token. 
+* You're now logged in, you can use facebook login. To log in, create a new post, you'll see one new button on the navbar. If you're already logged in on facebook with your browser but you never used this app, please log out and sign in again.
 
-* Use your page access token received through the console (F12 in Chrome) and paste it on the access token field  of the cfg record to be able to publish on the page for 1 hour
-
-* Once the token has been pasted on facebook_plugin.py, restart your app 
 
 * It's only the beginning, we will automate this process for the next pushes. We are currently working on the ajax branch to get the result of the FB.api() async function. We are not mastering JS yet so it will be done for the next iteration.
+
 
 ## Contributors
 
