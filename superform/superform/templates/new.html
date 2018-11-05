@@ -65,7 +65,7 @@
                                  {% for chan in l_chan %}
                                      <div class="form-check">
                                       <label class="form-check-label">
-                                        <input id="chan_option_{{ chan.id }} {{ chan.module }}" data-namechan="{{ chan.name }}" data-unavailablefields="{{ chan.unavailablefields }}" name="chan_option_{{ chan.id }}" type="checkbox" class="form-check-input checkbox" value="{{ chan.id }}">{{ chan.name }}
+                                        <input id="chan_option_{{ chan.id }}" data-namechan="{{ chan.name }}" data-unavailablefields="{{ chan.unavailablefields }}" name="chan_option_{{ chan.id }}" type="checkbox" class="form-check-input checkbox {{ chan.module }}" value="{{ chan.id }}">{{ chan.name }}
                                       </label>
                                     </div>
                                  {% endfor %}
