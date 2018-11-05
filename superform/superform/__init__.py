@@ -10,6 +10,10 @@ from superform.authorizations import authorizations_page
 from superform.channels import channels_page
 from superform.posts import posts_page
 from superform.users import get_moderate_channels_for_user, is_moderator
+from OpenSSL import SSL
+
+from werkzeug.serving import run_simple
+
 
 app = Flask(__name__)
 app.config.from_json("config.json")
@@ -57,4 +61,8 @@ def notfound(error):
 
 
 if __name__ == '__main__':
+    print('test')
+    context = SSL.Context(SSL.SSLv23_METHOD)
+    #context.use_privatekey_file('/home/gilles/Documents/UCL/MA1/LINGI2255 - Projet/LINGI2255-2018-Superform-MS-02/superform/superform/key.key')
+    #context.use_certificate_file('/home/gilles/Documents/UCL/MA1/LINGI2255 - Projet/LINGI2255-2018-Superform-MS-02/superform/superform/key.crt')
     app.run()
