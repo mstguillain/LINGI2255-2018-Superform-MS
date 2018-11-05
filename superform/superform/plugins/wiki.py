@@ -13,6 +13,8 @@ import requests
 # éditer une page sur wiki :
 # https://www.pmwiki.org/wiki/PmWiki/BasicEditing
 
+
+FIELDS_UNAVAILABLE = []
 CONFIG_FIELDS = ["username","password"]
 
 
@@ -22,11 +24,10 @@ def run(publishing,channel_config):
 
     titre="!! "+publishing.title+"\n"
     author=publishing.get_author()
-    date_from=publishing.date_from
 
-    suite = "Par " + author + " Publie le " + date_from + "\n"
+    suite = "Par " + author + " Publie le "+ "\n"
 
-    corps="publishing.description\n"
+    corps=publishing.description+"\n"
 
     text=titre+"-----"+suite+corps
 
