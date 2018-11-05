@@ -76,8 +76,8 @@
                           <div class="card-header">Status</div>
 
                           <div class="card-body">Content</div>
-                            <a class="btn btn-primary" onclick="loginWithPermissions()">Login Custom</a>
-                            <a class="btn btn-primary" onclick="requestPermissionsForPage()">Request Permissions</a>
+                            <!--<a class="btn btn-primary" onclick="loginWithPermissions()">Login Custom</a>
+                            <a href=# id=fbcred class="btn btn-primary" title="You need to click this button in order to get your page(s) access tokens from facebook">Request Permissions</a>-->
 
                          </div>
 
@@ -98,7 +98,6 @@
                                     <label for="{{ chan.name }}_titlepost">Title</label><br>
                                     <input type="text" name="{{ chan.name }}_titlepost" id="{{ chan.name }}_titlepost" class="form-control">
                                 </div>
-                                <div class="fb-login-button" data-max-rows="1" data-size="large" data-button-type="continue_with" data-show-faces="false" data-auto-logout-link="true" data-use-continue-as="true"></div>
                                 <div class="form-group">
                                     <label for="{{ chan.name }}_descriptionpost">Description</label><br>
                                     <textarea class="form-control" rows="5" id="{{ chan.name }}_descriptionpost" name="{{ chan.name }}_descriptionpost"></textarea>
@@ -164,11 +163,13 @@
     {% else %}
         Your are not logged in.
     {% endif %}
-
+        
 
 {% endblock %}
 
 {% block scripts %}
+
+    <script src="{{ url_for('static', filename='js/facebook_sdk.js') }}"></script>
     <script>
         
         // This manage if a channel is selected or not:
