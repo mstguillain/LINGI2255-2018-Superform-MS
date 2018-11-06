@@ -13,6 +13,12 @@ import requests
 # éditer une page sur wiki :
 # https://www.pmwiki.org/wiki/PmWiki/BasicEditing
 
+# à faire :
+# - rajouter : link_url (ok?), image_url, connexion avec user et password
+# - gérer le retour à la ligne dans la description
+# - gérer basetime
+# - gérer nom de page (ok?)
+# - gérer date (ok?)
 
 FIELDS_UNAVAILABLE = []
 CONFIG_FIELDS = ["username","password"]
@@ -21,18 +27,25 @@ CONFIG_FIELDS = ["username","password"]
 def makeText(publishing):
     titre = "!! " + publishing.title + "\n"
     author = publishing.get_author()
-    date_from = publishing.date_from
+    date_from = str(publishing.date_from).split()[0]
 
-    suite = "Par " + author + " Publie le " + "\n"
+    print(date_from)
 
+    suite = "Par " + author + " Publie le " +date_from+"\n"
     corps = str(publishing.description) + "\n"
 
-    text = titre + "-----" + suite + corps
+    link_url = "-----"+"[["+publishing.link_url+"]]"+"\n"
+    image_url = publishing.image_url
+
+    text = titre + "-----" + suite + corps + link_url
     return text
 
 def run(publishing,channel_config):
     json_data = json.loads(channel_config)
-    pageName = "Main.test"
+    authid= json_data['username'] # à rajouter dans configuration de la channel sur superform sinon ne marche pas...
+    authpw = json_data['password'] # à rajouter dans configuration de la channel sur superform sinon ne marche pas...
+
+    pageName = "News."+str(publishing.title).replace(" ","")
     text = makeText(publishing)
 
     data = {"n": pageName, "text": text, "action": "edit", "post": "1"}
