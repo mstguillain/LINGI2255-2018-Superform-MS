@@ -5,11 +5,12 @@ from smtplib import SMTPException
 from flask import current_app
 import json
 
-FIELDS_UNAVAILABLE = ['Title','Description']
+FIELDS_UNAVAILABLE = ['Title', 'Description']
 
-CONFIG_FIELDS = ["sender","receiver"]
+CONFIG_FIELDS = ["sender", "receiver"]
 
-def run(publishing,channel_config):
+
+def run(publishing, channel_config):
     json_data = json.loads(channel_config)
     sender = json_data['sender']
     receivers = json_data['receiver']
@@ -22,12 +23,13 @@ def run(publishing,channel_config):
     msg.attach(MIMEText(body, 'plain'))
 
     try:
-        smtpObj = smtplib.SMTP(current_app.config["SMTP_HOST"],current_app.config["SMTP_PORT"])
+        smtpObj = smtplib.SMTP(current_app.config["SMTP_HOST"],
+                               current_app.config["SMTP_PORT"])
         if current_app.config["SMTP_STARTTLS"]:
             smtpObj.starttls()
         text = msg.as_string()
         smtpObj.sendmail(sender, receivers, text)
         smtpObj.quit()
     except SMTPException as e:
-        #TODO should add log here
+        # TODO should add log here
         print(e)

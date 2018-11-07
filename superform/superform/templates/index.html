@@ -6,74 +6,76 @@
     {% if session.logged_in %}
 
         <div class="row">
-        <div class="col-md-12">
-            {% if user.is_mod %}
-                <h2>Unmoderated Publishings</h2>
+            <div class="col-md-12">
+                {% if user.is_mod %}
+                    <h2>Unmoderated Publishings</h2>
+                    <table class="table table-bordered">
+                        <thead>
+                        <tr>
+                            <th>
+                                Channel
+                            </th>
+                            <th>
+                                Subject
+                            </th>
+                            <th>
+                                Body
+                            </th>
+                            <th>
+                                Author
+                            </th>
+                            <th>
+                                Action
+                            </th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+                        {% for p in publishings %}
+                            <tr>
+                                <td>
+                                    {{ p.channel.name }}
+                                </td>
+                                <td>
+                                    {{ p.title }}
+                                </td>
+                                <td>
+                                    <div class="row">
+                                        <div class="col">{{ p.description }}</div>
+                                    </div>
+                                </td>
+                                <td>
+                                    {{ p.get_author() }}
+                                </td>
+                                <td>
+                                    <a href="{{ url_for('publishings.moderate_publishing',id=p.post_id,idc=p.channel_id) }}"
+                                       class="btn btn-outline-primary"
+                                       role="button">Moderate</a>
+
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                {% endif %}
+                <h2>All my posts</h2>
                 <table class="table table-bordered">
-                <thead>
-                  <tr>
-                    <th>
-                      Channel
-                    </th>
-                    <th>
-                      Subject
-                    </th>
-                    <th>
-                      Body
-                    </th>
-                    <th>
-                        Author
-                    </th>
-                    <th>
-                        Action
-                    </th>
-                  </tr>
-                </thead>
-
-                <tbody>
-                {% for p in publishings %}
+                    <thead>
                     <tr>
-                        <td>
-                            {{ p.channel_id }}
-                        </td>
-                        <td>
-                            {{ p.title }}
-                        </td>
-                        <td>
-                            <div class="row">
-                                <div class="col">{{ p.description }}</div>
-                            </div>
-                        </td>
-                        <td>
-                            {{ p.get_author() }}
-                        </td>
-                        <td>
-                            <a href="{{ url_for('publishings.moderate_publishing',id=p.post_id,idc=p.channel_id) }}" class="btn btn-outline-primary" role="button">Moderate</a>
-
-                        </td>
+                        <th>
+                            #
+                        </th>
+                        <th>
+                            Subject
+                        </th>
+                        <th>
+                            Body
+                        </th>
+                        <th>
+                            Action
+                        </th>
                     </tr>
-                {% endfor %}
-                </tbody>
-                </table>
-            {% endif %}
-            <h2>All my posts</h2>
-            <table class="table table-bordered">
-            <thead>
-              <tr>
-                <th>
-                  #
-                </th>
-                <th>
-                  Subject
-                </th>
-                <th>
-                  Body
-                </th>
-                <th>
-                    Action
-                </th>
-              </tr>
-            </thead>
+                    </thead>
 
             <tbody>
                 {% for item in posts %}
@@ -101,7 +103,6 @@
             </tbody>
             </table>
         </div>
-      </div>
     {% else %}
         <p>Your are not logged in.</p>
     {% endif %}
