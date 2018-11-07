@@ -56,6 +56,29 @@ This file should contain :
 * a variable called CONFIG_FIELDS.This is also a python list. This lets the manager of your module enter data that are used to communicate with other services. Example : The mail where the information must be send.
 * a function called run with as many arguments as you want (**kwargs).
 
+## Facebook plugin : 
+in order to run facebook login plugin, ou must run the app on https://localhost:5000/
+* in order to run it, please generate your .key and .pem : files https://medium.freecodecamp.org/how-to-get-https-working-on-your-local-development-environment-in-5-minutes-7af615770eec (only the two first commands)
+* to resolve the https testshib bug, you first need to login in http mode (only login with testshib then kill the app)
+```shell
+
+flask run
+
+```
+* Then run it with https with your files .key and .pem in your command
+
+```shell
+
+flask run --cert rootCA.pem --key rootCA.key
+
+```
+
+* You're now logged in, you can use facebook login. To log in, create a new post, you'll see one new button on the navbar. If you're already logged in on facebook with your browser but you never used this app, please log out and sign in again.
+
+
+* It's only the beginning, we will automate this process for the next pushes. We are currently working on the ajax branch to get the result of the FB.api() async function. We are not mastering JS yet so it will be done for the next iteration.
+
+
 ## Contributors
 
 Kim Mens - @kimmens 

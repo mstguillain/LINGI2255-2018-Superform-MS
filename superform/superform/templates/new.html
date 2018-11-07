@@ -65,7 +65,7 @@
                                  {% for chan in l_chan %}
                                      <div class="form-check">
                                       <label class="form-check-label">
-                                        <input id="chan_option_{{ chan.id }}" data-namechan="{{ chan.name }}" data-unavailablefields="{{ chan.unavailablefields }}" name="chan_option_{{ chan.id }}" type="checkbox" class="form-check-input checkbox" value="{{ chan.id }}">{{ chan.name }}
+                                        <input id="chan_option_{{ chan.id }}" data-namechan="{{ chan.name }}" data-unavailablefields="{{ chan.unavailablefields }}" name="chan_option_{{ chan.id }}" type="checkbox" class="form-check-input checkbox {{ chan.module }}" value="{{ chan.id }}">{{ chan.name }}
                                       </label>
                                     </div>
                                  {% endfor %}
@@ -74,7 +74,9 @@
 
                          <div class="card">
                           <div class="card-header">Status</div>
-                          <div class="card-body">Content</div>
+
+                          <div class="card-body" id="status-content">Content</div>
+
                          </div>
 
 
@@ -130,18 +132,19 @@
                              <div>
                               <label class="form-check-label">
                                {{ chan.name }}
-                              </label>
+
                              </div>
+
                          </div>
 
                          <div class="card">
                           <div class="card-header">Status</div>
+
                           <div class="card-body">Content</div>
                          </div>
 
 
                     </div>
-
                 </div>
 
 
@@ -158,12 +161,15 @@
     {% else %}
         Your are not logged in.
     {% endif %}
-
+        
 
 {% endblock %}
 
 {% block scripts %}
+
+    <script src="{{ url_for('static', filename='js/facebook_sdk.js') }}"></script>
     <script>
+        
         // This manage if a channel is selected or not:
         //  it hides/shows a tab for a channel
         //  it adds an information bullet to unavailable fields for each channel
@@ -257,9 +263,10 @@
                 })
                 .val(text);
         });
-
-
-
     </script>
+
+
+
+<script src="./static/js/status-checker.js"></script>
 
 {% endblock %}

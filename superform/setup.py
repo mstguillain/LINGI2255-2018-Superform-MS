@@ -1,3 +1,4 @@
+
 from setuptools import setup
 
 setup(
@@ -8,7 +9,6 @@ setup(
         'flask',
         'python3-saml',
         'sqlalchemy',
-        'flask-sqlalchemy', 'python3-linkedin'
-
+        'flask-sqlalchemy', 'python3-linkedin', 'facebook-sdk', 'python-twitter'
     ],
 )
