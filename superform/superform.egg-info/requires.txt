@@ -1,0 +1,5 @@
+flask
+python3-saml
+sqlalchemy
+flask-sqlalchemy
+facebook-sdk
