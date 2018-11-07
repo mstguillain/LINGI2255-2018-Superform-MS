@@ -1,5 +1,4 @@
-{% extends "layout.html" %}
-{% block title %}Configure Channel{% endblock %}
+{% extends "channel_configure.html" %}
 {% block content %}
     <h1>Configuration</h1>
     {% if session.logged_in %}
@@ -11,12 +10,16 @@
                             {% for field in config_fields %}
                                 <div class="form-group">
                                     <label for="{{ field }}">{{ field }}</label><br>
-                                    <input type="text" name="{{ field }}"
+                                    <input type="{{ 'password' if field == 'Password' else 'text' }}"
+                                           name="{{ field }}"
                                            id="{{ field }}"
                                            class="form-control"
                                            value="{{ channel.config_dict.get(field) }}">
                                 </div>
                             {% endfor %}
+                            <a type="button" class="btn btn-info"
+                               href="{{ redirect }}">Link
+                                in your LinkedIn</a> <br/> <br/>
                         </div>
                     </div>
                 </div>
@@ -29,5 +32,4 @@
     {% else %}
         Your are not logged in.
     {% endif %}
-
 {% endblock %}

@@ -1,12 +1,16 @@
-from flask import Blueprint, url_for, request, redirect, render_template, session
+from flask import Blueprint, url_for, request, redirect, render_template, \
+    session
 
 from superform.utils import login_required, datetime_converter, str_converter
 from superform.models import db, Publishing, Channel
 import facebook
 
 pub_page = Blueprint('publishings', __name__)
-@pub_page.route('/moderate/<int:id>/<string:idc>',methods=["GET","POST"])
+
+
+@pub_page.route('/moderate/<int:id>/<string:idc>', methods = ["GET", "POST"])
 @login_required()
+
 def moderate_publishing(id,idc):
     try:
         pub = db.session.query(Publishing).filter(Publishing.post_id==id,Publishing.channel_id==idc).first()
@@ -37,6 +41,4 @@ def moderate_publishing(id,idc):
     except facebook.GraphAPIError:
             return render_template('moderate_post.html', pub=pub)
     return redirect(url_for('index'))
-
-        
 
