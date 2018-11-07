@@ -13,24 +13,42 @@ import requests
 # éditer une page sur wiki :
 # https://www.pmwiki.org/wiki/PmWiki/BasicEditing
 
+# à faire :
+# - rajouter : link_url (ok?), image_url, connexion avec user et password
+# - gérer le retour à la ligne dans la description
+# - gérer basetime
+# - gérer nom de page (ok?)
+# - gérer date (ok?)
+
+FIELDS_UNAVAILABLE = []
 CONFIG_FIELDS = ["username","password"]
 
 
+def makeText(publishing):
+    titre = "!! " + publishing.title + "\n"
+    author = publishing.get_author()
+    date_from = str(publishing.date_from).split()[0]
+
+    print(date_from)
+
+    suite = "Par " + author + " Publie le " +date_from+"\n"
+    corps = str(publishing.description).replace("\n","[[<<]]") + "\n"
+
+    link_url = "-----"+"[["+publishing.link_url+"]]"+"\n"
+    image_url = publishing.image_url
+
+    text = titre + "-----" + suite + corps + link_url
+    return text
 
 def run(publishing,channel_config):
     json_data = json.loads(channel_config)
+    authid= json_data['username'] # à rajouter dans configuration de la channel sur superform sinon ne marche pas...
+    authpw = json_data['password'] # à rajouter dans configuration de la channel sur superform sinon ne marche pas...
 
-    titre="!! "+publishing.title+"\n"
-    author=publishing.get_author()
-    date_from=publishing.date_from
+    pageName = "News."+str(publishing.title).replace(" ","")
+    text = makeText(publishing)
 
-    suite = "Par " + author + " Publie le " + date_from + "\n"
-
-    corps="publishing.description\n"
-
-    text=titre+"-----"+suite+corps
-
-    data = {"n": "Main.Essai_Nono", "text": text, "action": "edit", "post": "1"}
+    data = {"n": pageName, "text": text, "action": "edit", "post": "1"}
     # r2 = requests.post("http://localhost/pmwiki-2.2.109/pmwiki.php?n=Main.Essai_nono&action=edit&text=Hello%20World&post=1", data)
 
     r2 = requests.post("http://localhost/pmwiki-2.2.109/pmwiki.php", data)
