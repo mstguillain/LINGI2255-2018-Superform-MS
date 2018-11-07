@@ -6,8 +6,7 @@ from linkedin import linkedin  # from python3-linkedin library
 
 FIELDS_UNAVAILABLE = ['Title', 'Description']
 
-CONFIG_FIELDS = ["Login",
-                 "Password"]  # Unused for now. But could be used to refresh dynamically the access token
+CONFIG_FIELDS = []  # Unused for now. But could be used to refresh dynamically the access token
 
 
 def linkedin_plugin(id, c, m, clas, config_fields):
@@ -21,7 +20,8 @@ def linkedin_plugin(id, c, m, clas, config_fields):
     RETURN_URL = 'http://localhost:5000/configure/linkedin'
     CLIENT_ID = '77p0caweo4t3t9'
     CLIENT_SECRET = 'uQVYTN3pDewuOb7d'
-    REDIRECT_LINK = "https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=" + CLIENT_ID + "&redirect_uri=" + RETURN_URL + "&state=" + state
+    REDIRECT_LINK = "https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=" \
+                    + CLIENT_ID + "&redirect_uri=" + RETURN_URL + "&state=" + state
     RETURN_URL += str(id)
     return render_template("linkedin_configuration.html",
                            channel = c,
@@ -56,11 +56,11 @@ def linkedin_use(code):
     authentication = get_basic_authentication()
     print("code I put in authentification", code)
     authentication.authorization_code = code
-    acces_token = get_access_token(authentication)
-    if acces_token is not None:
-        print("Access Token:", acces_token.access_token)
-        print("Expires in (seconds):", acces_token.expires_in)
-        return acces_token
+    access_token = get_access_token(authentication)
+    if access_token is not None:
+        print("Access Token:", access_token.access_token)
+        print("Expires in (seconds):", access_token.expires_in)
+        return access_token
     return None
 
 
@@ -69,7 +69,7 @@ def get_access_token(authentication):
         access_token = authentication.get_access_token()
         return access_token
     except linkedin.LinkedInError as err:
-        print("A fault occurred while getting the acess token")
+        print("A fault occurred while getting the access token")
         traceback.print_exc()
         return None
 

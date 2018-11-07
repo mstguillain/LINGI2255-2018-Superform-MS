@@ -70,7 +70,6 @@ def configure_channel(id):
             setattr(c, "config_dict", d)
             if str(m) == "superform.plugins.LinkedIn":
                 return linkedin_plugin(id, c, m, clas, config_fields)
-            #
         return render_template("channel_configure.html", channel = c,
                                config_fields = config_fields)
     str_conf = "{"
@@ -87,11 +86,12 @@ def configure_channel(id):
     """
     last_access_token = request.cookies.get(LAST_ACCESS_TOKEN)
     last_creation_time = request.cookies.get(LAST_CREATION_TIME)
-    last_chanel_id = request.cookies.get(LAST_CHANNEL_ID)
-    if str(m) == "superform.plugins.LinkedIn" and str(last_chanel_id) == str(
+    last_channel_id = request.cookies.get(LAST_CHANNEL_ID)
+    if str(m) == "superform.plugins.LinkedIn" and str(last_channel_id) == str(
             id) and last_access_token is not None and last_creation_time is not None:
         print("je suis dans la boucle")
-        str_conf += ","
+        if cfield > 0:
+            str_conf += ","
         str_conf += "\"" + "token" + "\" : \"" + last_access_token + "\""
         str_conf += ","
         str_conf += "\"" + "creationTime" + "\" : \"" + last_creation_time + "\""
