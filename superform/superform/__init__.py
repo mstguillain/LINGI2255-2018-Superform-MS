@@ -10,7 +10,7 @@ from superform.authorizations import authorizations_page
 from superform.channels import channels_page
 from superform.posts import posts_page
 from superform.users import get_moderate_channels_for_user, is_moderator
-from OpenSSL import SSL
+#from OpenSSL import SSL
 
 from werkzeug.serving import run_simple
 

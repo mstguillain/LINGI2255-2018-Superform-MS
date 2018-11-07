@@ -137,12 +137,13 @@ def login():
 def test_run_linkedinl(client=None):
     # Is there a way to test a send mail function?
     login()
-
+    acces_token = get_access_token()
     print("======================")
     # print(str(application.get_statistics_company_page(674969)))
-    print("token :", get_access_token())
+    print("token :", acces_token)
     print("======================")
-    assert True == True
+    assert len(acces_token)>1
+
 
 
 test_run_linkedinl() # will share a publication on LinkedIn with "Title", "comment", "description"
