@@ -167,6 +167,14 @@
         // This manage if a channel is selected or not:
         //  it hides/shows a tab for a channel
         //  it adds an information bullet to unavailable fields for each channel
+        function synchronize_fields(chan_name) {
+            $('#' + chan_name + '_titlepost').val(($('#titlepost')).val());
+            $('#' + chan_name + '_descriptionpost').val(($('#descriptionpost')).val());
+            $('#' + chan_name + '_linkurlpost').val(($('#linkurlpost')).val());
+            $('#' + chan_name + '_imagepost').val(($('#imagepost')).val());
+            $('#' + chan_name + '_datefrompost').val(($('#datefrompost')).val());
+            $('#' + chan_name + '_dateuntilpost').val(($('#dateuntilpost')).val());
+        }
         $('input.checkbox').change(function () {
             var nbselected = $('input.checkbox:checked').length;
             if(nbselected ==0){
@@ -175,17 +183,19 @@
                $("#publish-button").prop('disabled', false);
             }
 
-            nameC=$(this).attr('data-namechan');
-            fields = $(this).attr('data-unavailablefields');
-            split = fields.split(',');
+            var nameC = $(this).attr('data-namechan');
+            var fields = $(this).attr('data-unavailablefields');
+            var split = fields.split(',');
             if ($(this).is(':checked')) {
                 //If the channel is selected
                 $(this).addClass('checked');
-                for(var i = 0; i < split.length; i++) {
-                    $("input[id='"+nameC+"_"+ $('#'+split[i].toLowerCase()+'post').attr('id') + "']").prop('disabled', true);
-                    $("textarea[id='"+nameC+"_"+ $('#'+split[i].toLowerCase()+'post').attr('id') + "']").prop('disabled', true);
+                synchronize_fields(nameC);
+                for (var i = 0; i < split.length; i++) {
+                    var field_id = $('#'+split[i].toLowerCase()+'post').attr('id');
+                    $("input[id='" + nameC + "_" +  + "']").prop('disabled', true);
+                    $("textarea[id='" + nameC + "_" + field_id + "']").prop('disabled', true);
 
-                    $("label[for='"+nameC+"_"+ $('#'+split[i].toLowerCase()+'post').attr('id') + "']").append('<a href="#" data-toggle="popover" title="Unavailable field" data-content="This field is unavailable for channel ' + nameC +'"><i class="fas fa-exclamation-circle" style="color:orange"></i></a>');
+                    $("label[for='" + nameC + "_" + field_id + "']").append('<a href="#" data-toggle="popover" title="Unavailable field" data-content="This field is unavailable for channel ' + nameC +'"><i class="fas fa-exclamation-circle" style="color:orange"></i></a>');
 
                 }
                 $('[data-toggle="popover"]').popover();
@@ -193,73 +203,15 @@
             } else {
                 //If the channel is not selected
                 $(this).removeClass('checked');
-                for(var i = 0; i < split.length; i++) {
-                    $("input[id='"+nameC+"_"+ $('#'+split[i].toLowerCase()+'post').attr('id') + "']").prop('disabled', false);
-                    $("textarea[id='"+nameC+"_"+ $('#'+split[i].toLowerCase()+'post').attr('id') + "']").prop('disabled', false);
-                    $("label[for='"+nameC+"_"+ $('#'+split[i].toLowerCase()+'post').attr('id') + "'] > a").remove();
+                for (var i = 0; i < split.length; i++) {
+                    var field_id = $('#'+split[i].toLowerCase()+'post').attr('id');
+                    $("input[id='" + nameC + "_" + field_id + "']").prop('disabled', false);
+                    $("textarea[id='" + nameC + "_" + field_id + "']").prop('disabled', false);
+                    $("label[for='" + nameC + "_" + field_id + "'] > a").remove();
                 }
                 $('#li_'+nameC).hide();
             }
         });
-        // From here, I copy a field ONCE from general to all the equivalent fields of each channel
-        //It works but it's not really sexy to rewrite this for all fields of general tab
-        $('#titlepost').one("change",function(event){
-            text = ($(this).val());
-            //This is a subselect of input that match with the regex .*titlepost
-            $('input')
-                .filter(function() {
-                    return this.id.match(/.*titlepost/);
-                })
-                .val(text);
-        });
-        $('#descriptionpost').one("change",function(event){
-            text = ($(this).val());
-            //This is a subselect of input that match with the regex .*descriptionpost
-            $('textarea')
-                .filter(function() {
-                    return this.id.match(/.*descriptionpost/);
-                })
-                .val(text);
-        });
-        $('#linkurlpost').one("change",function(event){
-            text = ($(this).val());
-            //This is a subselect of input that match with the regex .*linkurlpost
-            $('input')
-                .filter(function() {
-                    return this.id.match(/.*linkurlpost/);
-                })
-                .val(text);
-        });
-        $('#imagepost').one("change",function(event){
-            text = ($(this).val());
-            //This is a subselect of input that match with the regex .*imagepost
-            $('input')
-                .filter(function() {
-                    return this.id.match(/.*imagepost/);
-                })
-                .val(text);
-        });
-        $('#dateuntilpost').one("change",function(event){
-            text = ($(this).val());
-            //This is a subselect of input that match with the regex .*dateuntilpost
-            $('input')
-                .filter(function() {
-                    return this.id.match(/.*dateuntilpost/);
-                })
-                .val(text);
-        });
-        $('#datefrompost').one("change",function(event){
-            text = ($(this).val());
-            //This is a subselect of input that match with the regex .*datefrompost
-            $('input')
-                .filter(function() {
-                    return this.id.match(/.*datefrompost/);
-                })
-                .val(text);
-        });
-
-
-
     </script>
 
 {% endblock %}
