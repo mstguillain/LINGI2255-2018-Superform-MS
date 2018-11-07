@@ -1,3 +1,5 @@
+import json
+
 from flask import Blueprint, current_app, url_for, request, make_response, redirect, session, render_template
 
 from superform.utils import login_required, get_instance_from_module_path, get_modules_names, get_module_full_name
@@ -5,6 +7,14 @@ from superform.models import db, Channel
 import ast
 
 channels_page = Blueprint('channels', __name__)
+
+
+def valid_conf(config, fields):
+    config_json = json.loads(config)
+    for field in fields:
+        if field not in config_json:
+            return False
+    return True
 
 
 @channels_page.route("/channels", methods=['GET', 'POST'])
