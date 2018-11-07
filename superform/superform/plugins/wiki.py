@@ -32,7 +32,7 @@ def makeText(publishing):
     print(date_from)
 
     suite = "Par " + author + " Publie le " +date_from+"\n"
-    corps = str(publishing.description) + "\n"
+    corps = str(publishing.description).replace("\n","[[<<]]") + "\n"
 
     link_url = "-----"+"[["+publishing.link_url+"]]"+"\n"
     image_url = publishing.image_url
