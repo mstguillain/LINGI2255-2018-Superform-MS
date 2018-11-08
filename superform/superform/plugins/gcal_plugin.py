@@ -1,7 +1,11 @@
-import facebook
+from __future__ import print_function
 from flask import current_app, session, flash
 from superform.models import db, User
 import json
+import datetime
+from googleapiclient.discovery import build
+from httplib2 import Http
+from oauth2client import file, client, tools
 
 FIELDS_UNAVAILABLE = []
 
@@ -14,21 +18,30 @@ CFG = {
 
 
 def run(publishing, channel_config):
-    json_data = json.loads(channel_config)
+    # If modifying these scopes, delete the file token.json.
+    SCOPES = 'https://www.googleapis.com/auth/calendar'
 
-    if (CFG['page_id'] == "UNDEFINED"):
-        CFG['page_id'] = json_data['page_id']
+    store = file.Storage('token.json')
+    creds = store.get()
+    if not creds or creds.invalid:
+        flow = client.flow_from_clientsecrets('credentials.json', SCOPES)
+        creds = tools.run_flow(flow, store)
+    service = build('calendar', 'v3', http=creds.authorize(Http()))
 
-    if (CFG['access_token'] == "UNDEFINED"):
-        CFG['access_token'] = setToken(CFG['page_id'])  # Check fb_cred in table User for corresponding access_token
+    # Call the Calendar API
+    now = datetime.datetime.utcnow().isoformat() + 'Z'  # 'Z' indicates UTC time
+    print('Getting the upcoming 10 events')
+    events_result = service.events().list(calendarId='primary', timeMin=now,
+                                          maxResults=20, singleEvents=True,
+                                          orderBy='startTime').execute()
+    events = events_result.get('items', [])
 
-    if (CFG['access_token'] == "ACCESS_TOKEN_NOT_FOUND"):
-        # May happen in two cases
-        # 1) the user has not generated its token yet
-        # 2) the user try to publish to a FB page he/she doesn't own
-        print("NO TOKEN FOUND")
+    if not events:
+        print('No upcoming events found.')
+    for event in events:
+        start = event['start'].get('dateTime', event['start'].get('date'))
+        print(start, event['summary'])
 
-    api = get_api(CFG)
 
     # On chope le message dans le champ description du post.
     title = publishing.title
@@ -38,41 +51,49 @@ def run(publishing, channel_config):
     date_begin = publishing.date_from
     date_end = publishing.date_until
 
-    id = publish(title + '\n' + body + '\n' + link + '\n' + image)
+    event = {
+        'summary': publishing.title,
+        'location': '800 Howard St., San Francisco, CA 94103',
+        'description': publishing.description,
+        'start': {
+            'dateTime': '2018-11-15T09:00:00-07:00',
+            'timeZone': 'America/Los_Angeles',
+        },
+        'end': {
+            'dateTime': '2018-12-15T17:00:00-07:00',
+            'timeZone': 'America/Los_Angeles',
+        },
+        'recurrence': [
+            'RRULE:FREQ=DAILY;COUNT=2'
+        ],
+        'attendees': [
+            {'email': 'lpage@example.com'},
+            {'email': 'sbrin@example.com'},
+        ],
+        'reminders': {
+            'useDefault': False,
+            'overrides': [
+                {'method': 'email', 'minutes': 24 * 60},
+                {'method': 'popup', 'minutes': 10},
+            ],
+        },
+    }
 
+    id = publish(event,service)
 
-def publish(message):
+def publish(event,service):
     """
     Publie sur le compte et renvoie l'id de la publication
     """
-    api = get_api(CFG)
-    status = api.put_object(parent_object='me', connection_name='feed', message=message)
-    return status['id']
 
+    event = service.events().insert(calendarId='primary', body=event).execute()
+    print ('Event created: %s' % (event.get('htmlLink'))) #TODO Delete when finished debugging
+    return event.get('htmlLink')
 
 def delete(id):
     """
     Supprime la publication
     """
-    api = get_api(CFG)
-    api.delete_object(id)
-
-
-def get_api(cfg):
-    graph = facebook.GraphAPI(cfg['access_token'])
-    # Get page token to post as the page. You can skip
-    # the following if you want to post as yourself.
-    """resp = graph.get_object('me/accounts')
-    page_access_token = None
-    for page in resp['data']:
-        if page['id'] == cfg['page_id']:
-        page_access_token = page['access_token']
-        """
-    graph = facebook.GraphAPI(cfg['access_token'])
-    return graph
-    # You can also skip the above if you get a page token:
-    # http://stackoverflow.com/questions/8231877/facebook-access-token-for-pages
-    # and make that long-lived token as in Step 3
 
 
 def setToken(goal_page_id):
