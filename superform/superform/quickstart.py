@@ -41,7 +41,7 @@ def main():
             'timeZone': 'America/Los_Angeles',
         },
         'end': {
-            'dateTime': '2018-11-15T17:00:00-07:00',
+            'dateTime': '2018-12-15T17:00:00-07:00',
             'timeZone': 'America/Los_Angeles',
         },
         'recurrence': [
