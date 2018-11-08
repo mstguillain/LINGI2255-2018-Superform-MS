@@ -32,7 +32,7 @@ def makeText(publishing):
         author = publishing.get_author()
     except AttributeError:
         author = "Superform"
-    #date = str(publishing.date_from).split()[0]
+
     date = str(datetime.datetime.now().strftime("%d/%m/%Y"))
 
     suite = "Par " + author + " Publie le " + date +"\n"
@@ -54,7 +54,7 @@ def run(publishing,channel_config):
 
     pageName = "News."+str(publishing.title).replace(" ","")
     text = makeText(publishing)
-    data = {"n": pageName, "text": text, "action": "edit", "post": "1","basetime": math.floor(time.time())}
+    data = {"n": pageName, "text": text, "action": "edit", "post": "1","authid": authid,"authpw":authpw,"basetime": math.floor(time.time())}
     # r2 = requests.post("http://localhost/pmwiki-2.2.109/pmwiki.php?n=Main.Essai_nono&action=edit&text=Hello%20World&post=1", data)
 
     r2 = requests.post("http://localhost/pmwiki-2.2.109/pmwiki.php", data)
