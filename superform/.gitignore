@@ -7,7 +7,5 @@
 .pytest_cache/*
 /superform/.cache/*
 /superform/.pytest_cache/*
-*/.DS_Store
-*.DS_Store
+/superform/superform/.DS_Store
 /superform/superform/superform.db
-*credentials.json
