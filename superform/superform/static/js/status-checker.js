@@ -1,165 +1,83 @@
 /*
 * CUSTOM BY GROUP 10
 */
-
-MAX_LENGTH_TWEET = 280;
-COUNT_TWEET = 1;
+PLUGINS_TO_CHECK = ["mail","wiki", "twitter"];
 
 statusChecker = {
-    lenTitle : 0, // Length of a post title
-    lenContent : 0, //Length of a post content
-    lenUrl : 0, // Length of a post's link url
-    JSONTwitterContent : 'undefined', //The JSON passes for Twitter
-    twitterChecked : false,  //Boolean to verify if the post will be published on Twitter
-    wikiChecked : false, // Boolean to verify if the post will be published on Wiki
-    canPublishing : false, // To disable or not the publish button
-    statusCheckerValue : 'hey',
-    checking : function() {}, // General listener method ( declaration)
-    twitter : function() {},  // Add statusChecker if a twitter plugin is checked (declaration)
-    wiki : function() {},  // Add statusChecker if a wiki plugin is checked (declaration)
-
-    // Getters
-    get lengthTitle() {
-        return this.lenTitle;
-    },
+    _lengthTitle : 0,
+    _lengthContent : 0,
+    _lengthURL : 0,
+    _pluginChecked : new Array(),
+    checking : function() {},
+    //Getters
     get lengthContent() {
-        return this.lenContent;
+        return this._lengthContent;
     },
-    get lengthUrl() {
-        return this.lenUrl;
+    get lengthTitle() {
+        return this._lengthTitle;
     },
-    get JSONTwitter() {
-        return this.JSONTwitterContent;
+    get lengthURL() {
+        return this._lengthURL;
     },
-    get twitterCheck() {
-        return this.twitterChecked;
-    },
-    get wikiCheck() {
-        return this.wikiChecked;
-    },
-    get canPublish() {
-        return this.canPublishing;
+    get pluginChecked() {
+        return this._pluginChecked;
     },
 
-    // Setters
-    set lengthTitle(val) {
-        this.lenTitle = val;
-        this.checking();
-    },
-    set lengthUrl(val) {
-        this.lenUrl = val;
-        this.checking();
-    },
+    //Setters
     set lengthContent(val) {
-        this.lenContent = val;
+        this._lengthContent = val;
         this.checking();
     },
-    set JSONTwitter(val) {
-        this.JSONTwitterContent = val;
-    },
-    set twitterCheck(val) {
-        this.twitterChecked = val;
+    set lengthTitle(val) {
+        this._lengthTitle = val;
         this.checking();
     },
-    set wikiCheck(val) {
-        this.wikiChecked = val;
+     set lengthURL(val) {
+        this._lengthURL = val;
         this.checking();
     },
-    set canPublish(val) {
-        this.canPublishing = val;
+    set pluginChecked(val) {
+        this._pluginChecked = val;
         this.checking();
     },
     checking : function(listener) {
         this.checking = listener;
-    },
-    twitter : function(listener) {
-        this.twitter = listener;
-    }
-}
-
-// General listener implementation
-statusChecker.checking(function() {
-
-    // For Twitter
-    if (statusChecker.twitterCheck) {
-       if($("#status-twitter").length == 0)  // If it doesn't exist, create it
-        $("#status-content").append("<ul class=\"list-group\" id=\"status-twitter\"><li class=\"list-group-item active\">Twitter</li> </ul>");
-       this.twitter();
-    }
-    else  {
-       $("#status-twitter").remove();
-    }
-
-    // For wiki
-    if (statusChecker.wikiCheck) {
-        statusChecker.wiki();
-    }
-    else {
-         //console.log("Add here hidden statusChecker");
-    }
-});
-
-
-// Update front-end statusChecker for Twitter
-statusChecker.twitter(function() {
-    if (this.lenTitle > 0) {
-        if ($("#tweet-title").length == 0)
-            $("#status-twitter").append("<li class=\"list-group-item\" id=\"tweet-title\"></li>");
-
-        $("#tweet-title").html("The title will be not displayed on Twitter");
-    }
-    else {
-        $("#tweet-title").remove();
-    }
-
-    if (this.lenContent > 280)
-    {
-        if ($("#tweet-too-long").length == 0)
-            $("#status-twitter").append("<li class=\"list-group-item\" id=\"tweet-too-long\"></li>");
-
-        $("#tweet-too-long").html("If you hit publish, this post will be split in multiple tweets");
-        renderTweet(true);
-    }
-    else
-    {
-       $("#tweet-too-long").remove();
-       //renderTweet(false);
-    }
-});
-
-function renderTweet(isActive) {
-    if (isActive) {
-        var lengthText=  $('#descriptionpost').val().length;
-        //console.log(lengthText);
-        while (lengthText > 280) {
-           COUNT_TWEET = COUNT_TWEET + 1;
-           var text1 = $("#descriptionpost").val().substring(0,280);
-           var text2 =  $("#descriptionpost").val().substring(280, $("#descriptionpost").val().length);
-           lengthText = lengthText - 280;
-           $("#descriptionpost").val(text2);
-           $('<div class="content-split"><br/><textarea class="form-control tweet-'+COUNT_TWEET+'" rows="5" name="descriptionpost" maxlength="'+MAX_LENGTH_TWEET+'">'+text1+'</textarea><br/><br/></div>').insertBefore('#descriptionpost');
-        }
-    }
-    else {
-        console.log("HERE");
-        var tweet = 1;
-        var text = '';
-        while (COUNT_TWEET != tweet) {
-            text = text + $("#tweet-"+tweet).val();
-            tweet = tweet + 1;
-        }
-       //console.log(text);
-       text = text + $("#description").val();
-       $("#description").val(text);
     }
 }
 
 
+/*
+*  Main function, checking every plugin check to update front-end status
+*/
+statusChecker.checking(function(){
+    PLUGINS_TO_CHECK.forEach(function(item, index) {
+        removeStatusBox(item);
+    });
 
-// Update front end statusChecker for Wiki
-statusChecker.wiki(function() {
-    console.log("Wiki here");
+    this._pluginChecked.forEach(function(item, index){
+        addStatusBox(item);
+        window[item]();
+    });
 });
+
+
+function twitter() {
+    if (statusChecker.lengthContent > 280) {
+        addStatus("twitter","If you hit publish, this post will be split in multiple tweets","tweet-too-long");
+    }
+    else {
+        removeStatus("tweet-too-long");
+    }
+
+}
+
+function mail() {
+    addStatus("mail", "TODO", "thisid");
+}
+
+function wiki() {
+    addStatus("wiki", "TODO", "thisid");
+}
 
 
 
@@ -171,21 +89,16 @@ statusChecker.wiki(function() {
 // Every checkbox for each plugin implemented by Group 10 ( you can add here )
 
 $('input.checkbox').change(function () {
-
-    if ($(this).is(":checked")){
-        if ($(this).hasClass('superform.plugins.twitter')) {
-           statusChecker.twitterCheck = true;
+    var hisClass = $(this).attr("class").split(" ");
+    var plugin = hisClass[2].split(".")[2];
+    if (isInArray(PLUGINS_TO_CHECK, plugin)) {
+        if (($(this).is(":checked")) && isInArray(statusChecker.pluginChecked, plugin) == false ) {
+           var tb = statusChecker.pluginChecked;
+           tb.push(plugin);
+           statusChecker.pluginChecked = tb;
         }
-        if ($(this).hasClass('superform.plugins.wiki')) {
-            statusChecker.wikiCheck = true;
-        }
-    }
-    else {
-        if ($(this).hasClass('superform.plugins.twitter')) {
-           statusChecker.twitterCheck = false;
-        }
-        if ($(this).hasClass('superform.plugins.wiki')) {
-           statusChecker.wikiCheck = false;
+        else if ($(this).is(":checked") == false && isInArray(statusChecker.pluginChecked, plugin) == true) {
+            statusChecker.pluginChecked = removeFromArray(statusChecker.pluginChecked, plugin);
         }
     }
 });
@@ -196,7 +109,7 @@ $( "#titlepost" ).on('input', function() {
 });
 
 // Content
-$( "#descriptionpost" ).on('input', function() {
+$( "#descriptionpost" ).on('input', function() { //TO DO REFACTOR FOR TWITTER
     statusChecker.lengthContent = $(this).val().length;
 });
 
@@ -207,54 +120,48 @@ $( "#linkurlpost" ).on('input', function() {
 
 
 
-
 /*
-statusChecker = {
-    lengthDescription : 0,
-    lengthUrl : 0,
-    twitterChecked : false,
-    wikiChecked : false,
-    lengthListener : function(val, isTwitterChecked) {},
-    set lengthContent(val) {
-        this.lengthDescription = val;
-        this.lengthListener(val + 1 + this.lengthUrl, this.checked);
-    },
-    get lengthContent() {
-        return this.lengthDescription;
-    },
-    set lengthLinkUrl(val) {
-        this.lengthUrl = val;
-        this.lengthListener(this.lengthDescription + 1 + val, this.checked);
-    },
-     get lengthLinkUrl() {
-        return this.lengthUrl;
-    },
-    set isTwitterChecked(val) {
-        this.checked = val;
-        this.lengthListener(this.lengthDescription + 1 + this.lengthUrl, this.checked);
-    },
-    get isTwitterChecked() {
-        return this.checked;
-    },
-    lengthListener : function(listener) {
-        this.lengthListener = listener;
+* Utility functions
+*/
+
+function addStatusBox(name) {
+    var title = name.substring(0,1).toUpperCase() + name.substring(1,name.length);
+    if($("#status-"+name).length == 0)  { // If it doesn't exist, create it
+        $("#status-content").append("<ul class=\"list-group\" id=\"status-"+name+"\"><li class=\"list-group-item active\">"+title+"</li> </ul>");
     }
 }
 
-tweetChecker.lengthListener(function (val, isTwitterChecked) {
-    if (val > 280 && isTwitterChecked)
-    {
-        document.getElementById("statusChecker-content").innerHTML = "If you hit publish, this post will be split in multiple tweets";
+function removeStatusBox(name) {
+    $("#status-"+name).remove();
+}
+
+function addStatus(plugin, text, id) {
+    if ($("#"+id).length == 0) { // If it doesn't exist, create it
+         $("#status-"+plugin).append("<li class=\"list-group-item\" id=\""+plugin+"-"+id+"\">"+text+"</li>");
     }
-    else
-    {
-        document.getElementById("statusChecker-content").innerHTML = "Content";
+}
+
+function removeStatus(plugin, id) {
+    if ($("#"+id).length != 0) { // If it doesn't exist, create it
+         $("#status-"+plugin+"-"+id).remove();
     }
+}
 
-});
+// Utily function for array
+function isInArray(tb, value) {
+    var isIn = false;
+    tb.forEach(function(item, index) {
+        if (item.localeCompare(value) == 0)
+            isIn = true;
+    });
+    return isIn;
+}
 
-
-
-
-
-*/
+function removeFromArray(tb, value) {
+    tb2 = new Array();
+    tb.forEach(function(item, index) {
+        if (item != value)
+            tb2.push(item);
+    });
+    return tb2;
+}
