@@ -1,7 +1,7 @@
 import os
 import sys
 import tempfile
-from datetime import datetime
+import datetime
 import string
 import random
 from twitter import twitter_utils
@@ -16,6 +16,8 @@ from superform.plugins import wiki
 FIELDS_UNAVAILABLE = []
 CONFIG_FIELDS = ["username","password"]
 
+
+#Test de la fonction qui decoupe un publishing et la mets dans le bon format
 def test_makeText():
     pub = Publishing()
     pub.user_id= "me myself and I"
@@ -30,13 +32,14 @@ def test_makeText():
     pub.channel_id='wiki'
 
     text = wiki.makeText(pub)
-    tab_of_text=text.split()
+    tab_of_text=text.splitlines()
+    date = str(datetime.datetime.now().strftime("%d/%m/%Y"))
 
-    assert tab_of_text[0] == "Par " + "Superform" + " Publie le " + pub.date
+    assert tab_of_text[0]=="!! " + pub.title
+    assert tab_of_text[1] == "-----" + "Par " + "Superform" + " Publie le " + date
+    assert tab_of_text[2]==  str(pub.description).replace("\n","[[<<]]")
+    assert tab_of_text[3]== "-----"+"[["+pub.link_url+"]]"
 
-    assert tab_of_text[1]== "-----" + str(publishing.description).replace("\n","[[<<]]")
 
 
-
-    assert True == True
 
