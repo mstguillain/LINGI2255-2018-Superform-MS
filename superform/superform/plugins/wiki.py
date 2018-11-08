@@ -29,6 +29,8 @@ CONFIG_FIELDS = ["username","password"]
 def makeText(publishing):
     titre = "!! " + publishing.title + "\n"
     author = publishing.get_author()
+    if( author is None):
+        author = "Superform"
     #date = str(publishing.date_from).split()[0]
     date = str(datetime.datetime.now().strftime("%d/%m/%Y"))
 
@@ -43,6 +45,8 @@ def makeText(publishing):
     return text
 
 def run(publishing,channel_config):
+
+
     json_data = json.loads(channel_config)
     authid= json_data['username'] # à rajouter dans configuration de la channel sur superform sinon ne marche pas...
     authpw = json_data['password'] # à rajouter dans configuration de la channel sur superform sinon ne marche pas...
