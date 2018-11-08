@@ -28,8 +28,9 @@ CONFIG_FIELDS = ["username","password"]
 
 def makeText(publishing):
     titre = "!! " + publishing.title + "\n"
-    author = publishing.get_author()
-    if( author is None):
+    try :
+        author = publishing.get_author()
+    except AttributeError:
         author = "Superform"
     #date = str(publishing.date_from).split()[0]
     date = str(datetime.datetime.now().strftime("%d/%m/%Y"))
