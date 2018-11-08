@@ -72,9 +72,6 @@ def configure_channel(id):
                 return linkedin_plugin(id, c, m, clas, config_fields)
         return render_template("channel_configure.html", channel = c,
                                config_fields = config_fields)
-    if request.form['toLK'] == 'toLK':
-        print('lol')
-        return redirect(url_for('channels.configure_channel', id = id))
     str_conf = "{"
     cfield = 0
     for field in config_fields:
@@ -116,6 +113,8 @@ def linkedin_return():
     """
     ref = request.url
     code = ""
+    resp = redirect(url_for('channels.channel_list'))
+
     if ref.startswith("http://localhost:5000/configure/linkedin?code"):
         i = ref.find("state", 46)
         code = ref[46:i - 1]
@@ -128,8 +127,8 @@ def linkedin_return():
         if last_access_token is None:
             print("no token !")
 
-    resp = redirect(url_for('channels.configure_channel', id = ch_id))
-    resp.set_cookie(LAST_ACCESS_TOKEN, last_access_token.access_token)
-    resp.set_cookie(LAST_CHANNEL_ID, last_channel_id)
-    resp.set_cookie(LAST_CREATION_TIME, last_creation_time)
+        resp = redirect(url_for('channels.configure_channel', id = ch_id))
+        resp.set_cookie(LAST_ACCESS_TOKEN, last_access_token.access_token)
+        resp.set_cookie(LAST_CHANNEL_ID, last_channel_id)
+        resp.set_cookie(LAST_CREATION_TIME, last_creation_time)
     return resp

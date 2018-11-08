@@ -11,7 +11,6 @@ def channels_available_for_user(userid):
         Authorization.user_id == userid)
     for auth in auths:
         chans.append(db.session.query(Channel).get(auth.channel_id))
-
     return chans
 
 
