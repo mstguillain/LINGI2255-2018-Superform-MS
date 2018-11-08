@@ -29,7 +29,7 @@ def moderate_publishing(id,idc):
             pub.date_until = datetime_converter(request.form.get('dateuntilpost'))
             #state is shared & validated
             #running the plugin here
-            c=db.session.query(Channel).filter(Channel.name == pub.channel_id).first()
+            c=db.session.query(Channel).filter(Channel.id == pub.channel_id).first()
             plugin_name = c.module
             c_conf = c.config
             from importlib import import_module

@@ -15,20 +15,6 @@ from superform.models import Channel, db
 ## log in : tip.hon2014@gmail.com
 ## pwd : PwdForTeam06
 
-@pytest.fixture
-def client():
-    app.app_context().push()
-    db_fd, app.config['DATABASE'] = tempfile.mkstemp()
-    app.config['TESTING'] = True
-    client = app.test_client()
-
-    with app.app_context():
-        db.create_all()
-
-    yield client
-
-    os.close(db_fd)
-    os.unlink(app.config['DATABASE'])
 
 def test_run_linkedin():
     pub = Publishing()
@@ -39,12 +25,14 @@ def test_run_linkedin():
     pub.image_url = 'image url'
     pub.date_until = '14.02.19'
     pub.state = 1
-
+    print("le test run linkedin est launched")
     linkedIn_Channel = db.session.query(Channel).filter(Channel.module == "superform.plugins.LinkedIn").first()
     if(linkedIn_Channel is None):
         print("LinkedIn test failed since the db contains no LinkedIn channel") #TODO pytest test_ignore ?
     else:
         channel_config=linkedIn_Channel.config
+        json_data = json.loads(channel_config)
+        pub.channel_id = json_data['id']
         status = linkedin.run(pub, channel_config)
         assert status == "Post successful"
 
@@ -53,7 +41,20 @@ def test_run_linkedin():
 ################################# This part is not functional ##############################################
 ############################################################################################################
 #
-#     pub.channel_id='Twitter'
+# @pytest.fixture
+# def client():
+#     app.app_context().push()
+#     db_fd, app.config['DATABASE'] = tempfile.mkstemp()
+#     app.config['TESTING'] = True
+#     client = app.test_client()
+#
+#     with app.app_context():
+#         db.create_all()
+#
+#     yield client
+#
+#     os.close(db_fd)
+#     os.unlink(app.config['DATABASE'])
 #
 # authorization_code = "AQTPNbuFxfPw7REPJppr-1m3erCFDDJek21lsLWoLX1cDKdCB7fdjYyfGlBfGxippwiL2blrubQZyxo17HISoOayzHQ2fMlkPLlUxFMRoAntFbEJxMkbZMJyHsVe2uJx8eK1HjbpXTFhcsik8Pa_9Jneb1DqBWYgP9YZbZpVRgNs2yFT7O1LftZ6PbK5yQ"
 # acces_token = "AQXDaUq7kmBz1CvrShflgk_mFRlXYq9tHHVgUzgGnGcvQEt7Pag2XtGgZiEnenjlZk1zrQXiEAB-U92SBoQVdNWKfx6LDcPVCJX4yRNyM7c0icEGexYqAQcFKRTnyflTgBuFo2ozTeuTwOY4xFe1iW51-Ph9cD25GVEHFapMVRj2oz-o2dkxanAW-cnzrQSkccOiW_aIrJqH-WsS37viS91mTRK9syXJbvCMHu4GwI4BwUsUJ9pfaal3X1U0Dmy-LmgnvHNW7utMZQdhUa2v7mTaIebdkXYJ__39p-OzIUXnDA_KtFHMsCj14PZ1lQTkGSO4dnkP7kx2VP8pLJRoyKuQWoUONA"
