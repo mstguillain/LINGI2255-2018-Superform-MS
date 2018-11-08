@@ -1,5 +1,8 @@
+import configparser
 import json
+import string
 import traceback
+import random
 
 from flask import request, render_template
 from linkedin import linkedin  # from python3-linkedin library
@@ -9,6 +12,34 @@ FIELDS_UNAVAILABLE = ['Title', 'Description']
 CONFIG_FIELDS = []  # Unused for now. But could be used to refresh dynamically the access token
 
 
+# TODO read credentials out of the linkedin_config.ini
+
+def getClientID(path):
+    config = configparser.RawConfigParser()
+    config.read('path')
+    return config.get('Credentials', 'CLIENT_ID')
+
+
+def getClientSecret(path):
+    config = configparser.RawConfigParser()
+    config.read('path')
+    return config.get('Credentials', 'CLIENT_SECRET')
+
+
+def printID():
+    print(getClientID())
+
+
+def id_generator(size = 6, chars = string.ascii_uppercase + string.digits):
+    """
+    Generate a random string of 6 characters
+    :param size: size
+    :param chars: the type of characters (here uppercase and digits)
+    :return: string
+    """
+    return ''.join(random.choice(chars) for _ in range(size))
+
+
 def linkedin_plugin(id, c, m, clas, config_fields):
     """
     Launched by channels.configure_channel(id) when the configure page
@@ -16,8 +47,9 @@ def linkedin_plugin(id, c, m, clas, config_fields):
     the REDIRECT_LINK which is used in the linkedin_configuration.html
     and calls the render_template() function.
     """
-    state = "id_" + str(id) + "rest_12345"
+    state = "id_" + str(id) + "rest_" + id_generator()
     RETURN_URL = 'http://localhost:5000/configure/linkedin'
+
     CLIENT_ID = '77p0caweo4t3t9'
     CLIENT_SECRET = 'uQVYTN3pDewuOb7d'
     REDIRECT_LINK = "https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=" \
