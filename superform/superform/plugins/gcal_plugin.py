@@ -7,49 +7,27 @@ from googleapiclient.discovery import build
 from httplib2 import Http
 from oauth2client import file, client, tools
 
-FIELDS_UNAVAILABLE = []
 
-CONFIG_FIELDS = ["page_id"]
+FIELDS_UNAVAILABLE = ['Image']
 
-CFG = {
-    "page_id": "UNDEFINED",  # Step 1
-    "access_token": "UNDEFINED"
-}
+def get_user_credentials():
+    user = User.query.get(session["user_id"])
+    return client.OAuth2Credentials.from_json(json.loads(user.gcal_cred)) if user.gcal_cred else None
 
+def set_user_credentials(creds):
+   user = User.query.get(session["user_id"])
+   user.gcal_cred = creds.to_json().stringify()
 
 def run(publishing, channel_config):
     # If modifying these scopes, delete the file token.json.
     SCOPES = 'https://www.googleapis.com/auth/calendar'
 
-    store = file.Storage('token.json')
-    creds = store.get()
+    creds = get_user_credentials()
     if not creds or creds.invalid:
         flow = client.flow_from_clientsecrets('credentials.json', SCOPES)
-        creds = tools.run_flow(flow, store)
+        creds = tools.run_flow(flow, file.Storage('token.json'))
+        set_user_credentials(creds)
     service = build('calendar', 'v3', http=creds.authorize(Http()))
-
-    # Call the Calendar API
-    now = datetime.datetime.utcnow().isoformat() + 'Z'  # 'Z' indicates UTC time
-    print('Getting the upcoming 10 events')
-    events_result = service.events().list(calendarId='primary', timeMin=now,
-                                          maxResults=20, singleEvents=True,
-                                          orderBy='startTime').execute()
-    events = events_result.get('items', [])
-
-    if not events:
-        print('No upcoming events found.')
-    for event in events:
-        start = event['start'].get('dateTime', event['start'].get('date'))
-        print(start, event['summary'])
-
-
-    # On chope le message dans le champ description du post.
-    title = publishing.title
-    body = publishing.description
-    link = publishing.link_url
-    image = publishing.image_url
-    date_begin = publishing.date_from
-    date_end = publishing.date_until
 
     event = {
         'summary': publishing.title,
@@ -78,7 +56,6 @@ def run(publishing, channel_config):
             ],
         },
     }
-
     id = publish(event,service)
 
 def publish(event,service):
@@ -94,18 +71,3 @@ def delete(id):
     """
     Supprime la publication
     """
-
-
-def setToken(goal_page_id):
-    user = User.query.get(session["user_id"])
-    credentials = user.fb_cred
-    print(credentials)
-    if credentials != None:
-        splitted = credentials.split(",")  # Split fb_cred to give us tuple page_id|access_token
-        for elem in splitted:
-            page_and_token = elem.split("|")  # Split page_id|access_token
-            if (page_and_token[0] == goal_page_id):  # If page id from credentials is the one we're looking for
-                return page_and_token[1]
-    else:
-        flash('please log out and login, no facebook token found on the database')
-    return "ACCESS_TOKEN_NOT_FOUND"
