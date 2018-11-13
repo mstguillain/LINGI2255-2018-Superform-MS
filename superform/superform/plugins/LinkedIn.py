@@ -1,4 +1,3 @@
-import configparser
 import json
 import string
 import traceback
@@ -7,86 +6,94 @@ import random
 from flask import request, render_template
 from linkedin import linkedin  # from python3-linkedin library
 
+#########################
+## credentials reading ##
+#########################
+import configparser
+from pathlib import Path
+import sys
+
 FIELDS_UNAVAILABLE = ['Title', 'Description']
 
 CONFIG_FIELDS = []  # Unused for now. But could be used to refresh dynamically the access token
 
 
-# TODO read credentials out of the linkedin_config.ini
+########################
+## template rendering ##
+########################
 
-def getClientID(path):
-    config = configparser.RawConfigParser()
-    config.read('path')
-    return config.get('Credentials', 'CLIENT_ID')
-
-
-def getClientSecret(path):
-    config = configparser.RawConfigParser()
-    config.read('path')
-    return config.get('Credentials', 'CLIENT_SECRET')
-
-
-def printID():
-    print(getClientID())
-
-
-def id_generator(size = 6, chars = string.ascii_uppercase + string.digits):
-    """
-    Generate a random string of 6 characters
-    :param size: size
-    :param chars: the type of characters (here uppercase and digits)
-    :return: string
-    """
-    return ''.join(random.choice(chars) for _ in range(size))
-
-
-def linkedin_plugin(id, c, m, clas, config_fields):
+def linkedin_plugin(id, c, config_fields):
     """
     Launched by channels.configure_channel(id) when the configure page
     is reached and the channel is from the LinkedIn module. It creates
-    the REDIRECT_LINK which is used in the linkedin_configuration.html
+    the redirect_link which is used in the linkedin_configuration.html
     and calls the render_template() function.
+    :param id: id of the channel; used to create the redirect_link
+    :param c: the channel object; used to pass the information to the template
+    :param config_fields: configuration fields; used to pass the information to the template
+    :return: creates the template
     """
     state = "id_" + str(id) + "rest_" + id_generator()
-    RETURN_URL = 'http://localhost:5000/configure/linkedin'
+    return_url = 'http://localhost:5000/configure/linkedin'
+    client_id = "no client id"
 
-    CLIENT_ID = '77p0caweo4t3t9'
-    CLIENT_SECRET = 'uQVYTN3pDewuOb7d'
-    REDIRECT_LINK = "https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=" \
-                    + CLIENT_ID + "&redirect_uri=" + RETURN_URL + "&state=" + state
-    RETURN_URL += str(id)
+    try:
+        client_id = get_client_id()
+    except FileNotFoundError:
+        print(
+            "linkedin.ini file not found. Please check that the linkedin.ini "
+            "file is placed in the superform/plugins folder.")
+
+    redirect_link = "https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=" \
+                    + client_id + "&redirect_uri=" + return_url + "&state=" + state
     return render_template("linkedin_configuration.html",
                            channel = c,
                            config_fields = config_fields,
-                           redirect = REDIRECT_LINK)
+                           redirect = redirect_link)
 
 
-def get_basic_authentication():
-    """ Get the access to the LinkedIn account and links to the
-     python3-linkedin library """
-    CLIENT_ID = '77p0caweo4t3t9'
-    CLIENT_SECRET = 'uQVYTN3pDewuOb7d'
-    RETURN_URL = 'http://localhost:5000/configure/linkedin'
+############################
+## authentication process ##
+############################
+
+def get_linkedin_authentication():
+    """
+    Get the access to the LinkedIn account and links it to the python3-linkedin library
+    :return: the authentication object created by the python3-linkedin library
+    """
+    try:
+        client_id = get_client_id()
+    except FileNotFoundError:
+        print(
+            "linkedin.ini file not found. Please check that the linkedin.ini "
+            "file is placed in the superform/plugins folder.")
+        client_id = None
+    try:
+        client_secret = get_client_secret()
+    except FileNotFoundError:
+        print(
+            "linkedin.ini file not found. Please check that the linkedin.ini "
+            "file is placed in the superform/plugins folder.")
+        client_secret = None
+
+    return_url = 'http://localhost:5000/configure/linkedin'
 
     authentication = linkedin.LinkedInAuthentication(
-        CLIENT_ID,
-        CLIENT_SECRET,
-        RETURN_URL,
+        client_id,
+        client_secret,
+        return_url,
         linkedin.PERMISSIONS.enums.values()
     )
     return authentication
 
 
-def linkedin_use(code):
+def linkedin_code_processing(code):
     """
-    Use the authorization token to generate the
+    Use the authorization token to generate the access token
     :param code: the authorization_code gotten from the api
-    :return: the gotten access token
+    :return: the access token
     """
-    print("From linkedin.py: " + code)
-
-    authentication = get_basic_authentication()
-    print("code I put in authentification", code)
+    authentication = get_linkedin_authentication()
     authentication.authorization_code = code
     access_token = get_access_token(authentication)
     if access_token is not None:
@@ -97,6 +104,10 @@ def linkedin_use(code):
 
 
 def get_access_token(authentication):
+    """
+    :param authentication: the access to the LinkedIn account
+    :return: the access token linked to the LK account
+    """
     try:
         access_token = authentication.get_access_token()
         return access_token
@@ -105,6 +116,10 @@ def get_access_token(authentication):
         traceback.print_exc()
         return None
 
+
+######################
+## post publication ##
+######################
 
 def run(publishing, channel_config):
     """ Gathers the informations in the config column and launches the
@@ -146,7 +161,7 @@ def post(access_token, comment = None, title = None, description = None,
     import collections
     AccessToken = collections.namedtuple('AccessToken',
                                          ['access_token', 'expires_in'])
-    authentication = get_basic_authentication()
+    authentication = get_linkedin_authentication()
     authentication.token = AccessToken(access_token, "99999999")
     application = linkedin.LinkedInApplication(authentication)
     profile = application.get_profile()
@@ -159,3 +174,59 @@ def post(access_token, comment = None, title = None, description = None,
     except Exception as e:
         print(e)
         return False
+
+
+#########################
+## credentials reading ##
+#########################
+
+
+def get_linkedin_ini():
+    """
+    Gets and reads the linkedin.ini file in the plugins folder. Raises an
+    exception if the file isn't found
+    :return: the config_parser object reading the file
+    """
+    data_folder = Path("superform/plugins")
+    file_to_open = data_folder / "lindekin.ini"
+    if not data_folder.is_dir():
+        raise FileNotFoundError("Directory not found at %s" % data_folder)
+    else:
+        if not file_to_open.is_file():
+            raise FileNotFoundError("File not found: at %s" % file_to_open)
+        else:
+            config_parser = configparser.ConfigParser()
+            config_parser.read(file_to_open)
+            return config_parser
+
+
+def get_client_id():
+    """
+    Returns the client_id found in the linekedin.ini file. Raises an exception
+    if the linkedin.ini file is not found.
+    :return: the client id value found in the linkedin.ini file
+    """
+
+    config = get_linkedin_ini()
+    c_id = config.get('Credentials', 'CLIENT_ID')
+    return c_id
+
+
+def get_client_secret():
+    config = get_linkedin_ini()
+    c_secret = config.get('Credentials', 'CLIENT_SECRET')
+    return c_secret
+
+
+#####################
+## other functions ##
+#####################
+
+def id_generator(size = 6, chars = string.ascii_uppercase + string.digits):
+    """
+    Generate a random string of 6 characters
+    :param size: size
+    :param chars: the type of characters (here uppercase and digits)
+    :return: string
+    """
+    return ''.join(random.choice(chars) for _ in range(size))

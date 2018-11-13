@@ -5,7 +5,7 @@ from flask import Blueprint, current_app, url_for, request, redirect, \
     render_template
 
 from superform.models import db, Channel
-from superform.plugins.LinkedIn import linkedin_plugin, linkedin_use
+from superform.plugins.LinkedIn import linkedin_plugin, linkedin_code_processing
 from superform.utils import login_required, get_instance_from_module_path, \
     get_modules_names, get_module_full_name
 
@@ -61,15 +61,12 @@ def configure_channel(id):
     m = c.module
     clas = get_instance_from_module_path(m)
     config_fields = clas.CONFIG_FIELDS
-
-    print("This is the request.url : " + request.url)
-
     if request.method == 'GET':
         if c.config is not "":
             d = ast.literal_eval(c.config)
             setattr(c, "config_dict", d)
             if str(m) == "superform.plugins.LinkedIn":
-                return linkedin_plugin(id, c, m, clas, config_fields)
+                return linkedin_plugin(id, c, config_fields)
         return render_template("channel_configure.html", channel = c,
                                config_fields = config_fields)
     str_conf = "{"
@@ -89,7 +86,6 @@ def configure_channel(id):
     last_channel_id = request.cookies.get(LAST_CHANNEL_ID)
     if str(m) == "superform.plugins.LinkedIn" and str(last_channel_id) == str(
             id) and last_access_token is not None and last_creation_time is not None:
-        print("je suis dans la boucle")
         if cfield > 0:
             str_conf += ","
         str_conf += "\"" + "token" + "\" : \"" + last_access_token + "\""
@@ -109,24 +105,23 @@ def linkedin_return():
         Redirected route manager for the LinkedIn plugin, sets the necessary
         cookies to continue the session.
     """
-    ref = request.url
-    code = ""
-    resp = redirect(url_for('channels.channel_list'))
-
-    if ref.startswith("http://localhost:5000/configure/linkedin?code"):
-        i = ref.find("state", 46)
-        code = ref[46:i - 1]
-        ch_id = ref[i + 9:ref.find("rest")]
-        print('The id is: ' + ch_id)
-        last_access_token = linkedin_use(code)  # return from LinkedIn
+    url = request.url
+    redirection = redirect(url_for('channels.channel_list'))
+    if url.startswith("http://localhost:5000/configure/linkedin?code"):
+        i = url.find("state", 46)
+        code = url[46:i - 1]
+        ch_id = url[i + 9:url.find("rest")]
+        last_access_token = linkedin_code_processing(code)  # return from LinkedIn
         now = datetime.datetime.now()
         last_creation_time = now.strftime("%Y-%m-%d %H:%M")
         last_channel_id = ch_id
         if last_access_token is None:
             print("no token !")
 
-        resp = redirect(url_for('channels.configure_channel', id = ch_id))
-        resp.set_cookie(LAST_ACCESS_TOKEN, last_access_token.access_token)
-        resp.set_cookie(LAST_CHANNEL_ID, last_channel_id)
-        resp.set_cookie(LAST_CREATION_TIME, last_creation_time)
-    return resp
+        redirection = redirect(url_for('channels.configure_channel', id = ch_id))
+        redirection.set_cookie(LAST_ACCESS_TOKEN, last_access_token.access_token)
+        redirection.set_cookie(LAST_CHANNEL_ID, last_channel_id)
+        redirection.set_cookie(LAST_CREATION_TIME, last_creation_time)
+    else:
+        print("Error: no code given")
+    return redirection
