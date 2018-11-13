@@ -8,7 +8,7 @@ setup(
     install_requires=[
         'flask',
         'python3-saml',
-        'sqlalchemy',
+        'sqlalchemy','feedparser',
         'flask-sqlalchemy', 'python3-linkedin', 'facebook-sdk', 'python-twitter'
     ],
 )
