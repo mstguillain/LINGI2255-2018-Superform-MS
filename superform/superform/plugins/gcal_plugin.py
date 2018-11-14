@@ -50,13 +50,15 @@ def generate_event(publishing):
             {
                 "fileUrl": publishing.link_url
             }
-        ]
+        ],
         'start': {
-            'dateTime': date_format_converter(publishing.date_from, publishing.start_time),
+            #hour is hardcoded due to moderation issue
+            'dateTime': publishing.date_from+'T'+'00:00:00z,
             'timeZone': 'Europe/Zurich',
         },
         'end': {
-            'dateTime': date_format_converter(publishing.date_until, publishing.end_time),
+            #hour is hardcoded due to moderation issue
+            'dateTime': publishing.date_from+'T'+'23:59:59z,
             'timeZone': 'Europe/Zurich',
         },
         'reminders': {
