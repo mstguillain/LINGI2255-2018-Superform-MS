@@ -5,7 +5,8 @@ from flask import Blueprint, current_app, url_for, request, redirect, \
     render_template
 
 from superform.models import db, Channel
-from superform.plugins.LinkedIn import linkedin_plugin, linkedin_code_processing
+from superform.plugins.LinkedIn import linkedin_plugin, \
+    linkedin_code_processing
 from superform.utils import login_required, get_instance_from_module_path, \
     get_modules_names, get_module_full_name
 
@@ -18,6 +19,7 @@ channels_page = Blueprint('channels', __name__)
 LAST_ACCESS_TOKEN = "last_access_token"
 LAST_CREATION_TIME = "last_creation_time"
 LAST_CHANNEL_ID = "last_channel_id"
+LAST_STATUS = "0"
 
 
 @channels_page.route("/channels", methods = ['GET', 'POST'])
@@ -66,7 +68,7 @@ def configure_channel(id):
             d = ast.literal_eval(c.config)
             setattr(c, "config_dict", d)
             if str(m) == "superform.plugins.LinkedIn":
-                return linkedin_plugin(id, c, config_fields)
+                return linkedin_plugin(id, c, config_fields, request.cookies.get(LAST_STATUS))
         return render_template("channel_configure.html", channel = c,
                                config_fields = config_fields)
     str_conf = "{"
@@ -77,10 +79,9 @@ def configure_channel(id):
         str_conf += "\"" + field + "\" : \"" + request.form.get(field) + "\""
         cfield += 1
 
-    """
-        If any LinkedIn session cookie is present we add them to the 
-        data-base.
-    """
+    # If any LinkedIn session cookie is present we add them to the
+    # data-base.
+
     last_access_token = request.cookies.get(LAST_ACCESS_TOKEN)
     last_creation_time = request.cookies.get(LAST_CREATION_TIME)
     last_channel_id = request.cookies.get(LAST_CHANNEL_ID)
@@ -106,22 +107,34 @@ def linkedin_return():
         cookies to continue the session.
     """
     url = request.url
-    redirection = redirect(url_for('channels.channel_list'))
-    if url.startswith("http://localhost:5000/configure/linkedin?code"):
+    if url.startswith(request.url_root + "configure/linkedin?code"):
         i = url.find("state", 46)
         code = url[46:i - 1]
         ch_id = url[i + 9:url.find("rest")]
-        last_access_token = linkedin_code_processing(code)  # return from LinkedIn
+        last_access_token = linkedin_code_processing(
+            code)  # return from LinkedIn
         now = datetime.datetime.now()
         last_creation_time = now.strftime("%Y-%m-%d %H:%M")
         last_channel_id = ch_id
         if last_access_token is None:
             print("no token !")
 
-        redirection = redirect(url_for('channels.configure_channel', id = ch_id))
-        redirection.set_cookie(LAST_ACCESS_TOKEN, last_access_token.access_token)
+        redirection = redirect(
+            url_for('channels.configure_channel', id = ch_id))
+        redirection.set_cookie(LAST_ACCESS_TOKEN,
+                               last_access_token.access_token)
         redirection.set_cookie(LAST_CHANNEL_ID, last_channel_id)
         redirection.set_cookie(LAST_CREATION_TIME, last_creation_time)
+        redirection.set_cookie(LAST_STATUS, "1:%s" % ch_id)
+    elif url.startswith(
+            request.url_root + "configure/linkedin?error=user_cancelled_authorize"):
+        print("Error: authorization cancelled")
+        i = url.find("state")
+        ch_id = url[i + 9:url.find("rest")]
+        redirection = redirect(
+            url_for('channels.configure_channel', id = ch_id))
+        redirection.set_cookie(LAST_STATUS, "-1:%s" % ch_id)
     else:
-        print("Error: no code given")
+        print("Error: no code found")
+        redirection = redirect(url_for('error'))
     return redirection

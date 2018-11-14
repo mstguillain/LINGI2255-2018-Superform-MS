@@ -1,17 +1,12 @@
+import configparser
 import json
+import random
 import string
 import traceback
-import random
-
-from flask import request, render_template
-from linkedin import linkedin  # from python3-linkedin library
-
-#########################
-## credentials reading ##
-#########################
-import configparser
 from pathlib import Path
-import sys
+
+from flask import request, render_template, url_for
+from linkedin import linkedin  # from python3-linkedin library
 
 FIELDS_UNAVAILABLE = ['Title', 'Description']
 
@@ -22,34 +17,56 @@ CONFIG_FIELDS = []  # Unused for now. But could be used to refresh dynamically t
 ## template rendering ##
 ########################
 
-def linkedin_plugin(id, c, config_fields):
+def linkedin_plugin(id, c, config_fields, status):
     """
     Launched by channels.configure_channel(id) when the configure page
     is reached and the channel is from the LinkedIn module. It creates
     the redirect_link which is used in the linkedin_configuration.html
     and calls the render_template() function.
+    :param status: gives the status of the linkedin authentication
     :param id: id of the channel; used to create the redirect_link
     :param c: the channel object; used to pass the information to the template
     :param config_fields: configuration fields; used to pass the information to the template
     :return: creates the template
     """
     state = "id_" + str(id) + "rest_" + id_generator()
-    return_url = 'http://localhost:5000/configure/linkedin'
+    # return_url = 'http://localhost:5000/configure/linkedin' hardcoded url
+    # just in case
     client_id = "no client id"
+    return_url = request.url_root + str(url_for('channels.linkedin_return'))[
+                                    1:]
+    # gets the root of the app and add the path to linkedin_return and
+    # gets rid of the first '/'
+    flag = -1
+    message = ""
 
     try:
         client_id = get_client_id()
+        message += "LinkedIn credentials found. "
+        flag = 1
     except FileNotFoundError:
         print(
             "linkedin.ini file not found. Please check that the linkedin.ini "
             "file is placed in the superform/plugins folder.")
+        message += "Credentials not found! Please check that you have put the " \
+                   "application credentials in the plugins/linkedin.ini file. "
 
     redirect_link = "https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=" \
                     + client_id + "&redirect_uri=" + return_url + "&state=" + state
+
+    if status == "-1:%i" % id:
+        flag = -1
+        message += "\nConnection to LinkedIn failed"
+    elif status == "1:%i" % id:
+        message += "\nSuccessfully connected to LinkedIn! Do not forget to save!"
+
     return render_template("linkedin_configuration.html",
                            channel = c,
                            config_fields = config_fields,
-                           redirect = redirect_link)
+                           redirect = redirect_link,
+                           message = message,
+                           flag = flag
+                           )
 
 
 ############################
@@ -76,8 +93,8 @@ def get_linkedin_authentication():
             "file is placed in the superform/plugins folder.")
         client_secret = None
 
-    return_url = 'http://localhost:5000/configure/linkedin'
-
+    return_url = request.url_root + str(url_for('channels.linkedin_return'))[
+                                    1:]
     authentication = linkedin.LinkedInAuthentication(
         client_id,
         client_secret,
@@ -127,7 +144,7 @@ def run(publishing, channel_config):
     json_data = json.loads(channel_config)
     token = json_data['token']
     title = publishing.title
-    body = publishing.description  # a quoi tu sers?
+    body = publishing.description
     link = publishing.link_url
 
     comment = title + "\n" + body + "\n" + link
