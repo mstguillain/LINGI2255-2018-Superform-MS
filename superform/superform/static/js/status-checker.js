@@ -2,39 +2,44 @@
 * CUSTOM BY GROUP 10
 */
 LIMIT_CHAR_TWEET = 280;
-LIMIT_NB_TWEET = 10;
-
-PLUGINS_TO_CHECK = ["twitter"];
 
 statusListener = {
     twitter :
     [
         {
-            func : "LIMIT_CONTENT",
+            type : "description",
+            compare : "GT",
+            value : LIMIT_CHAR_TWEET,
             text : "If you hit publish, this post will be split in multiple tweets",
-            canPublish : true,
-            value : LIMIT_CHAR_TWEET
+            forbidPublish : false,
+            func : "renderTweet",
+            args : ""
         },
         {
-            func : "NO_TITLE",
+            type : "title",
+            compare : "EQ",
+            value : "0",
             text : "The title will be not displayed",
-            canPublish : true
-        },
+            forbidPublish : false
+        }
+    ],
+    mail :
+    [
         {
-            func : "RENDER_FOR_TWEET",
-            canPublish : true,
-            value : LIMIT_CHAR_TWEET
+            type : "title",
+            compare : "EQ",
+            value : "0",
+            text : "You need a title for a mail",
+            forbidPublish : true
         }
     ]
-};
-
-
-
+}
 
 statusChecker = {
     _lengthTitle : 0,
     _lengthContent : 0,
     _lengthURL : 0,
+    _forbidPublish : true,
     _pluginChecked : new Array(),
     checking : function() {},
     //Getters
@@ -46,6 +51,9 @@ statusChecker = {
     },
     get lengthURL() {
         return this._lengthURL;
+    },
+    get forbidPublish() {
+        return this._forbidPublish;
     },
     get pluginChecked() {
         return this._pluginChecked;
@@ -64,6 +72,9 @@ statusChecker = {
         this._lengthURL = val;
         this.checking();
     },
+    set forbidPublish(val) {
+        this._forbidPublish = val;
+    },
     set pluginChecked(val) {
         this._pluginChecked = val;
         this.checking();
@@ -78,18 +89,77 @@ statusChecker = {
 *  Main function, checking every plugin check to update front-end status
 */
 statusChecker.checking(function(){
-    PLUGINS_TO_CHECK.forEach(function(item, index) {
+    Object.keys(statusListener).forEach(function(item, index) {
         removeStatusBox(item);
     });
+
+    this._forbidPublish = false;
 
     this._pluginChecked.forEach(function(plugin, index){
         addStatusBox(plugin);
         statusListener[plugin].forEach(function (item, index2) {
-            window[item["func"]]("twitter", item["text"], item["value"], item["canPublish"]);
+            checkStatus(plugin, item);
+            if (typeof item["func"] != "undefined") {
+                 window[item["func"]](item["args"]);
+            }
         });
     });
+
+    $("#publish-button").prop("disabled",this._forbidPublish);
 });
 
+
+function checkStatus(plugin, status) {
+    value = getValueType(status["type"]);
+
+    if (value < 0) {
+        console.log("ERROR : failed to check input "+status["type"]);
+        return;
+    }
+
+    if (comparingValue(value, status["compare"], status["value"])) {
+        addStatusText(plugin, status["text"], status["type"]+"-"+status["compare"]+"-"+status["value"]);
+        if (status["forbidPublish"])
+            statusChecker.forbidPublish = true;
+        console.log(statusChecker.forbidPublish);
+    }
+
+}
+
+
+function comparingValue(arg1, compare, arg2) {
+    var value
+    switch (compare) {
+        case 'LT' :
+            value = (arg1 < arg2); break;
+        case 'GT' :
+            value = (arg1 > arg2); break;
+        case 'EQ' :
+            value = (arg1 == arg2); break;
+        case 'LEQ' :
+            value = (arg1 <= arg2); break;
+        case 'GEQ' :
+            value = (arg1 >= arg2); break;
+        default :
+            value = false;
+    }
+    return value;
+}
+
+function getValueType(type) {
+    var value;
+    switch (type) {
+        case 'description' :
+            value = statusChecker.lengthContent; break;
+        case 'title' :
+            value = statusChecker.lengthTitle; break;
+        case 'link' :
+            value = statusChecker.lengthUrl; break;
+        default :
+            value = -1;
+    }
+    return value;
+}
 
 /*
 *   Theses function manages to update the statusChecker states
@@ -101,7 +171,7 @@ statusChecker.checking(function(){
 $('input.checkbox').change(function () {
     var hisClass = $(this).attr("class").split(" ");
     var plugin = hisClass[2].split(".")[2];
-    if (isInArray(PLUGINS_TO_CHECK, plugin)) {
+    if (isInArray(Object.keys(statusListener), plugin)) {
         if (($(this).is(":checked")) && isInArray(statusChecker.pluginChecked, plugin) == false ) {
            var tb = statusChecker.pluginChecked;
            tb.push(plugin);
@@ -124,7 +194,6 @@ $( "#descriptionpost" ).on('input', function() {
         statusChecker.lengthContent = $(this).val().length + tweets.toString().length;
     else
         statusChecker.lengthContent = $(this).val().length;
-    console.log((isInArray(statusChecker.pluginChecked, "twitter")));
 });
 
 // Link URL
@@ -161,62 +230,6 @@ function removeStatusText(plugin, id) {
     }
 }
 
-/*
-*   Listeners function
-*/
-
-function LIMIT_CONTENT(plugin, text, value, canPublish) {
-    if (statusChecker.lengthContent  > value) {
-        var id = plugin + "content-too-long";
-        addStatusText(plugin, text, id);
-    }
-    console.log(statusChecker.lengthContent + NB_TWEET * 280)
-}
-
-function LIMIT_TITLE(plugin, text, value, canPublish) {
-    if (statusChecker.lengthTitle > value) {
-        var id = plugin + "title-too-long";
-        addStatusText(plugin, text, id);
-    }
-}
-
-function LIMIT_URL(plugin, text, value, canPublish) {
-    if (statusChecker.lengthURL > value) {
-        var id = plugin + "url-too-long";
-        addStatusText(plugin, text, id);
-    }
-}
-
-function NO_CONTENT(plugin, text, value, canPublish) {
-    if (statusChecker.lengthContent == 0)  {
-        var id = plugin +"-no-content";
-        addStatusText(plugin,text,id);
-    }
-}
-function NO_TITLE(plugin, text, value, canPublish) {
-    if (statusChecker.lengthTitle == 0)  {
-        var id = plugin +"-no-title";
-        addStatusText(plugin,text,id);
-    }
-}
-function NO_URL(plugin, text, value, canPublish) {
-    if (statusChecker.lengthTitle == 0)  {
-        var id = plugin +"-no-url";
-        addStatusText(plugin,text,id);
-    }
-}
-
-function RENDER_FOR_TWEET(plugin, text, value, canPublish) {
-    if (statusChecker.lengthContent > value) {
-        renderTweet();
-    }
-}
-
-/*
-function addStatus(func, text, block, val = 0) {
-    window[func](text, block, val);
-}
-*/
 
 // Utily function for array
 function isInArray(tb, value) {
@@ -237,38 +250,88 @@ function removeFromArray(tb, value) {
     return tb2;
 }
 
+function rearrangeArray(tb) {
+    tb2 = new Array();
+    tb.forEach(function(item, index) {
+        if (item.length != 0)
+            tb2.push(item);
+    });
+
+    return tb2;
+}
+
 /*
 *  Render tweet part
 */
-/*
+
 tweets = new Array();
-NB_TWEET = 0;
 
 function createInputTextForTweet(text, nbTweet) {
+    if (nbTweet == tweets.length - 1) {
+        $("#descriptionpost").val(text);
+    }
+    else {
+        var inputToAdd = '<textarea class="form-control tweet-'+nbTweet+'" rows="5" maxlength="'+LIMIT_CHAR_TWEET+'">'
+        inputToAdd += text
+        inputToAdd += '</textarea>';
+        $(inputToAdd).insertBefore('.tweet-'+(nbTweet+1));
 
-    var inputToAdd = '<div id=tweet-"'+nbTweet+'>';
-    inputToAdd += '<textarea class="form-control" rows="5" id="descriptionpost" name="descriptionpost" maxlength="'+LIMIT_CHAR_TWEET+'">'
-    inputToAdd += text
-    inputToAdd += '</textarea><br/><br/></div>';
-    if (nbTweet == NB_TWEET - 1)
-        $(inputToAdd).insertBefore('#descriptionpost');
-    else
-        $(inputToAdd).insertBefore('#tweet-'+nbTweet - 1);
+
+        $( ".tweet-"+nbTweet).on('input', function() { //Add listener
+            tweets[nbTweet] = $(this).val();
+
+            if ($(this).val().length == 0) {
+                tweets = rearrangeArray(tweets);
+                tweets.push(" ");
+                for (i = 0; i < tweets.length - 1; i ++) {
+                    $(".tweet-"+i).remove();
+                }
+                tweets.pop();
+                renderTweet();
+            }
+        });
+    }
 }
 
 function renderTweet() {
-    //Create array of tweets
-    var sizeArray = 0;
+
+    if (tweets.length > 0) // If the render is not new, suppress the last tweet
+        tweets.pop();
+
     for (var i = 0, charsLength = $("#descriptionpost").val().length; i < charsLength; i += 280) {
         tweets.push($("#descriptionpost").val().substring(i, i + 280));
-        NB_TWEET = NB_TWEET + 1;
     }
-    //Create each input based on this
-    tweets.forEach(function(item, index) {
-        createInputTextForTweet(text, nbTweet);
-    });
+    nbTweet = tweets.length - 1;
+    $("#descriptionpost").attr("class","form-control tweet-"+nbTweet);
+    for (i = 0; i < tweets.length - 1; i ++) {
+        $(".tweet-"+i).remove();
+    }
 
+    for (i = tweets.length; i > 0; i -- ){
+        createInputTextForTweet(tweets[i-1], nbTweet);
+        nbTweet = nbTweet - 1;
+    };
 }
 
 
-*/
+function unifyTweet() {
+    text = "";
+    if (tweets.length > 0) {
+        for (i = 0; i < tweets.length; i ++) {
+            text += $(".form-control tweet-"+i).val();
+            $(".form-control tweet-"+i).remove();
+        }
+        tweets = new Array();
+
+        $("#descriptionpost").val(text);
+    }
+}
+
+function RENDER_FOR_TWEET(plugin, text, value, canPublish) {
+    if ($("#descriptionpost").val().length > value) {
+        renderTweet();
+    }
+    else {
+        unifyTweet();
+    }
+}
