@@ -3,6 +3,7 @@ from superform.models import db, User
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
+from datetime import datetime
 import json
 
 
@@ -12,6 +13,9 @@ CLIENT_ID = 'client_id'
 CLIENT_SECRET = 'client_secret'
 CONFIG_FIELDS = [PROJECT_ID, CLIENT_ID, CLIENT_SECRET]
 
+
+def str_converter(datet):
+    return datetime.strftime(datet,"%Y-%m-%d")
 
 def creds_to_string(creds):
    return json.dumps({'token': creds.token,
@@ -39,10 +43,9 @@ def get_full_config(channel_config):
                 "client_secret":channel_config[CLIENT_SECRET],
                 "redirect_uris":["urn:ietf:wg:oauth:2.0:oob","http://localhost"]}}
 
-def date_format_converter(date, hour):
-    return date+'T'+hour+':00Z'
-
 def generate_event(publishing):
+   print(publishing.date_from)
+   print(str_converter(publishing.date_from))
    return {
         'summary': publishing.title,
         'description': publishing.description,
@@ -52,11 +55,11 @@ def generate_event(publishing):
             }
         ],
         'start': {
-            'date': publishing.date_from,
+            'date': str_converter(publishing.date_from),
             'timeZone': 'Europe/Zurich',
         },
         'end': {
-            'date': publishing.date_until,
+            'date': str_converter(publishing.date_until),
             'timeZone': 'Europe/Zurich',
         },
         'reminders': {
@@ -70,7 +73,7 @@ def generate_event(publishing):
 
 def run(publishing, channel_config):
     SCOPES = 'https://www.googleapis.com/auth/calendar'
-    #print('START AND END TIME'+publishing.starttime+' '+publishing.endtime)
+    
     creds = get_user_credentials()
     if not creds:
        channel_config = get_full_config(json.loads(channel_config))
@@ -84,13 +87,13 @@ def run(publishing, channel_config):
     service = build('calendar', 'v3', credentials=creds)
     event = generate_event(publishing)
     id = publish(event, service)
+    print(id)
 
 def publish(event, service):
     """
     Publie sur le compte et renvoie l'id de la publication
     """
     event = service.events().insert(calendarId='primary', body=event).execute()
-    print ('Event created: %s' % (event.get('htmlLink'))) #TODO Delete when finished debugging
     return event.get('htmlLink')
 
 def delete(id):
