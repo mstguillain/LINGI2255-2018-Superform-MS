@@ -1,34 +1,49 @@
-from __future__ import print_function
-from flask import current_app, session, flash
+from flask import session
 from superform.models import db, User
-import json
-import datetime
+from google_auth_oauthlib.flow import InstalledAppFlow
+from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
-from httplib2 import Http
-from oauth2client import file, client, tools
+import json
 
 
 FIELDS_UNAVAILABLE = ['Image']
+CREDENTIALS = '/Users/laurent/Documents/LINGI2255/LINGI2255-2018-Superform-MS-02/superform/superform/credentials.json'
+
+
+def creds_to_string(creds):
+   return json.dumps({'token': creds.token,
+            'refresh_token': creds._refresh_token,
+            'token_uri': creds._token_uri,
+            'client_id': creds._client_id,
+            'client_secret': creds._client_secret,
+            'scopes': creds._scopes})
 
 def get_user_credentials():
-    user = User.query.get(session["user_id"])
-    return client.OAuth2Credentials.from_json(json.loads(user.gcal_cred)) if user.gcal_cred else None
+   user = User.query.get(session["user_id"])
+   dict = json.loads(user.gcal_cred)
+   return Credentials(dict) if user.gcal_cred else None
 
 def set_user_credentials(creds):
    user = User.query.get(session["user_id"])
-   user.gcal_cred = creds.to_json().stringify()
+   user.gcal_cred = creds_to_string(creds)
+   db.session.commit()
 
 def run(publishing, channel_config):
-    # If modifying these scopes, delete the file token.json.
     SCOPES = 'https://www.googleapis.com/auth/calendar'
 
-    creds = get_user_credentials()
+    #creds = get_user_credentials()
+    creds = None
     if not creds or creds.invalid:
-        flow = client.flow_from_clientsecrets('credentials.json', SCOPES)
-        creds = tools.run_flow(flow, file.Storage('token.json'))
-        set_user_credentials(creds)
-    service = build('calendar', 'v3', http=creds.authorize(Http()))
+       flow = InstalledAppFlow.from_client_secrets_file(CREDENTIALS, scopes=[SCOPES])
+       creds = flow.run_local_server(host='localhost', port=8080,
+                   authorization_prompt_message='Please visit this URL: {url}',
+                   success_message='The auth flow is complete, you may close this window.',
+                   open_browser=True)
+       set_user_credentials(creds)
 
+    print('service creation')
+    service = build('calendar', 'v3')
+    print('service created')
     event = {
         'summary': publishing.title,
         'location': '800 Howard St., San Francisco, CA 94103',
@@ -57,12 +72,12 @@ def run(publishing, channel_config):
         },
     }
     id = publish(event,service)
+    print('published')
 
-def publish(event,service):
+def publish(event, service):
     """
     Publie sur le compte et renvoie l'id de la publication
     """
-
     event = service.events().insert(calendarId='primary', body=event).execute()
     print ('Event created: %s' % (event.get('htmlLink'))) #TODO Delete when finished debugging
     return event.get('htmlLink')
