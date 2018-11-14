@@ -3,14 +3,14 @@ from superform.models import db, User
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
-from httplib2 import Http
-from oauth2client import file, client, tools
 import json
-import inspect
 
 
 FIELDS_UNAVAILABLE = ['Image']
-CREDENTIALS = '/Users/laurent/Documents/LINGI2255/LINGI2255-2018-Superform-MS-02/superform/superform/credentials.json'
+PROJECT_ID = 'project_id'
+CLIENT_ID = 'client_id'
+CLIENT_SECRET = 'client_secret'
+CONFIG_FIELDS = [PROJECT_ID, CLIENT_ID, CLIENT_SECRET]
 
 
 def creds_to_string(creds):
@@ -23,28 +23,24 @@ def creds_to_string(creds):
 
 def get_user_credentials():
    user = User.query.get(session["user_id"])
-   dict = json.loads(user.gcal_cred)
-   return Credentials.from_authorized_user_info(dict) if user.gcal_cred else None
+   return Credentials.from_authorized_user_info(json.loads(user.gcal_cred)) if user.gcal_cred else None
 
 def set_user_credentials(creds):
    user = User.query.get(session["user_id"])
    user.gcal_cred = creds_to_string(creds)
    db.session.commit()
 
-def run(publishing, channel_config):
-    SCOPES = 'https://www.googleapis.com/auth/calendar'
+def get_full_config(channel_config):
+   return {"installed":{"client_id":channel_config[CLIENT_ID],
+                "project_id":channel_config[PROJECT_ID],
+                "auth_uri":"https://accounts.google.com/o/oauth2/auth",
+                "token_uri":"https://www.googleapis.com/oauth2/v3/token",
+                "auth_provider_x509_cert_url":"https://www.googleapis.com/oauth2/v1/certs",
+                "client_secret":channel_config[CLIENT_SECRET],
+                "redirect_uris":["urn:ietf:wg:oauth:2.0:oob","http://localhost"]}}
 
-    creds = get_user_credentials()
-    if not creds or not creds.valid:
-       flow = InstalledAppFlow.from_client_secrets_file(CREDENTIALS, scopes=[SCOPES])
-       creds = flow.run_local_server(host='localhost', port=8080,
-                   authorization_prompt_message='Please visit this URL: {url}',
-                   success_message='The auth flow is complete, you may close this window.',
-                   open_browser=True)
-       set_user_credentials(creds)
-
-    service = build('calendar', 'v3', credentials=creds)
-    event = {
+def generate_event(publishing):
+   return {
         'summary': publishing.title,
         'location': '800 Howard St., San Francisco, CA 94103',
         'description': publishing.description,
@@ -70,8 +66,24 @@ def run(publishing, channel_config):
                 {'method': 'popup', 'minutes': 10},
             ],
         },
-    }
-    id = publish(event,service)
+    } 
+
+def run(publishing, channel_config):
+    SCOPES = 'https://www.googleapis.com/auth/calendar'
+
+    creds = get_user_credentials()
+    if not creds:
+       channel_config = get_full_config(json.loads(channel_config))
+       flow = InstalledAppFlow.from_client_config(channel_config, scopes=[SCOPES])
+       creds = flow.run_local_server(host='localhost', port=8080,
+                   authorization_prompt_message='Please visit this URL: {url}',
+                   success_message='The auth flow is complete, you may close this window.',
+                   open_browser=True)
+       set_user_credentials(creds)
+
+    service = build('calendar', 'v3', credentials=creds)
+    event = generate_event(publishing)
+    id = publish(event, service)
 
 def publish(event, service):
     """
