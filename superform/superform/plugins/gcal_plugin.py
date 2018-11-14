@@ -40,7 +40,7 @@ def get_full_config(channel_config):
                 "redirect_uris":["urn:ietf:wg:oauth:2.0:oob","http://localhost"]}}
 
 def date_format_converter(date, hour):
-    return date+'T'+hour+':00z'
+    return date+'T'+hour+':00Z'
 
 def generate_event(publishing):
    return {
@@ -48,17 +48,15 @@ def generate_event(publishing):
         'description': publishing.description,
         'attachments': [
             {
-                "fileUrl": publishing.link_url
+                "fileUrl": publishing.link_url,
             }
         ],
         'start': {
-            #hour is hardcoded due to moderation issue
-            'dateTime': publishing.date_from+'T'+'00:00:00z,
+            'date': publishing.date_from,
             'timeZone': 'Europe/Zurich',
         },
         'end': {
-            #hour is hardcoded due to moderation issue
-            'dateTime': publishing.date_from+'T'+'23:59:59z,
+            'date': publishing.date_until,
             'timeZone': 'Europe/Zurich',
         },
         'reminders': {
@@ -68,7 +66,7 @@ def generate_event(publishing):
                 {'method': 'popup', 'minutes': 10},
             ],
         },
-    } 
+    }
 
 def run(publishing, channel_config):
     SCOPES = 'https://www.googleapis.com/auth/calendar'
