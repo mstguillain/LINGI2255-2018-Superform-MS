@@ -39,26 +39,26 @@ def get_full_config(channel_config):
                 "client_secret":channel_config[CLIENT_SECRET],
                 "redirect_uris":["urn:ietf:wg:oauth:2.0:oob","http://localhost"]}}
 
+def date_format_converter(date, hour):
+    return date+'T'+hour+':00Z'
+
 def generate_event(publishing):
    return {
         'summary': publishing.title,
-        'location': '800 Howard St., San Francisco, CA 94103',
         'description': publishing.description,
+        'attachments': [
+            {
+                "fileUrl": publishing.link_url,
+            }
+        ],
         'start': {
-            'dateTime': '2018-11-15T09:00:00-07:00',
-            'timeZone': 'America/Los_Angeles',
+            'date': publishing.date_from,
+            'timeZone': 'Europe/Zurich',
         },
         'end': {
-            'dateTime': '2018-12-15T17:00:00-07:00',
-            'timeZone': 'America/Los_Angeles',
+            'date': publishing.date_until,
+            'timeZone': 'Europe/Zurich',
         },
-        'recurrence': [
-            'RRULE:FREQ=DAILY;COUNT=2'
-        ],
-        'attendees': [
-            {'email': 'lpage@example.com'},
-            {'email': 'sbrin@example.com'},
-        ],
         'reminders': {
             'useDefault': False,
             'overrides': [
@@ -66,11 +66,11 @@ def generate_event(publishing):
                 {'method': 'popup', 'minutes': 10},
             ],
         },
-    } 
+    }
 
 def run(publishing, channel_config):
     SCOPES = 'https://www.googleapis.com/auth/calendar'
-
+    #print('START AND END TIME'+publishing.starttime+' '+publishing.endtime)
     creds = get_user_credentials()
     if not creds:
        channel_config = get_full_config(json.loads(channel_config))

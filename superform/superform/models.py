@@ -16,15 +16,15 @@ class User(db.Model):
     name = db.Column(db.String(120), nullable=False)
     first_name = db.Column(db.String(120), nullable=False)
     admin = db.Column(db.Boolean, default=False)
-    fb_cred = db.Column(db.String(2147483647), nullable=True) # NOTRE CHAMP
+    fb_cred = db.Column(db.String(2147483647), nullable=True) # Parce que c'est NOTRE CHAMP
     gcal_cred = db.Column(db.String(2147483647), nullable=True)
     posts = db.relationship("Post", backref="user", lazy=True)
     authorizations = db.relationship("Authorization", backref="user", lazy=True)
 
     def __repr__(self):
         return '<User {}>'.format(repr(self.id))
-    
-    
+
+
 
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True, unique=True, nullable=False)
@@ -66,6 +66,9 @@ class Publishing(db.Model):
     image_url = db.Column(db.Text)
     date_from = db.Column(db.DateTime)
     date_until = db.Column(db.DateTime)
+    # start_time = db.Column(db.DateTime, nullable=True)
+    # end_time = db.Column(db.DateTime, nullable=True)
+
 
     __table_args__ = (db.PrimaryKeyConstraint('post_id', 'channel_id'),)
 
