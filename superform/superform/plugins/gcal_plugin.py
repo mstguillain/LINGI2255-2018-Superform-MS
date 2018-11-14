@@ -3,7 +3,10 @@ from superform.models import db, User
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
+from httplib2 import Http
+from oauth2client import file, client, tools
 import json
+import inspect
 
 
 FIELDS_UNAVAILABLE = ['Image']
@@ -21,7 +24,7 @@ def creds_to_string(creds):
 def get_user_credentials():
    user = User.query.get(session["user_id"])
    dict = json.loads(user.gcal_cred)
-   return Credentials(dict) if user.gcal_cred else None
+   return Credentials.from_authorized_user_info(dict) if user.gcal_cred else None
 
 def set_user_credentials(creds):
    user = User.query.get(session["user_id"])
@@ -31,9 +34,8 @@ def set_user_credentials(creds):
 def run(publishing, channel_config):
     SCOPES = 'https://www.googleapis.com/auth/calendar'
 
-    #creds = get_user_credentials()
-    creds = None
-    if not creds or creds.invalid:
+    creds = get_user_credentials()
+    if not creds or not creds.valid:
        flow = InstalledAppFlow.from_client_secrets_file(CREDENTIALS, scopes=[SCOPES])
        creds = flow.run_local_server(host='localhost', port=8080,
                    authorization_prompt_message='Please visit this URL: {url}',
@@ -41,9 +43,7 @@ def run(publishing, channel_config):
                    open_browser=True)
        set_user_credentials(creds)
 
-    print('service creation')
-    service = build('calendar', 'v3')
-    print('service created')
+    service = build('calendar', 'v3', credentials=creds)
     event = {
         'summary': publishing.title,
         'location': '800 Howard St., San Francisco, CA 94103',
@@ -72,7 +72,6 @@ def run(publishing, channel_config):
         },
     }
     id = publish(event,service)
-    print('published')
 
 def publish(event, service):
     """
