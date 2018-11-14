@@ -2,10 +2,11 @@
 /venv/
 .idea
 /__pycache__/
-/superform/superform/config.json
+config.json
+credentials.json
 .cache/*
 .pytest_cache/*
 /superform/.cache/*
 /superform/.pytest_cache/*
-/superform/superform/.DS_Store
-/superform/superform/superform.db
+.DS_Store
+superform.db
