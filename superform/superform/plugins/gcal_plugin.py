@@ -45,7 +45,7 @@ def generate_event(publishing):
         'location': '800 Howard St., San Francisco, CA 94103',
         'description': publishing.description,
         'start': {
-            'dateTime': '2018-11-15T09:00:00-07:00',
+            'dateTime': publishing.,
             'timeZone': 'America/Los_Angeles',
         },
         'end': {
@@ -70,6 +70,8 @@ def generate_event(publishing):
 
 def run(publishing, channel_config):
     SCOPES = 'https://www.googleapis.com/auth/calendar'
+
+    print('START AND END TIME'+publishing.starttime+' '+publishing.endtime)
 
     creds = get_user_credentials()
     if not creds:
