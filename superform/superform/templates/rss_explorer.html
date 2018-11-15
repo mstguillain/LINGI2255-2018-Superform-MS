@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+{% block title %}RSS explorer{% endblock %}
+{% block content %}
+    <h1>RSS Feeds</h1>
+    <table class="table">
+        <thead class="thead-light">
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Feed Name</th>
+            <th scope="col">Description</th>
+            <th scope="col">Link</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for feed in feeds %}
+            <tr>
+                <th scope="row">{{ feed.id }}</th>
+                <td>{{ feed[0] }}</td>
+                <td>{{ feed[1] }}</td>
+                <td>
+                    <a href="{{ url_for('static', filename=feed[2]) }}"
+                       class="btn btn-secondary"
+                       type="button">Access</a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+
+{% endblock %}
