@@ -121,6 +121,20 @@
                                             <input id="{{ chan.name }}_dateuntilpost" name="{{ chan.name }}_dateuntilpost" type="date" class="form-control">
                                         </div>
                                     </div>
+                                    {% if chan.module == "superform.plugins.gcal_plugin" %}
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="{{ chan.name }}_dateuntilpost">Start Time</label><br>
+                                            <input id="{{ chan.name }}_dateuntilpost" name="{{ chan.name }}_dateuntilpost" type="time" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="{{ chan.name }}_dateuntilpost">End Time</label><br>
+                                            <input id="{{ chan.name }}_dateuntilpost" name="{{ chan.name }}_dateuntilpost" type="time" class="form-control">
+                                        </div>
+                                    </div>
+                                    {% endif %}
                                 </div>
 
                             </div>

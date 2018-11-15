@@ -6,7 +6,7 @@ setup(
     packages=['superform'],
     include_package_data=True,
     install_requires=[
-        'flask',
+        'flask', 'pyopenssl',
         'python3-saml', 'sqlalchemy',
         'flask-sqlalchemy', 'facebook-sdk', 'python-twitter'
     ],
