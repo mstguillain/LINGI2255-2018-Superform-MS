@@ -41,6 +41,8 @@ def makeText(publishing):
         author = publishing.get_author()
     except AttributeError:
         author = "Superform"
+    except TypeError:
+        author = "Superform"
 
     date = str(datetime.datetime.now().strftime("%d/%m/%Y"))
 
