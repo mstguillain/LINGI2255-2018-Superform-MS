@@ -28,15 +28,24 @@ import math
 #           --> http://localhost/pmwiki-2.2.109/pmwiki.php?n=News.GroupAttributes?action=attr
 #           --> mettre un mot de passe pour le champ edit (par exemple "edit")
 #               Dans cet exemple, il y aura donc besoin du mot de passe pour créer toutes les pages qui commencent par News. (ex: News.Conference)
+#       * Configurer pmwiki pour qui'il accepte le codage utf-8 :
+#               When you first install PmWiki, the local/config.php file does not exist.
+#               Copy the sample-config.php file (in the docs/ directory) to local/config.php and use it as a starting point.
 #       * Configurer la channel wiki sur superform :
 #           --> mettre le mot de passe choisi dans le champ password. Pour l'instant on peut mettre ce qu'on veut dans le champs username
 
 FIELDS_UNAVAILABLE = ['Title','Description']
 CONFIG_FIELDS = ["username","password"]
 
+urlwiki = "http://localhost/pmwiki-2.2.109/pmwiki.php"
 
 def makeText(publishing):
+    text = ""
+    #title
     titre = "!! " + publishing.title + "\n"
+    text = titre
+
+    #author and date
     try :
         author = publishing.get_author()
     except AttributeError:
@@ -45,16 +54,20 @@ def makeText(publishing):
         author = "Superform"
 
     date = str(datetime.datetime.now().strftime("%d/%m/%Y"))
+    suite = "Par " + author + " Publié le " + date +"\n"
+    text = text  + suite + "-----"
 
-    suite = "Par " + author + " Publie le " + date +"\n"
+    #description
     corps = str(publishing.description).replace("\n","[[<<]]") + "\n"
+    text = text + corps
 
-
-    text = titre + "-----" + suite + corps
+    #link
     if len(str(publishing.link_url))>0 :
         link_url = "-----"+"[["+publishing.link_url+"]]"+"\n"
         text = text +  link_url
+    #image
     image_url = publishing.image_url
+    text.encode("UTF-8")
     return text
 
 def run(publishing,channel_config):
@@ -69,9 +82,9 @@ def run(publishing,channel_config):
     pageName = "News."+str(publishing.title).replace(" ","")
     text = makeText(publishing)
     data = {"n": pageName, "text": text, "action": "edit", "post": "1", 'authid': authid, "authpw":authpw,"basetime": math.floor(time.time())}
-    # r2 = requests.post("http://localhost/pmwiki-2.2.109/pmwiki.php?n=Main.Essai_nono&action=edit&text=Hello%20World&post=1", data)
+    # r2 = requests.post(urlwiki + "?n=Main.Essai_nono&action=edit&text=Hello%20World&post=1", data)
 
-    r2 = requests.post("http://localhost/pmwiki-2.2.109/pmwiki.php", data)
+    r2 = requests.post(urlwiki, data)
 
 
 
