@@ -35,6 +35,7 @@ def linkedin_plugin(id, c, config_fields, status):
     client_id = "no client id"
     return_url = request.url_root + str(url_for('channels.linkedin_return'))[
                                     1:]
+
     # gets the root of the app and add the path to linkedin_return and
     # gets rid of the first '/'
     flag = -1
@@ -93,8 +94,12 @@ def get_linkedin_authentication():
             "file is placed in the superform/plugins folder.")
         client_secret = None
 
+
+
     return_url = request.url_root + str(url_for('channels.linkedin_return'))[
-                                    1:]
+                                   1:]
+
+
     authentication = linkedin.LinkedInAuthentication(
         client_id,
         client_secret,
@@ -148,9 +153,7 @@ def run(publishing, channel_config):
     link = publishing.link_url
 
     comment = title + "\n" + body + "\n" + link
-    print("Body: ", body)
-    print("Title: ", title)
-    print("Link: ", link)
+
 
     posted = post(token, comment = comment, title = None, description = None,
                   submitted_url = None, submitted_image_url = None)
@@ -207,6 +210,7 @@ def get_linkedin_ini():
     data_folder = Path("superform/plugins")
     file_to_open = data_folder / "linkedin.ini"
     if not data_folder.is_dir():
+        print("Directory not found at %s" % data_folder)
         raise FileNotFoundError("Directory not found at %s" % data_folder)
     else:
         if not file_to_open.is_file():
