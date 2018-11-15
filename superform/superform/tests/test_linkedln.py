@@ -7,7 +7,7 @@ from linkedin import linkedin
 import json
 import random
 
-from superform import app, db, Publishing, channels
+from superform import app, Publishing
 from superform.plugins import LinkedIn
 from superform.models import Channel, db
 
