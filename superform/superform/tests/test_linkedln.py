@@ -83,9 +83,10 @@ def test_get_linkedin_ini_exception():
         file_not_found = True
 
     if file_not_found:
-        with pytest.raises(FileNotFoundError, args={"message": "A file not found exception was not thrown"}):
+        with pytest.raises(FileNotFoundError, message="A file not found exception was not thrown"):
             LinkedIn.get_linkedin_ini()
             # TODO: Print that everything went well if the exception was well caught
+
     else:
         print("No init error occurred")
         # TODO: test that the initialization doesn't throw an erro
