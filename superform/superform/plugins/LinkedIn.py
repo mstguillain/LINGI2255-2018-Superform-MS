@@ -205,7 +205,7 @@ def get_linkedin_ini():
     :return: the config_parser object reading the file
     """
     data_folder = Path("superform/plugins")
-    file_to_open = data_folder / "lindekin.ini"
+    file_to_open = data_folder / "linkedin.ini"
     if not data_folder.is_dir():
         raise FileNotFoundError("Directory not found at %s" % data_folder)
     else:
