@@ -44,8 +44,6 @@ def get_full_config(channel_config):
                 "redirect_uris":["urn:ietf:wg:oauth:2.0:oob","http://localhost"]}}
 
 def generate_event(publishing):
-   print(publishing.date_from)
-   print(str_converter(publishing.date_from))
    return {
         'summary': publishing.title,
         'description': publishing.description,
@@ -87,7 +85,6 @@ def run(publishing, channel_config):
     service = build('calendar', 'v3', credentials=creds)
     event = generate_event(publishing)
     id = publish(event, service)
-    print(id)
 
 def publish(event, service):
     """
