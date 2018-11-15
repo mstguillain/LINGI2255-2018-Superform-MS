@@ -9,6 +9,6 @@ setup(
         'flask',
         'python3-saml',
         'sqlalchemy','feedparser',
-        'flask-sqlalchemy', 'python3-linkedin', 'facebook-sdk', 'python-twitter'
+        'flask-sqlalchemy', 'python3-linkedin', 'facebook-sdk', 'python-twitter', 'rfeed'
     ],
 )

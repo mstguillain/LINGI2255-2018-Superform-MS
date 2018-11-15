@@ -5,9 +5,9 @@ import datetime
 import os
 import feedparser
 
-FIELDS_UNAVAILABLE = ['Name of the Feed', 'Description']
+FIELDS_UNAVAILABLE = ['Title', 'Description']
 
-CONFIG_FIELDS = ["rname","rdescription"]
+CONFIG_FIELDS = ["Feed title", "Feed description"]
 
 RSS_DIR = "localhost:5000/rss/"
 
@@ -69,8 +69,8 @@ def import_items(xml_path):
 def run(publishing, channel_config):
 
     json_data = json.loads(channel_config)
-    rname = json_data['rname']
-    rdescription = json_data['rdescription']
+    rname = json_data['Feed title']
+    rdescription = json_data['Feed description']
     item_title = publishing.title
     item_body = publishing.description
     item_link = publishing.link_url
