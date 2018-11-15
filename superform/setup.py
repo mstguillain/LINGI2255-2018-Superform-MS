@@ -9,6 +9,6 @@ setup(
         'flask',
         'python3-saml', 'sqlalchemy',
         'flask-sqlalchemy', 'facebook-sdk', 'python-twitter',
-        'google-api-python-client', 'oauth2client'
+        'google-api-python-client', 'oauth2client', 'google_auth_oauthlib'
     ],
 )

@@ -25,6 +25,19 @@ def creds_to_string(creds):
             'client_secret': creds._client_secret,
             'scopes': creds._scopes})
 
+def generate_user_credentials(channel_config):
+    SCOPES = 'https://www.googleapis.com/auth/calendar'
+
+    creds = get_user_credentials()
+    if not creds:
+       channel_config = get_full_config(json.loads(channel_config))
+       flow = InstalledAppFlow.from_client_config(channel_config, scopes=[SCOPES])
+       creds = flow.run_local_server(host='localhost', port=8080,
+                   authorization_prompt_message='Please visit this URL: {url}',
+                   success_message='The auth flow is complete, you may close this window.',
+                   open_browser=True)
+       set_user_credentials(creds)
+
 def get_user_credentials():
    user = User.query.get(session["user_id"])
    return Credentials.from_authorized_user_info(json.loads(user.gcal_cred)) if user.gcal_cred else None
@@ -70,18 +83,7 @@ def generate_event(publishing):
     }
 
 def run(publishing, channel_config):
-    SCOPES = 'https://www.googleapis.com/auth/calendar'
-    
     creds = get_user_credentials()
-    if not creds:
-       channel_config = get_full_config(json.loads(channel_config))
-       flow = InstalledAppFlow.from_client_config(channel_config, scopes=[SCOPES])
-       creds = flow.run_local_server(host='localhost', port=8080,
-                   authorization_prompt_message='Please visit this URL: {url}',
-                   success_message='The auth flow is complete, you may close this window.',
-                   open_browser=True)
-       set_user_credentials(creds)
-
     service = build('calendar', 'v3', credentials=creds)
     event = generate_event(publishing)
     id = publish(event, service)
