@@ -31,7 +31,7 @@ import math
 #       * Configurer la channel wiki sur superform :
 #           --> mettre le mot de passe choisi dans le champ password. Pour l'instant on peut mettre ce qu'on veut dans le champs username
 
-FIELDS_UNAVAILABLE = []
+FIELDS_UNAVAILABLE = ['Title','Description']
 CONFIG_FIELDS = ["username","password"]
 
 
