@@ -3,7 +3,9 @@ import json
 import random
 import string
 import traceback
+import time
 from pathlib import Path
+from superform.models import Channel, db
 
 from flask import request, render_template, url_for
 from linkedin import linkedin  # from python3-linkedin library
@@ -60,6 +62,23 @@ def linkedin_plugin(id, c, config_fields, status):
         message += "\nConnection to LinkedIn failed"
     elif status == "1:%i" % id:
         message += "\nSuccessfully connected to LinkedIn! Do not forget to save!"
+
+    #getsurlaDB
+    linkedIn_Channel = db.session.query(Channel).filter(
+        Channel.id == id).first()
+    if(linkedIn_Channel is not None):
+        channel_config = linkedIn_Channel.config
+        json_data = json.loads(channel_config)
+        if ('creationTime' in json_data):
+            creationTime = json_data['creationTime']
+            creationTime_in_seconds = int(creationTime)
+            now_in_seconds = int (time.time())
+            elapsed_time_in_seconds = now_in_seconds - creationTime_in_seconds
+            left_time_in_seonds = 5184000 - elapsed_time_in_seconds
+            days_left = int(left_time_in_seonds/86400)
+            message += "\n Token valid for "+ str(days_left) + 'days left'
+
+
 
     return render_template("linkedin_configuration.html",
                            channel = c,

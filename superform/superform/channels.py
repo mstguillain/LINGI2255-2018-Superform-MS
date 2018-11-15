@@ -1,5 +1,6 @@
 import ast
 import datetime
+import time
 
 from flask import Blueprint, current_app, url_for, request, redirect, \
     render_template
@@ -68,7 +69,8 @@ def configure_channel(id):
             d = ast.literal_eval(c.config)
             setattr(c, "config_dict", d)
             if str(m) == "superform.plugins.LinkedIn":
-                return linkedin_plugin(id, c, config_fields, request.cookies.get(LAST_STATUS))
+                last_status = request.cookies.get(LAST_STATUS)
+                return linkedin_plugin(id, c, config_fields, last_status)
         return render_template("channel_configure.html", channel = c,
                                config_fields = config_fields)
     str_conf = "{"
@@ -85,6 +87,9 @@ def configure_channel(id):
     last_access_token = request.cookies.get(LAST_ACCESS_TOKEN)
     last_creation_time = request.cookies.get(LAST_CREATION_TIME)
     last_channel_id = request.cookies.get(LAST_CHANNEL_ID)
+
+
+
     if str(m) == "superform.plugins.LinkedIn" and str(last_channel_id) == str(
             id) and last_access_token is not None and last_creation_time is not None:
         if cfield > 0:
@@ -114,7 +119,7 @@ def linkedin_return():
         last_access_token = linkedin_code_processing(
             code)  # return from LinkedIn
         now = datetime.datetime.now()
-        last_creation_time = now.strftime("%Y-%m-%d %H:%M")
+        last_creation_time = str (int(time.time())) #str(time.gmtime()) #now.strftime("%Y-%m-%d %H:%M")
         last_channel_id = ch_id
         if last_access_token is None:
             print("no token !")
