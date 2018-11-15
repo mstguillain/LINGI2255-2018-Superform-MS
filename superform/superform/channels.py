@@ -141,5 +141,8 @@ def linkedin_return():
         redirection.set_cookie(LAST_STATUS, "-1:%s" % ch_id)
     else:
         print("Error: no code found")
-        redirection = redirect(url_for('error'))
+        i = url.find("state")
+        ch_id = url[i + 9:url.find("rest")]
+        redirection = redirect(url_for('channels.configure_channel', id = ch_id))
+        redirection.set_cookie(LAST_STATUS, "-1:%s" % ch_id)
     return redirection
