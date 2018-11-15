@@ -33,6 +33,16 @@ statusListener = {
             forbidPublish : true
         }
     ],
+    LinkedIn :
+    [
+        {
+            type : "title",
+            compare : "EQ",
+            value : "0",
+            text : "The LinkedIn title will be not displayed",
+            forbidPublish : false
+        }
+    ],
     wiki :
     [
         {
