@@ -4,6 +4,7 @@ import tempfile
 import traceback
 import pytest
 from linkedin import linkedin
+import superform.plugins.rss as rss
 import json
 
 from superform import app, db, Publishing, channels
@@ -22,6 +23,7 @@ from pathlib import Path
 ## pwd : PwdForTeam06
 
 
+temp_xml_path = ""
 def test_run_rss():
     """
     Checks if a simple linkedin post can be created (require a session being present in the db)
@@ -30,8 +32,26 @@ def test_run_rss():
     pass
 
 
-def test_import_items():
-    pass
+def test_import_items_no_items():
+    """
+    Test if there no item when creating a new RSS feed
+    TODO: create a new xml and get its path
+    """
+    xml_path = ""
+    items = rss.import_items(xml_path)
+    assert len(items), "Items were present when it shoudln't have been the case"
+
+def test_import_items_new_items():
+    """
+    Test if creating a new RSS item  is done properly and doesn't generate double
+    TODO: create a new xml and get its path
+    """
+    xml_path = ""
+    items = rss.import_items(xml_path)
+    oldlen = len(items)
+    items = rss.import_items(xml_path)
+    newLen = len(items)
+    assert newLen == oldlen + 1, "Addition of one new item to the RSS feed failed"
 
 
 def test_new_feed():
@@ -43,22 +63,6 @@ def test_get_rss_ini():
     """
     Tests whether the rss.ini file is present in the plugins folder
     """
-    data_folder = Path("superform/plugins")
-    file_to_open = data_folder / "rss.ini"
-    assert data_folder.is_dir()
-    assert file_to_open.is_file()
+    pass
 
 
-def test_get_client_id_and_secret():
-    """
-    Tests whether we find the right values in the test.ini file
-    TODO: to test (yash: i was unable to run the tests)
-    """
-    config = configparser.ConfigParser()
-    config.read('test.ini')
-    c_id = config.get('Credentials', 'CLIENT_ID')
-    c_secret = config.get('Credentials', 'CLIENT_SECRET')
-    myhobby = config.get('Profile_1', 'hobby')
-    assert c_id == "myclientID"
-    assert c_secret == "myclientsecret"
-    assert myhobby == 'bass'
