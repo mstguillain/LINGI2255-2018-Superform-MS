@@ -32,6 +32,16 @@ statusListener = {
             text : "You need a title for a mail",
             forbidPublish : true
         }
+    ],
+    wiki :
+    [
+        {
+            type : "title",
+            compare : "EQ",
+            value : "0",
+            text : "You need a title for the publication",
+            forbidPublish : true
+        }
     ]
 }
 

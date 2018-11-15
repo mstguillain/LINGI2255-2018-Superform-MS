@@ -18,6 +18,7 @@ import math
 
 # à faire :
 # - rajouter :  image_url, connexion avec user et password
+# - gerer accent dans desciption
 
 # COMMENT ON A GERE L'AUTHENTIFICATION POUR LE MOMENT :
 # On modifie les accès de notre server local pour que seules les personnes
@@ -45,6 +46,7 @@ def makeText(publishing):
 
     suite = "Par " + author + " Publie le " + date +"\n"
     corps = str(publishing.description).replace("\n","[[<<]]") + "\n"
+
 
     text = titre + "-----" + suite + corps
     if len(str(publishing.link_url))>0 :
