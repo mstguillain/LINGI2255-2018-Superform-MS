@@ -37,24 +37,32 @@ import math
 FIELDS_UNAVAILABLE = ['Title','Description']
 CONFIG_FIELDS = ["username","password"]
 
+urlwiki = "http://localhost/pmwiki-2.2.109/pmwiki.php"
 
 def makeText(publishing):
+    text = ""
+    #title
     titre = "!! " + publishing.title + "\n"
+    text = titre
+
+    #author and date
     try :
         author = publishing.get_author()
     except AttributeError:
         author = "Superform"
-
     date = str(datetime.datetime.now().strftime("%d/%m/%Y"))
+    suite = "Par " + author + " Publié le " + date +"\n"
+    text = text  + suite + "-----"
 
-    suite = "Par " + author + " Publie le " + date +"\n"
+    #description
     corps = str(publishing.description).replace("\n","[[<<]]") + "\n"
+    text = text + corps
 
-
-    text = titre + "-----" + suite + corps
+    #link
     if len(str(publishing.link_url))>0 :
         link_url = "-----"+"[["+publishing.link_url+"]]"+"\n"
         text = text +  link_url
+    #image
     image_url = publishing.image_url
     text.encode("UTF-8")
     return text
@@ -71,9 +79,9 @@ def run(publishing,channel_config):
     pageName = "News."+str(publishing.title).replace(" ","")
     text = makeText(publishing)
     data = {"n": pageName, "text": text, "action": "edit", "post": "1", 'authid': authid, "authpw":authpw,"basetime": math.floor(time.time())}
-    # r2 = requests.post("http://localhost/pmwiki-2.2.109/pmwiki.php?n=Main.Essai_nono&action=edit&text=Hello%20World&post=1", data)
+    # r2 = requests.post(urlwiki + "?n=Main.Essai_nono&action=edit&text=Hello%20World&post=1", data)
 
-    r2 = requests.post("http://localhost/pmwiki-2.2.109/pmwiki.php", data)
+    r2 = requests.post(urlwiki, data)
 
 
 
