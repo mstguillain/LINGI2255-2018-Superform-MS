@@ -9,7 +9,7 @@ FIELDS_UNAVAILABLE = ['Title', 'Description']
 
 CONFIG_FIELDS = ["Feed title", "Feed description"]
 
-RSS_DIR = "localhost:5000/rss/"
+RSS_DIR = "localhost:5000/static/rss/"
 
 def newFeed(rname,rdescription):
     """
@@ -29,7 +29,7 @@ def newFeed(rname,rdescription):
         docs=None,
         items=[])
     print("link: ",feedLink)
-    return feed
+    return feed, nameOfFeed
 
 def import_items(xml_path):
     """
@@ -86,7 +86,11 @@ def run(publishing, channel_config):
 
 
     localPath = os.path.dirname(__file__)+"/rss/feed_"+str(publishing.channel_id)+".xml"
-    feed = newFeed(rname, rdescription)
+    parent = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    print("#######",parent)
+
+    feed,nof = newFeed(rname, rdescription)
+    serverPath = parent+"/static/rss/"+nof+".xml"
     feed.items.append(item)
     if os.path.isfile(localPath): #import older publishing if any
         print("a file already exist")
@@ -95,10 +99,12 @@ def run(publishing, channel_config):
         print(len(olderItems))
         feed.items.extend(olderItems)
 
-
+    a = feed.rss()
     print(feed.items)
     with open(localPath, 'w') as f:
-        a = feed.rss()
-        f.write(a)
 
+        f.write(a)
+    with open(serverPath, 'w') as f:
+
+        f.write(a)
 
