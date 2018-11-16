@@ -60,7 +60,7 @@ def test_validity_date():
     result = gcal_plugin.is_valid(pub)
     assert result==False
 
-def test_validity_date():
+def test_validity():
     pub = Publishing()
     pub.title = 'test'
     pub.date_from = '16.11.18'
