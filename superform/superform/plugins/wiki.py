@@ -66,7 +66,10 @@ def makeText(publishing):
         link_url = "-----"+"[["+publishing.link_url+"]]"+"\n"
         text = text +  link_url
     #image
-    image_url = publishing.image_url
+    if( len(str(publishing.image_url)))>0 :
+        image_url = "-----"+publishing.image_url+"\n"
+        text = text+image_url
+
     text.encode("UTF-8")
     return text
 
