@@ -10,7 +10,7 @@ from superform.models import Channel, db
 from flask import request, render_template, url_for
 from linkedin import linkedin  # from python3-linkedin library
 
-FIELDS_UNAVAILABLE = ['Title', 'Description']
+FIELDS_UNAVAILABLE = []
 
 CONFIG_FIELDS = []  # Unused for now. But could be used to refresh dynamically the access token
 
@@ -40,52 +40,72 @@ def linkedin_plugin(id, c, config_fields, status):
 
     # gets the root of the app and add the path to linkedin_return and
     # gets rid of the first '/'
-    flag = -1
-    message = ""
+    credentials_flag = -1
+    connection_flag = 0
+    expiration_flag = 0
+    credentials_message = ""
+    connection_message = ""
+    expiration_message = ""
 
     try:
         client_id = get_client_id()
-        message += "LinkedIn credentials found. "
-        flag = 1
+        credentials_message += "LinkedIn credentials found. "
+        credentials_flag = 1
     except FileNotFoundError:
         print(
             "linkedin.ini file not found. Please check that the linkedin.ini "
             "file is placed in the superform/plugins folder.")
-        message += "Credentials not found! Please check that you have put the " \
-                   "application credentials in the plugins/linkedin.ini file. "
+        credentials_message += "Credentials not found! Please check that you have put the " \
+                               "application credentials in the plugins/linkedin.ini file. "
 
     redirect_link = "https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=" \
                     + client_id + "&redirect_uri=" + return_url + "&state=" + state
 
     if status == "-1:%i" % id:
-        flag = -1
-        message += "\nConnection to LinkedIn failed"
+        connection_flag = -1
+        connection_message += "Connection to LinkedIn failed"
     elif status == "1:%i" % id:
-        message += "\nSuccessfully connected to LinkedIn! Do not forget to save!"
+        connection_flag = 1
+        connection_message += "Successfully connected to LinkedIn! Do not forget to save!"
 
-    #getsurlaDB
+    # get sur la DB
     linkedIn_Channel = db.session.query(Channel).filter(
         Channel.id == id).first()
-    if(linkedIn_Channel is not None):
+    if linkedIn_Channel is not None:
         channel_config = linkedIn_Channel.config
         json_data = json.loads(channel_config)
-        if ('creationTime' in json_data):
+        if 'creationTime' in json_data:
             creationTime = json_data['creationTime']
             creationTime_in_seconds = int(creationTime)
-            now_in_seconds = int (time.time())
+            now_in_seconds = int(time.time())
             elapsed_time_in_seconds = now_in_seconds - creationTime_in_seconds
-            left_time_in_seonds = 5184000 - elapsed_time_in_seconds
-            days_left = int(left_time_in_seonds/86400)
-            message += "\n Token valid for "+ str(days_left) + 'days left'
-
-
+            time_left_in_seconds = 5184000 - elapsed_time_in_seconds
+            days_left = int(time_left_in_seconds / 86400)
+            if days_left < 0:
+                expiration_flag = -1
+                expiration_message += "Token expired since %i days! Please" \
+                                      " relink your LinkedIn account and click \"save\"" \
+                                      % abs(days_left)
+            else:
+                expiration_flag = 1
+                expiration_message += "Token still valid for " + str(
+                    days_left) + ' days.'
+                if days_left < 6:
+                    expiration_flag = 2
+                    expiration_message += " We strongly advise you to already " \
+                                          "re-link your LinkedIn account and" \
+                                          " then click \"save\""
 
     return render_template("linkedin_configuration.html",
                            channel = c,
                            config_fields = config_fields,
                            redirect = redirect_link,
-                           message = message,
-                           flag = flag
+                           credentials_message = credentials_message,
+                           connection_message = connection_message,
+                           expiration_message = expiration_message,
+                           credentials_flag = credentials_flag,
+                           connection_flag = connection_flag,
+                           expiration_flag = expiration_flag
                            )
 
 
@@ -98,6 +118,7 @@ def get_linkedin_authentication():
     Get the access to the LinkedIn account and links it to the python3-linkedin library
     :return: the authentication object created by the python3-linkedin library
     """
+    print("Start: Authentication process")
     try:
         client_id = get_client_id()
     except FileNotFoundError:
@@ -113,11 +134,8 @@ def get_linkedin_authentication():
             "file is placed in the superform/plugins folder.")
         client_secret = None
 
-
-
     return_url = request.url_root + str(url_for('channels.linkedin_return'))[
-                                   1:]
-
+                                    1:]
 
     authentication = linkedin.LinkedInAuthentication(
         client_id,
@@ -134,12 +152,16 @@ def linkedin_code_processing(code):
     :param code: the authorization_code gotten from the api
     :return: the access token
     """
+    print("Code processing")
     authentication = get_linkedin_authentication()
+    print("Authentication success")
     authentication.authorization_code = code
     access_token = get_access_token(authentication)
     if access_token is not None:
-        print("Access Token:", access_token.access_token)
-        print("Expires in (seconds):", access_token.expires_in)
+        print("Access Token fetched")
+        print("Token expires in %s seconds (%i days)"
+              % (access_token.expires_in,
+                 int(access_token.expires_in) / (60 * 60 * 24)))
         return access_token
     return None
 
@@ -149,6 +171,7 @@ def get_access_token(authentication):
     :param authentication: the access to the LinkedIn account
     :return: the access token linked to the LK account
     """
+    print("Start: Access token fetching")
     try:
         access_token = authentication.get_access_token()
         return access_token
@@ -159,12 +182,13 @@ def get_access_token(authentication):
 
 
 ######################
-## post publication ##
+## publication ##
 ######################
 
 def run(publishing, channel_config):
     """ Gathers the informations in the config column and launches the
     posting process """
+    print("Start LinkedIn publication process")
     json_data = json.loads(channel_config)
     token = json_data['token']
     title = publishing.title
@@ -172,7 +196,6 @@ def run(publishing, channel_config):
     link = publishing.link_url
 
     comment = title + "\n" + body + "\n" + link
-
 
     posted = post(token, comment = comment, title = None, description = None,
                   submitted_url = None, submitted_image_url = None)

@@ -1,26 +1,27 @@
-from flask import current_app
+from flask import current_app, request
 import json
 import rfeed
 import datetime
 import os
 import feedparser
 
-FIELDS_UNAVAILABLE = ['Title', 'Description']
+FIELDS_UNAVAILABLE = []
 
 CONFIG_FIELDS = ["Feed title", "Feed description"]
 
-RSS_DIR = "localhost:5000/static/rss/"
 
-def newFeed(rname,rdescription):
+def newFeed(rname, rdescription):
     """
     :param rname: name for the RSS feed
     :param rdescription: description of the RSS feed
     :return: Will return a new (empty publication) feed with "localhost:5000/rss/NAME_OF_FEED.xml" as link
     """
-    print("ici")
+    print("____________________________\n"
+          "Creating a new rss feed")
     temp = rname.split(" ")
     nameOfFeed = "_".join(temp)
-    feedLink = RSS_DIR+nameOfFeed+".xml"
+    RSS_DIR = request.url_root + "static/rss/"
+    feedLink = RSS_DIR + nameOfFeed + ".xml"
     feed = rfeed.Feed(
         title=rname,
         link=feedLink,
@@ -28,8 +29,9 @@ def newFeed(rname,rdescription):
         lastBuildDate=datetime.datetime.now(),
         docs=None,
         items=[])
-    print("link: ",feedLink)
+    print("Link to the feed: ", feedLink)
     return feed, nameOfFeed
+
 
 def import_items(xml_path):
     """
@@ -55,19 +57,21 @@ def import_items(xml_path):
             body = post.description
             # print('description ok')
         if 'published' in post:
-            date= post.published
+            date = post.published
             # print('date ok')
 
         item = rfeed.Item(
-            title=title,
-            link=link,
-            description=body,
-            pubDate=datetime.datetime.strptime(date, "%a, %d %b %Y %X GMT"))
+            title = title,
+            link = link,
+            description = body,
+            pubDate = datetime.datetime.strptime(date, "%a, %d %b %Y %X GMT"))
         items.append(item)
     return items
 
-def run(publishing, channel_config):
 
+def run(publishing, channel_config):
+    print("____________________________\n"
+          "Runs the rss publication")
     json_data = json.loads(channel_config)
     rname = json_data['Feed title']
     rdescription = json_data['Feed description']
@@ -79,32 +83,24 @@ def run(publishing, channel_config):
     item_img = publishing.image_url
 
     item = rfeed.Item(
-        title=item_title,
-        link=item_link,
-        description=item_body,
-        pubDate=item_from)
+        title = item_title,
+        link = item_link,
+        description = item_body,
+        pubDate = item_from)
 
-
-    localPath = os.path.dirname(__file__)+"/rss/feed_"+str(publishing.channel_id)+".xml"
+    localPath = os.path.dirname(__file__) + "/rss/feed_" + str(
+        publishing.channel_id) + ".xml"
     parent = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    print("#######",parent)
 
-    feed,nof = newFeed(rname, rdescription)
-    serverPath = parent+"/static/rss/"+nof+".xml"
+    feed, nof = newFeed(rname, rdescription)
+    serverPath = parent + "/static/rss/" + nof + ".xml"
     feed.items.append(item)
-    if os.path.isfile(localPath): #import older publishing if any
-        print("a file already exist")
+    if os.path.isfile(localPath):  # import older publishing if any
         olderItems = import_items(localPath)
-        print(olderItems)
-        print(len(olderItems))
         feed.items.extend(olderItems)
 
     a = feed.rss()
-    print(feed.items)
     with open(localPath, 'w') as f:
-
         f.write(a)
     with open(serverPath, 'w') as f:
-
         f.write(a)
-

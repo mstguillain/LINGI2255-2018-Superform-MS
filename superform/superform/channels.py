@@ -89,7 +89,7 @@ def configure_channel(id):
     last_channel_id = request.cookies.get(LAST_CHANNEL_ID)
 
 
-
+    print("Saving LinkedIn channel data")
     if str(m) == "superform.plugins.LinkedIn" and str(last_channel_id) == str(
             id) and last_access_token is not None and last_creation_time is not None:
         if cfield > 0:
@@ -111,18 +111,20 @@ def linkedin_return():
         Redirected route manager for the LinkedIn plugin, sets the necessary
         cookies to continue the session.
     """
+    print("Redirected from LinkedIn")
     url = request.url
     if url.startswith(request.url_root + "configure/linkedin?code"):
         i = url.find("state", 46)
         code = url[46:i - 1]
+        print("Code retrieved")
         ch_id = url[i + 9:url.find("rest")]
         last_access_token = linkedin_code_processing(
             code)  # return from LinkedIn
         now = datetime.datetime.now()
-        last_creation_time = str (int(time.time())) #str(time.gmtime()) #now.strftime("%Y-%m-%d %H:%M")
+        last_creation_time = str(int(time.time()))  # str(time.gmtime()) #now.strftime("%Y-%m-%d %H:%M")
         last_channel_id = ch_id
         if last_access_token is None:
-            print("no token !")
+            print("No token retrieved!")
 
         redirection = redirect(
             url_for('channels.configure_channel', id = ch_id))

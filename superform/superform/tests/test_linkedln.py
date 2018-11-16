@@ -75,13 +75,13 @@ def test_run_linkedin():
         try:
             client_id = LinkedIn.get_client_id()
         except FileNotFoundError:
-            assert (False), "bad configuration, requires a linkedin.ini file "
             client_id = None
+            assert (False), "bad configuration, requires a linkedin.ini file "
         try:
             client_secret = LinkedIn.get_client_secret()
         except FileNotFoundError:
-            assert (False), "bad configuration, requires a linkedin.ini file "
             client_secret = None
+            assert (False), "bad configuration, requires a linkedin.ini file "
 
         return_url = url_root+"/channels"
         authentication = linkedin.LinkedInAuthentication(

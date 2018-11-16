@@ -21,10 +21,25 @@
                                href="{{ redirect }}">Link
                                 in your LinkedIn</a>
                             <br/><br/>
-                            {% if flag == -1 %} <!-- Error -->
-                                <p class="alert-danger">{{ message }}</p>
-                            {% elif flag == 1 %} <!-- Success -->
-                                <p class="alert-info">{{ message }}</p>
+                            <!-- Credentials block -->
+                            {% if credentials_flag == -1 %} <!-- Error -->
+                                <p class="alert-danger">{{ credentials_message }}</p>
+                            {% elif credentials_flag == 1 %} <!-- Success -->
+                                <p class="alert-info">{{ credentials_message }}</p>
+                            {% endif %}
+                            <!-- Connection block -->
+                            {% if connection_flag == -1 %} <!-- Error -->
+                                <p class="alert-danger">{{ connection_message }}</p>
+                            {% elif connection_flag == 1 %} <!-- Success -->
+                                <p class="alert-info">{{ connection_message }}</p>
+                            {% endif %}
+                            <!-- Expiration block -->
+                            {% if expiration_flag == -1 %} <!-- Error -->
+                                <p class="alert-danger">{{ expiration_message }}</p>
+                            {% elif expiration_flag == 1 %} <!-- Success -->
+                                <p class="alert-info">{{ expiration_message }}</p>
+                            {% elif expiration_flag == 2 %} <!-- Warning -->
+                                <p class="alert-warning">{{ expiration_message }}</p>
                             {% endif %}
                         </div>
                     </div>
