@@ -31,3 +31,47 @@ def test_run():
             found=True
     print(found)
     assert found
+
+def test_validity_title():
+    pub = Publishing()
+    pub.title = ' '
+    pub.date_from = '16.11.18'
+    pub.date_until = '16.11.18'
+    pub.link_url = 'anything'
+    pub.description = 'description'
+    pub.image_url = 'image url'
+    pub.state = 1
+    pub.channel_id = 'Gcal'
+
+    result = gcal_plugin.is_valid(pub)
+    assert result==False
+
+def test_validity_date():
+    pub = Publishing()
+    pub.title = 'test'
+    pub.date_from = '16.11.1995'
+    pub.date_until = '16.11.1995'
+    pub.link_url = 'anything'
+    pub.description = 'description'
+    pub.image_url = 'image url'
+    pub.state = 1
+    pub.channel_id = 'Gcal'
+
+    result = gcal_plugin.is_valid(pub)
+    assert result==False
+
+def test_validity_date():
+    pub = Publishing()
+    pub.title = 'test'
+    pub.date_from = '16.11.18'
+    pub.date_until = '16.11.18'
+    pub.link_url = 'anything'
+    pub.description = 'description'
+    pub.image_url = 'image url'
+    pub.state = 1
+    pub.channel_id = 'Gcal'
+
+    result = gcal_plugin.is_valid(pub)
+    assert result==True
+
+

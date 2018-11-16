@@ -5,6 +5,7 @@ from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 from datetime import datetime
 import json
+import time
 
 
 FIELDS_UNAVAILABLE = ['Image']
@@ -99,3 +100,17 @@ def delete(id):
     """
     Supprime la publication
     """
+
+def is_valid(pub):
+    """
+      check if valid
+    """
+    now = datetime.datetime.now()
+    if len(pub.title)==0:
+        return False
+    if pub.date_from < now :
+        return False
+    if pub.date_from > pub.date_until:
+        return False
+    else :
+        return True
