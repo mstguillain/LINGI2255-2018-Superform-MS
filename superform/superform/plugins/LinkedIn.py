@@ -84,7 +84,7 @@ def linkedin_plugin(id, c, config_fields, status):
             if days_left < 0:
                 expiration_flag = -1
                 expiration_message += "Token expired since %i days! Please" \
-                                      " relink your LinkedIn account and click \"save\"" \
+                                      " relink your LinkedIn account and click \"save\"." \
                                       % abs(days_left)
             else:
                 expiration_flag = 1
@@ -94,7 +94,7 @@ def linkedin_plugin(id, c, config_fields, status):
                     expiration_flag = 2
                     expiration_message += " We strongly advise you to already " \
                                           "re-link your LinkedIn account and" \
-                                          " then click \"save\""
+                                          " then click \"save\"."
 
     return render_template("linkedin_configuration.html",
                            channel = c,

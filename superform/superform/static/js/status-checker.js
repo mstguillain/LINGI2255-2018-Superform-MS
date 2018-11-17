@@ -37,9 +37,40 @@ statusListener = {
     [
         {
             type : "title",
+            compare : "GT",
+            value : "0",
+            text : "The title will appear above the description",
+            forbidPublish : false
+        },
+        {
+            type : "link",
+            compare : "GT",
+            value : "0",
+            text : "The link may provide a background image",
+            forbidPublish : false
+        }
+    ],
+    rss :
+    [
+        {
+            type : "link",
             compare : "EQ",
             value : "0",
-            text : "The LinkedIn title will be not displayed",
+            text : "The link tag will appear empty",
+            forbidPublish : false
+        },
+        {
+            type : "title",
+            compare : "EQ",
+            value : "0",
+            text : "The title tag will appear empty",
+            forbidPublish : false
+        },
+        {
+            type : "description",
+            compare : "EQ",
+            value : "0",
+            text : "The description tag will appear empty",
             forbidPublish : false
         }
     ],
