@@ -34,7 +34,8 @@ import math
 #       * Configurer la channel wiki sur superform :
 #           --> mettre le mot de passe choisi dans le champ password. Pour l'instant on peut mettre ce qu'on veut dans le champs username
 
-FIELDS_UNAVAILABLE = ['Title','Description']
+#FIELDS_UNAVAILABLE = ['Title','Description']
+FIELDS_UNAVAILABLE = []
 CONFIG_FIELDS = ["username","password"]
 
 urlwiki = "http://localhost/pmwiki-2.2.109/pmwiki.php"
@@ -55,11 +56,12 @@ def makeText(publishing):
 
     date = str(datetime.datetime.now().strftime("%d/%m/%Y"))
     suite = "Par " + author + " Publié le " + date +"\n"
-    text = text  + suite + "-----"
+    text = text  + suite +"\n"+ "-----"+"\n"
 
     #description
-    corps = str(publishing.description).replace("\n","[[<<]]") + "\n"
-    text = text + corps
+    #corps = str(publishing.description).replace("\n","[[<<]] ") +"\n"
+    corps = str(publishing.description).replace("\n","\n") +"\n"
+    text = text + corps+"\n"
 
     #link
     if len(str(publishing.link_url))>0 :
@@ -67,10 +69,11 @@ def makeText(publishing):
         text = text +  link_url
     #image
     if( len(str(publishing.image_url)))>0 :
-        image_url = "-----"+publishing.image_url+"\n"
+        image_url = "-----"+"\n"+publishing.image_url+"\n"
         text = text+image_url
 
     text.encode("UTF-8")
+    print(text)
     return text
 
 def run(publishing,channel_config):
