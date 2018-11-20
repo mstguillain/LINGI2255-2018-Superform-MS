@@ -60,7 +60,7 @@ def makeText(publishing):
 
     #description
     #corps = str(publishing.description).replace("\n","[[<<]] ") +"\n"
-    corps = str(publishing.description).replace("\n","\n") +"\n"
+    corps = str(publishing.description).replace("\n","[[<<]] \n") +"\n"
     text = text + corps+"\n"
 
     #link
@@ -73,7 +73,6 @@ def makeText(publishing):
         text = text+image_url
 
     text.encode("UTF-8")
-    print(text)
     return text
 
 def run(publishing,channel_config):
