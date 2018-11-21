@@ -3,11 +3,10 @@
 .idea
 /__pycache__/
 config.json
-cache/*
-.pytest_cache/*
-.DS_Store
-*/superform.db
 credentials.json
-superform/uild/
-superform/dist/
-superform/superform.egg-info/
+.cache/*
+.pytest_cache/*
+/superform/.cache/*
+/superform/.pytest_cache/*
+.DS_Store
+superform.db
