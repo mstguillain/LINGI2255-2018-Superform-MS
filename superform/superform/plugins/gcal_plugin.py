@@ -40,7 +40,7 @@ def get_full_config(channel_config):
                 "redirect_uris":["urn:ietf:wg:oauth:2.0:oob","http://localhost"]}}
 
 def date_format_converter(date, hour):
-    return date+'T'+hour+':00z'
+    return date+'T'+hour+':00Z'
 
 def generate_event(publishing):
    return {
@@ -53,12 +53,12 @@ def generate_event(publishing):
         ],
         'start': {
             #hour is hardcoded due to moderation issue
-            'dateTime': publishing.date_from+'T'+'00:00:00z,
+            'dateTime': publishing.date_from+'T'+'00:00:00Z',
             'timeZone': 'Europe/Zurich',
         },
         'end': {
             #hour is hardcoded due to moderation issue
-            'dateTime': publishing.date_from+'T'+'23:59:59z,
+            'dateTime': publishing.date_from+'T'+'23:59:59Z',
             'timeZone': 'Europe/Zurich',
         },
         'reminders': {
