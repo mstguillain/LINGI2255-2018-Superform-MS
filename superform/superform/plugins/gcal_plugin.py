@@ -102,5 +102,5 @@ def delete(id):
     """
 
 def is_valid(pub):
-    now = datetime.datetime.now()
+    now = datetime.now()
     return len(pub.title) != 0 and pub.date_from >= now and pub.date_from <= pub.date_until

@@ -1,4 +1,4 @@
-from flask import Blueprint, url_for, request, redirect, session, render_template
+from flask import Blueprint, flash, url_for, request, redirect, session, render_template
 from superform.users import channels_available_for_user
 from superform.utils import login_required, datetime_converter, str_converter, get_instance_from_module_path
 from superform.models import db, Post, Publishing, Channel, User
@@ -41,7 +41,10 @@ def create_a_publishing(post, chn, form):
                      link_url=link_post, image_url=image_post,
                      date_from=date_from, date_until=date_until)
 
-    if(is_gcal_channel(chan)):
+    if not gcal_plugin.is_valid(pub):
+       flash("You must fill properly the form !")
+       return None
+    if is_gcal_channel(chan):
         generate_google_user_credentials(chan)
 
     db.session.add(pub)
