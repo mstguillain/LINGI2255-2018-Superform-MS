@@ -3,10 +3,10 @@
 .idea
 /__pycache__/
 config.json
-.cache/*
+cache/*
 .pytest_cache/*
 .DS_Store
-*/uperform.db
+*/superform.db
 credentials.json
 superform/uild/
 superform/dist/

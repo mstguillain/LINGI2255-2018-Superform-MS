@@ -4,7 +4,7 @@ from superform.models import db, User
 import json
 
 
-FIELDS_UNAVAILABLE = ['Title']
+FIELDS_UNAVAILABLE = ['Title','Publication Date','Publication Until']
 
 CONFIG_FIELDS = ["page_id"]
 
