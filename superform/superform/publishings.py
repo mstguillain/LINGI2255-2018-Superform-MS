@@ -23,8 +23,8 @@ def moderate_publishing(id,idc):
             pub.image_url = request.form.get('imagepost')
             pub.date_from = datetime_converter(request.form.get('datefrompost'))
             pub.date_until = datetime_converter(request.form.get('dateuntilpost'))
-            pub.start_time = hour_converter(request.form.get('starttime'))
-            pub.end_time = hour_converter(request.form.get('endtime'))
+            #pub.start_time = hour_converter(request.form.get('starttime'))
+            #pub.end_time = hour_converter(request.form.get('endtime'))
             #state is shared & validated
             #running the plugin here
             c=db.session.query(Channel).filter(Channel.name == pub.channel_id).first()

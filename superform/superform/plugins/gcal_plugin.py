@@ -3,7 +3,9 @@ from superform.models import db, User
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
+from datetime import datetime
 import json
+import time
 
 
 FIELDS_UNAVAILABLE = ['Image']
@@ -13,6 +15,9 @@ CLIENT_SECRET = 'client_secret'
 CONFIG_FIELDS = [PROJECT_ID, CLIENT_ID, CLIENT_SECRET]
 
 
+def str_converter(datet):
+    return datetime.strftime(datet,"%Y-%m-%d")
+
 def creds_to_string(creds):
    return json.dumps({'token': creds.token,
             'refresh_token': creds._refresh_token,
@@ -20,6 +25,19 @@ def creds_to_string(creds):
             'client_id': creds._client_id,
             'client_secret': creds._client_secret,
             'scopes': creds._scopes})
+
+def generate_user_credentials(channel_config):
+    SCOPES = 'https://www.googleapis.com/auth/calendar'
+
+    creds = get_user_credentials()
+    if not creds:
+       channel_config = get_full_config(json.loads(channel_config))
+       flow = InstalledAppFlow.from_client_config(channel_config, scopes=[SCOPES])
+       creds = flow.run_local_server(host='localhost', port=8080,
+                   authorization_prompt_message='Please visit this URL: {url}',
+                   success_message='The auth flow is complete, you may close this window.',
+                   open_browser=True)
+       set_user_credentials(creds)
 
 def get_user_credentials():
    user = User.query.get(session["user_id"])
@@ -48,17 +66,15 @@ def generate_event(publishing):
         'description': publishing.description,
         'attachments': [
             {
-                "fileUrl": publishing.link_url
+                "fileUrl": publishing.link_url,
             }
         ],
         'start': {
-            #hour is hardcoded due to moderation issue
-            'dateTime': publishing.date_from+'T'+'00:00:00Z',
+            'date': str_converter(publishing.date_from),
             'timeZone': 'Europe/Zurich',
         },
         'end': {
-            #hour is hardcoded due to moderation issue
-            'dateTime': publishing.date_from+'T'+'23:59:59Z',
+            'date': str_converter(publishing.date_until),
             'timeZone': 'Europe/Zurich',
         },
         'reminders': {
@@ -68,21 +84,10 @@ def generate_event(publishing):
                 {'method': 'popup', 'minutes': 10},
             ],
         },
-    } 
+    }
 
 def run(publishing, channel_config):
-    SCOPES = 'https://www.googleapis.com/auth/calendar'
-    #print('START AND END TIME'+publishing.starttime+' '+publishing.endtime)
     creds = get_user_credentials()
-    if not creds:
-       channel_config = get_full_config(json.loads(channel_config))
-       flow = InstalledAppFlow.from_client_config(channel_config, scopes=[SCOPES])
-       creds = flow.run_local_server(host='localhost', port=8080,
-                   authorization_prompt_message='Please visit this URL: {url}',
-                   success_message='The auth flow is complete, you may close this window.',
-                   open_browser=True)
-       set_user_credentials(creds)
-
     service = build('calendar', 'v3', credentials=creds)
     event = generate_event(publishing)
     id = publish(event, service)
@@ -92,10 +97,23 @@ def publish(event, service):
     Publie sur le compte et renvoie l'id de la publication
     """
     event = service.events().insert(calendarId='primary', body=event).execute()
-    print ('Event created: %s' % (event.get('htmlLink'))) #TODO Delete when finished debugging
     return event.get('htmlLink')
 
 def delete(id):
     """
     Supprime la publication
     """
+
+def is_valid(pub):
+    """
+      check if valid
+    """
+    now = datetime.datetime.now()
+    if len(pub.title)==0:
+        return False
+    if pub.date_from < now :
+        return False
+    if pub.date_from > pub.date_until:
+        return False
+    else :
+        return True

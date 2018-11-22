@@ -79,6 +79,11 @@ flask run --cert rootCA.pem --key rootCA.key
 * It's only the beginning, we are fixing the SSL issue with testshib, and we are doing protective programming with tokens and login buttons
 
 
+## GCal plugin:
+In order to run the GCal plugin, you must first create a project on the Google API at the following link: https://console.developers.google.com/, this will give you an Application ID that we will use later. THen, you must create an OAuth Client ID in the credentials tab. This will provide you a client ID and a client secret. Note that you don't need to download the JSON file of the credentials. Lastly, you will need to enable Google Calendar with your project by finding him on the library tab.
+Then you can connect to the Superform application and create a new channel linked to gcal. You will now need to configure it with the 3 different values that you found earlier when registering the Application to the Google API. After that, you just need to set up the configurations for the corresponding gcal channel and you can now post on Google Calendar through Superform.
+
+
 ## Contributors
 
 Kim Mens - @kimmens 
