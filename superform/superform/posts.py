@@ -42,7 +42,6 @@ def create_a_publishing(post, chn, form):
                      date_from=date_from, date_until=date_until)
 
     if not gcal_plugin.is_valid(pub):
-       flash("You must fill properly the form !")
        return None
     if is_gcal_channel(chan):
         generate_google_user_credentials(chan)
@@ -96,6 +95,11 @@ def publish_from_new_post():
                 # for each selected channel options
                 # create the publication
                 pub = create_a_publishing(p, c, request.form)
+                if pub == None :
+                    p.title = "[DRAFT] "+p.title
+                    flash("The form was not filled correctly. Your post has been saved as draft, please proceed to modifications.")
+                else:
+                    print(c)
 
     db.session.commit()
     return redirect(url_for('index'))
