@@ -7,6 +7,7 @@ from superform.publishings import pub_page
 from superform.models import db, User, Post,Publishing
 from superform.authentication import authentication_page
 from superform.authorizations import authorizations_page
+from superform.stats import stats_page
 from superform.channels import channels_page
 from superform.posts import posts_page
 from superform.users import get_moderate_channels_for_user, is_moderator
@@ -24,6 +25,7 @@ app.register_blueprint(authorizations_page)
 app.register_blueprint(channels_page)
 app.register_blueprint(posts_page)
 app.register_blueprint(pub_page)
+app.register_blueprint(stats_page)
 
 # Init dbs
 db.init_app(app)

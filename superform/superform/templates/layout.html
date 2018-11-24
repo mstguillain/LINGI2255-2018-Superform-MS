@@ -3,7 +3,7 @@
     <head>
         {% block head %}
         <!-- Required meta tags -->
-        <meta charset="utf-8">
+        <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
         <!-- Bootstrap CSS -->
@@ -13,9 +13,9 @@
         <title>{% block title %}{% endblock %} - Superform</title>
         {% endblock %}
     </head>
-    
+
     <body>
-    
+
 
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
             <a class="navbar-brand" href="{{ url_for('index') }}">
@@ -36,7 +36,10 @@
                         <li class="nav-item">
                             <a class="nav-link" href="{{ url_for('posts.new_post')}}">New post</a>
                         </li>
-                        
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('stats.stats')}}">Stats</a>
+                        </li>
+
 
                         <li class="nav-item">
                             <a class="nav-link" href="{{ url_for('posts.records')}}">Archives</a>
@@ -63,7 +66,7 @@
                 </ul>
             </div>
         </nav>
-        
+
         <div class="container-fluid">
         {% with messages = get_flashed_messages() %}
             {% if messages %}
@@ -82,7 +85,7 @@
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
         <!-- Optional JavaScript -->
         <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-        
+
         <script src="{{ url_for('static', filename='js/jquery-3.3.1.min.js') }}" integrity="sha384-tsQFqpEReu7ZLhBV2VZlAu7zcOV+rXbYlF2cqB8txI/8aZajjp4Bqd+V6D5IgvKT" crossorigin="anonymous"></script>
         <script src="{{ url_for('static', filename='js/popper.min.js') }}" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
         <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
