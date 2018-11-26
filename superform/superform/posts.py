@@ -4,7 +4,7 @@ from superform.utils import login_required, datetime_converter, str_converter, g
 from superform.models import db, Post, Publishing, Channel, User
 import facebook
 import json
-import http 
+import http
 import urllib.request
 from .plugins import gcal_plugin
 
@@ -28,6 +28,8 @@ def create_a_post(form):
 
 def create_a_publishing(post, chn, form):
     chan = str(chn.name)
+    chn.count += 1
+    user_id = session.get("user_id", "") if session.get("logged_in", False) else -1
     title_post = form.get(chan + '_titlepost') if (form.get(chan + '_titlepost') is not None) else post.title
     descr_post = form.get(chan + '_descriptionpost') if form.get(
         chan + '_descriptionpost') is not None else post.description
@@ -37,7 +39,7 @@ def create_a_publishing(post, chn, form):
         form.get(chan + '_datefrompost')) is not None else post.date_from
     date_until = datetime_converter(form.get(chan + '_dateuntilpost')) if datetime_converter(
         form.get(chan + '_dateuntilpost')) is not None else post.date_until
-    pub = Publishing(post_id=post.id, channel_id=chan, state=0, title=title_post, description=descr_post,
+    pub = Publishing(post_id=post.id, user_id=user_id,channel_id=chan, state=0, title=title_post, description=descr_post,
                      link_url=link_post, image_url=image_post,
                      date_from=date_from, date_until=date_until)
 
@@ -122,8 +124,3 @@ def getFBdata():
     user.fb_cred = str #set fb_Cred field for currently connected user
     db.session.commit()
     return "OK"
-
-    
-
-
-

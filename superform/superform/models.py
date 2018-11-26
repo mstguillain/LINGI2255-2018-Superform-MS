@@ -58,6 +58,7 @@ class Post(db.Model):
 
 class Publishing(db.Model):
     post_id = db.Column(db.Integer, db.ForeignKey("post.id"), nullable=False)
+    user_id = db.Column(db.String(80), db.ForeignKey("user.id"), nullable=False)
     channel_id = db.Column(db.Integer, db.ForeignKey("channel.id"), nullable=False)
     state = db.Column(db.Integer, nullable=False, default=-1)
     title = db.Column(db.Text, nullable=False)
@@ -84,6 +85,7 @@ class Channel(db.Model):
     name = db.Column(db.Text, nullable=False)
     module = db.Column(db.String(100), nullable=False)
     config = db.Column(db.Text, nullable=False)
+    count = db.Column(db.Integer, default=0)
 
     publishings = db.relationship("Publishing", backref="channel", lazy=True)
     authorizations = db.relationship("Authorization", backref="channel", lazy=True)
