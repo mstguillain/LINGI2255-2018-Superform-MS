@@ -4,7 +4,7 @@ from superform.models import db, User
 import json
 
 
-FIELDS_UNAVAILABLE = ['Title','Publication Date','Publication Until']
+FIELDS_UNAVAILABLE = ['Title','Publication From','Publication','Date','Image']
 
 CONFIG_FIELDS = ["page_id"]
 
@@ -27,8 +27,14 @@ def run(publishing, channel_config):
         # May happen in two cases 
         # 1) the user has not generated its token yet
         # 2) the user try to publish to a FB page he/she doesn't own
-        print("NO TOKEN FOUND")
-    
+        
+
+        CFG['access_token'] = setToken(CFG['page_id'])
+        if(CFG['access_token'] == "ACCESS_TOKEN_NOT_FOUND"):
+            flash('No access token to the page of the channel found, please login')
+            print("NO TOKEN FOUND")
+        else:
+            print("token refreshed after error")
     api = get_api(CFG)
 
     
@@ -37,10 +43,10 @@ def run(publishing, channel_config):
     body = publishing.description
     link = publishing.link_url
     image = publishing.image_url
-    #publishing.date_from
-    #publishing.date_until
+    print(publishing.date_from)
+    print(publishing.date_until)
     
-    id = publish(title+'\n'+body+'\n'+link+'\n'+image)
+    id = publish(title+'\n'+body+'\n'+link)
 
 
 def publish(message):
@@ -85,6 +91,5 @@ def setToken(goal_page_id):
             page_and_token = elem.split("|") #Split page_id|access_token 
             if(page_and_token[0] == goal_page_id): #If page id from credentials is the one we're looking for
                 return page_and_token[1]
-    else:
-        flash('please log out and login, no facebook token found on the database')
+    
     return "ACCESS_TOKEN_NOT_FOUND"
