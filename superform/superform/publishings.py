@@ -1,6 +1,6 @@
 from flask import Blueprint, url_for, request, redirect, render_template, session
 
-from superform.utils import login_required, datetime_converter, str_converter, hour_converter
+from superform.utils import login_required, datetime_converter, str_converter
 from superform.models import db, Publishing, Channel
 import facebook
 

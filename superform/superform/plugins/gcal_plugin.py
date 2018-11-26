@@ -4,8 +4,8 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 from datetime import datetime
+from superform.utils import str_converter
 import json
-import time
 
 
 FIELDS_UNAVAILABLE = ['Image']
@@ -13,10 +13,6 @@ PROJECT_ID = 'project_id'
 CLIENT_ID = 'client_id'
 CLIENT_SECRET = 'client_secret'
 CONFIG_FIELDS = [PROJECT_ID, CLIENT_ID, CLIENT_SECRET]
-
-
-def str_converter(datet):
-    return datetime.strftime(datet,"%Y-%m-%d")
 
 def creds_to_string(creds):
    return json.dumps({'token': creds.token,
@@ -57,9 +53,6 @@ def get_full_config(channel_config):
                 "client_secret":channel_config[CLIENT_SECRET],
                 "redirect_uris":["urn:ietf:wg:oauth:2.0:oob","http://localhost"]}}
 
-def date_format_converter(date, hour):
-    return date+'T'+hour+':00Z'
-
 def generate_event(publishing):
    return {
         'summary': publishing.title,
@@ -70,11 +63,11 @@ def generate_event(publishing):
             }
         ],
         'start': {
-            'date': str_converter(publishing.date_from),
+            'dateTime': str_converter(publishing.date_from) + ':00Z',
             'timeZone': 'Europe/Zurich',
         },
         'end': {
-            'date': str_converter(publishing.date_until),
+            'dateTime': str_converter(publishing.date_until) + ':00Z',
             'timeZone': 'Europe/Zurich',
         },
         'reminders': {
