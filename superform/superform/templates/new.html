@@ -74,9 +74,7 @@
 
                          <div class="card">
                           <div class="card-header">Status</div>
-
-                          <div class="card-body" id="status-content">Content</div>
-
+                          <div class="card-body" id="status-content"></div>
                          </div>
 
 
@@ -161,7 +159,7 @@
     {% else %}
         Your are not logged in.
     {% endif %}
-        
+
 
 {% endblock %}
 
@@ -169,7 +167,7 @@
 
     <script src="{{ url_for('static', filename='js/facebook_sdk.js') }}"></script>
     <script>
-        
+
         // This manage if a channel is selected or not:
         //  it hides/shows a tab for a channel
         //  it adds an information bullet to unavailable fields for each channel
