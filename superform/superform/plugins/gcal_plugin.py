@@ -35,8 +35,8 @@ def generate_user_credentials(channel_config):
                    open_browser=True)
        set_user_credentials(creds)
 
-def get_user_credentials():
-   user = User.query.get(session["user_id"])
+def get_user_credentials(user_id):
+   user = User.query.get(user_id) if user_id else User.query.get(session["user_id"])
    return Credentials.from_authorized_user_info(json.loads(user.gcal_cred)) if user.gcal_cred else None
 
 def set_user_credentials(creds):
@@ -99,4 +99,4 @@ def delete(id):
 
 def is_valid(pub):
     now = datetime.now()
-    return len(pub.title) != 0 and pub.date_from >= now and pub.date_from <= pub.date_until
+    return len(pub.title.strip()) != 0 and pub.date_from >= now and pub.date_from <= pub.date_until

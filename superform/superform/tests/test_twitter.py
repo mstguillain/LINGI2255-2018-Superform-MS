@@ -11,8 +11,6 @@ from twitter import twitter_utils
 from superform import app, db, Publishing, channels
 from superform.models import Channel, db
 from superform.plugins import twitter
-from nose import with_setup
-
 
 
 def test_run_tweet():
