@@ -1,4 +1,4 @@
-# To run : Be sure to be in Superform/superform folder and then 'pytest -v' in your terminal
+# To run : Be sure to be in ../LINGI2255-2018-Superform-MS-06/superform folder and then 'pytest -v' in your terminal
 import datetime
 import os
 import tempfile
