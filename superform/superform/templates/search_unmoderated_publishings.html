@@ -1,0 +1,101 @@
+<form class="form-group">
+     <label for="subject-search"><b>Search by subject :</b></label>
+     <input type="text" class="form-control" id="subject-search" placeholder="...">
+</form>
+<div class="input-group-btn">
+      <button type="button" class="btn btn-success" data-toggle="collapse" data-target="#advanced" aria-expanded="true">Advanced search &gt;&gt;</button>
+</div>
+<div id ="advanced" class="collapse">
+<form class="form-group" action="search">
+     <label for="body-search"><b> Text contains in body : </b></label>
+     <input type="text" class="form-control" id="body-search" placeholder="...">
+</form>
+<form class="form-group">
+     <label for="author-search"><b> Author : </b></label>
+     <input type="text" class="form-control" id="author-search" placeholder="...">
+</form>
+<div class="form-group">
+     <label for="channel-search"><b>Channels : </b></label>
+                             {% if channels|length == 0 %}
+                                 <p>No channel available for this user</p>
+                             {% else %}
+                                 {% for chan in channels %}
+                                     <div class="form-check">
+                                      <label class="form-check-label">
+                                        <input id ="channel-search" type="checkbox" class="form-check-input checkbox" checked>{{ chan.name }}
+                                      </label>
+                                    </div>
+                                 {% endfor %}
+                             {% endif %}
+</div>
+</div>
+<br/>
+
+<script>
+     var allChannels = {% if channels|length == 0 %}[]{% else %}[{% for chan in channels %}'{{chan.name}}',{% endfor %}]{% endif %}
+     var filter = {
+          channels : allChannels,
+          subject : "",
+          body : "",
+          author : ""
+     };
+
+     function waitJQuery(func, args) {
+    if (window.jQuery)
+         func(args);
+    else
+        setTimeout(function() {
+            waitJQuery(func, args)
+        }, 40);
+     }
+
+     function launchListener() {
+          $("#subject-search" ).on('input', function() {
+               filter.subject = $(this).val();
+               launchSearch();
+
+          });
+          $( "#body-search" ).on('input', function() {
+               filter.body = $(this).val();
+               launchSearch();
+          });
+
+           $( "#author-search" ).on('input', function() {
+               filter.author = $(this).val();
+               launchSearch();
+          });
+     }
+
+     function launchSearch() {
+      $.ajax({
+                    type : 'POST',
+                    data : filter,
+                    url : '/search_publishings',
+                    success : function(data) {
+                        //console.log(data);
+                        console.log(JSON.parse(data));
+                        $("tbody.list-publishings").html(changeTable(JSON.parse(data)));
+                    }
+      });
+     }
+
+     function changeTable(data) {
+        html = ''
+        if (data.length == 0) {
+            html = "<b>Nothing found !</b>"
+        }
+        else {
+            data.forEach(function(row) {
+                html += '<tr>'
+                html += '<td>' + row['channel'] + '</td>'
+                html += '<td>' + row['subject'] + '</td>'
+                html += '<td><div class="row"><div class="col">'+row['body']+'</div></div></td>'
+                html += '<td>' + row['author'] + '</td>'
+                html += '<td><a href="'+row['button']+'" class="btn btn-outline-primary" role="button">Moderate</a></td>'
+                html += '</tr>'
+            });
+        }
+        return html
+     }
+     waitJQuery(launchListener);
+</script>

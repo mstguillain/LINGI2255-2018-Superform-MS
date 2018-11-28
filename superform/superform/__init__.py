@@ -1,4 +1,8 @@
 from flask import Flask, render_template, session
+#For search
+from flask import request, url_for
+import json
+#
 import pkgutil
 import importlib
 
@@ -31,12 +35,40 @@ app.config["PLUGINS"] = {
     in pkgutil.iter_modules(superform.plugins.__path__, superform.plugins.__name__ + ".")
 }
 
+@app.route('/search_publishings', methods=['POST'])
+def search_publishings() :
+    data =''
+    user = User.query.get(session.get("user_id", "")) if session.get("logged_in", False) else None
+    posts = []
+    chans = []
+    flattened_list_pubs = []
+    if user is not None:
+        setattr(user, 'is_mod', is_moderator(user))
+        chans = get_moderate_channels_for_user(user)
+        pubs_per_chan = (db.session.query(Publishing).filter((Publishing.channel_id == c.name) &
+                                                             (Publishing.title.like('%'+request.form['subject']+'%') )&
+                                                             (Publishing.description.like('%' + request.form['body'] + '%')) &
+                                                             (Publishing.state == 0)) for c in chans)
+        flattened_list_pubs = [y for x in pubs_per_chan for y in x]
+        data = '['
+        i = 0
+        for p in flattened_list_pubs :
+            if request.form['author'] in p.get_author() :
+                if i != 0 :
+                    data += ','
+                data += '{"channel": "'+p.channel_id+'" , "subject" : "'+p.title+'", "body":"'+p.description+'", "author":"'+p.get_author()+'",'
+                data += '"button":"'+ url_for('publishings.moderate_publishing',id=p.post_id,idc=p.channel_id)+'"}'
+                i = i + 1
+        data += ']'
+
+    return str(data)
 
 @app.route('/')
 def index():
     user = User.query.get(session.get("user_id", "")) if session.get("logged_in", False) else None
     posts=[]
     flattened_list_pubs =[]
+    chans = []
     if user is not None:
         setattr(user,'is_mod',is_moderator(user))
         posts = db.session.query(Post).filter(Post.user_id==session.get("user_id", ""))
@@ -44,7 +76,7 @@ def index():
         pubs_per_chan = (db.session.query(Publishing).filter((Publishing.channel_id == c.name) & (Publishing.state == 0)) for c in chans)
         flattened_list_pubs = [y for x in pubs_per_chan for y in x]
 
-    return render_template("index.html", user=user,posts=posts,publishings = flattened_list_pubs)
+    return render_template("index.html", user=user,posts=posts,publishings = flattened_list_pubs, channels = chans)
 
 @app.errorhandler(403)
 def forbidden(error):
