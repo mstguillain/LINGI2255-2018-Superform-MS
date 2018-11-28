@@ -36,9 +36,15 @@ def test_makeText():
     date = str(datetime.datetime.now().strftime("%d/%m/%Y"))
 
     assert tab_of_text[0]=="!! " + pub.title
-    assert tab_of_text[1] == "-----" + "Par " + "Superform" + " Publie le " + date
-    assert tab_of_text[2]==  str(pub.description).replace("\n","[[<<]]")
-    assert tab_of_text[3]== "-----"+"[["+pub.link_url+"]]"
+    assert tab_of_text[1] ==  "Par " + "Superform" + " Publié le " + date
+    assert tab_of_text[2]== ""
+    assert tab_of_text[3]=="-----"#+str(pub.description).replace("\n","[[<<]]")
+    assert tab_of_text[4]==str(pub.description).replace("\n","[[<<]]")
+    assert tab_of_text[5]== ""
+    assert tab_of_text[6]== "-----"+"[["+pub.link_url+"]]"
+    assert tab_of_text[7]=="-----"
+    assert tab_of_text[8]==pub.image_url
+
 
 def test_run():
     config ={ "username" : ["superform"], "password" : ["superform"]   }
