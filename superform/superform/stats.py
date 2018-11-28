@@ -1,7 +1,7 @@
 from flask import Blueprint, url_for, request, redirect, session, render_template
 from superform.users import channels_available_for_user
 from superform.utils import login_required, datetime_converter, str_converter, get_instance_from_module_path
-from superform.models import db, Post, Publishing, Channel, User
+from superform.models import db, Post, Publishing, Channel, User, State, Authorization,Permission
 import facebook
 import json
 import http
@@ -26,10 +26,83 @@ def number_of_posts():
 def number_of_publishings():
     return db.session.query(Publishing).filter(Post.user_id == session.get("user_id", "")).count()
 
-def number_of_accepted():
+def number_of_waiting():
+    """
+
+    :return:
+    """
     return db.session.query(Publishing)\
     .filter(Publishing.user_id == session.get("user_id", ""),\
-    Publishing.state == 1).count()
+    Publishing.state == State.WAITING).count()
+
+def number_of_accepted():
+    """
+
+    :return:
+    """
+    return db.session.query(Publishing)\
+    .filter(Publishing.user_id == session.get("user_id", ""),\
+    Publishing.state == State.PUBLISHED).count()
+
+def number_of_archived():
+    """
+
+    :return:
+    """
+    return db.session.query(Publishing)\
+    .filter(Publishing.user_id == session.get("user_id", ""),\
+    Publishing.state == State.ARCHIVED).count()
+
+def accepted_user_posts(User_id):
+    """
+
+    :return:
+    """
+    return db.session.query(Publishing)\
+    .filter(Publishing.user_id == session.get("user_id", ""),\
+    Publishing.user_id==User_id, Publishing.state==State.PUBLISHED).count()
+
+def waiting_user_posts(User_id):
+    """
+
+    :return:
+    """
+    return db.session.query(Publishing)\
+    .filter(Publishing.user_id == session.get("user_id", ""),\
+    Publishing.user_id==User_id, Publishing.state==State.WAITING).count()
+
+def archived_user_posts(User_id):
+    """
+
+    :return:
+    """
+    return db.session.query(Publishing)\
+    .filter(Publishing.user_id == session.get("user_id", ""),\
+    Publishing.user_id==User_id, Publishing.state==State.ARCHIVED).count()
+
+
+def total_user_posts(User_id):
+    """
+
+    :return:
+    """
+    return db.session.query(Publishing)\
+    .filter(Publishing.user_id == session.get("user_id", ""),\
+    Publishing.user_id == User_id).count()
+
+def number_of_users():
+    return db.session.query(Authorization).filter(Authorization.permission==Permission.AUTHOR).distinct().count()
+
+def number_of_Moderator():
+    return db.session.query(Authorization).filter(Authorization.permission==Permission.MODERATOR).distinct().count()
+
+def channel_submission(Channel):
+    return db.session.query(Publishing).filter(Publishing.channel_id == Channel).count()
+
+def total_submission():
+    return db.session.query(Publishing).filter(Publishing.user_id == session.get("user_id", "")).count()
+
+
 
 @stats_page.route('/stats')
 @login_required()

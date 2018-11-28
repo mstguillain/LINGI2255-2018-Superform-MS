@@ -116,3 +116,4 @@ class Permission(Enum):
 class State(Enum):
     WAITING = 1
     PUBLISHED = 2
+    ARCHIVED = 3

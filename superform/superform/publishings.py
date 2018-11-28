@@ -2,6 +2,7 @@ from flask import Blueprint, url_for, request, redirect, render_template, sessio
 
 from superform.utils import login_required, datetime_converter, str_converter, hour_converter
 from superform.models import db, Publishing, Channel
+from models import State
 import facebook
 
 pub_page = Blueprint('publishings', __name__)
@@ -33,7 +34,7 @@ def moderate_publishing(id,idc):
             from importlib import import_module
             plugin = import_module(plugin_name)
             plugin.run(pub,c_conf)
-            pub.state = 1
+            pub.state = State.PUBLISHED
             db.session.commit()
             return redirect(url_for('index'))
     except facebook.GraphAPIError:
