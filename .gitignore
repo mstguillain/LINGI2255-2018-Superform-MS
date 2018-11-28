@@ -26,3 +26,9 @@ superform/superform.egg-info/
 .flooignore
 *.DS_Store
 linkedin.ini
+.DS_Store
+*/superform.db
+credentials.json
+superform/uild/
+superform/dist/
+superform/superform.egg-info/

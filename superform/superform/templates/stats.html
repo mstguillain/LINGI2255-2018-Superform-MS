@@ -1,0 +1,46 @@
+{% extends "layout.html" %}
+{% block title %}New Post{% endblock %}
+{% block content %}
+
+<h1> Statistiques du site </h1>
+Nombre de posts = {{data.number_of_posts}} <br />
+Nombre de publications = {{data.number_of_publishings}}<br />
+Nombre de publications acceptées = {{data.number_of_accepted}}
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.bundle.min.js"></script>
+<div class="row">
+    <div class="col-md-4">
+        <h2>Utilisation des channels</h2>
+        <canvas id="myChart" width="400" height="400"></canvas>
+    </div>
+</div>
+<script>
+var dynamicColors = function() {
+    var r = Math.floor(Math.random() * 255);
+    var g = Math.floor(Math.random() * 255);
+    var b = Math.floor(Math.random() * 255);
+    return "rgb(" + r + "," + g + "," + b + ")";
+}
+
+var colors = []
+for (var i = 0; i < {{data.channels.label|tojson|safe}}.length; i++){
+    colors.push(dynamicColors())
+}
+console.log(colors)
+var ctx = document.getElementById("myChart").getContext('2d');
+var myChart = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+        labels: {{data.channels.label|tojson|safe}},
+        datasets: [{
+            label: '# of Votes',
+            backgroundColor: colors,
+            data: {{data.channels.count}},
+            borderWidth: 1
+        }]
+    },
+});
+
+
+</script>
+{% endblock %}
