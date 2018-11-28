@@ -22,11 +22,10 @@
                 <i class="fas fa-paper-plane"></i>
                 Superform
             </a>
-            <div class="fb-login-button" data-max-rows="1" data-size="large" data-button-type="continue_with" data-show-faces="false" data-auto-logout-link="true" data-use-continue-as="true" onlogin=startConnexion()></div>
+            <fb:login-button size="xlarge" scope="email, manage_pages, pages_show_list, publish_pages, business_management, publish_to_groups, public_profile" onlogin="checkLoginState();">Refresh Token</fb:login-button>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo03" aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <!--<button type="button" class="btn btn-primary" onclick="">Login</button>-->
             <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
                 <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
                     <li class="nav-item {{ 'active' if request.endpoint == 'index' else '' }}">
@@ -81,6 +80,7 @@
         {% endwith %}
         {% block content %}{% endblock %}
         </div>
+        
 
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
         <!-- Optional JavaScript -->

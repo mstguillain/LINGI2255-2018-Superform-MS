@@ -37,6 +37,7 @@ def moderate_publishing(id,idc):
             pub.state = State.PUBLISHED
             db.session.commit()
             return redirect(url_for('index'))
-    except facebook.GraphAPIError:
+    except facebook.GraphAPIError as Error:
+            print(Error)
             return render_template('moderate_post.html', pub=pub)
     return redirect(url_for('index'))
