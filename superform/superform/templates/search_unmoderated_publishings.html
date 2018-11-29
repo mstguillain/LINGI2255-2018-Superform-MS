@@ -22,7 +22,7 @@
                                  {% for chan in channels %}
                                      <div class="form-check">
                                       <label class="form-check-label">
-                                        <input id ="channel-search" type="checkbox" class="form-check-input checkbox" checked>{{ chan.name }}
+                                        <input id ="checkbox-search {{chan.name}}" type="checkbox" class="form-check-input checkbox" checked>{{ chan.name }}
                                       </label>
                                     </div>
                                  {% endfor %}
@@ -52,6 +52,7 @@
      function launchListener() {
           $("#subject-search" ).on('input', function() {
                filter.subject = $(this).val();
+               console.log(filter);
                launchSearch();
 
           });
@@ -64,6 +65,21 @@
                filter.author = $(this).val();
                launchSearch();
           });
+
+         $('input.checkbox').change(function () {
+            tbId = $(this).attr("id").split(' ');
+            checked = $(this).is(":checked")
+            if (tbId[0] == "checkbox-search") {
+                if (checked && !isInArray(filter.channels, tbId[1])) {
+                    filter.channels.push(tbId[1]);
+                    launchSearch();
+                }
+                else if (!checked && isInArray(filter.channels, tbId[1])){
+                    filter.channels = removeFromArray(filter.channels, tbId[1]);
+                    launchSearch();
+                }
+            }
+        });
      }
 
      function launchSearch() {
@@ -73,7 +89,7 @@
                     url : '/search_publishings',
                     success : function(data) {
                         //console.log(data);
-                        console.log(JSON.parse(data));
+                        console.table(JSON.parse(data));
                         $("tbody.list-publishings").html(changeTable(JSON.parse(data)));
                     }
       });
@@ -97,5 +113,23 @@
         }
         return html
      }
+
+     function removeFromArray(tb, value) {
+        var tb2 = new Array();
+        tb.forEach(function(item, index) {
+            if (item != value)
+                tb2.push(item);
+        });
+        return tb2;
+    }
+    function isInArray(tb, value) {
+        var isIn = false;
+        tb.forEach(function(item, index) {
+            if (item.localeCompare(value) == 0)
+                isIn = true;
+        });
+        return isIn;
+    }
+
      waitJQuery(launchListener);
 </script>
