@@ -34,7 +34,7 @@
                         {% for p in publishings %}
                             <tr>
                                 <td>
-                                    {{ p.channel.name }}
+                                    {{ p.channel_id }}
                                 </td>
                                 <td>
                                     {{ p.title }}
@@ -98,8 +98,6 @@
                     </td>
                 </tr>
                 {% endfor %}
-                {#<fb:login-button scope="public_profile,email,publish_to_groups,business_management,manage_pages,publish_pages" onlogin="checkLoginState();">
-                </fb:login-button>#}
             </tbody>
             </table>
         </div>

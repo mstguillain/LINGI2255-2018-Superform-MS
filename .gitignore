@@ -7,7 +7,6 @@
 .pytest_cache/*
 /superform/.cache/*
 /superform/.pytest_cache/*
-
 *.pyc
 *.xml
 superform.db
@@ -17,7 +16,6 @@ superform.db
 *.log
 *.out
 *.whl
-d4_report.pdf
 *.toc
 *.webloc
 pip
@@ -26,4 +24,11 @@ superform/dist/
 superform/superform.egg-info/dependency_links.txt
 superform/superform.egg-info/
 .flooignore
-
+*.DS_Store
+linkedin.ini
+.DS_Store
+*/superform.db
+credentials.json
+superform/uild/
+superform/dist/
+superform/superform.egg-info/

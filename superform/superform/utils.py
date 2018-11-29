@@ -19,6 +19,8 @@ def login_required(admin_required = False):
 
     return decorator
 
+def hour_converter(stri):
+    return datetime.strptime(stri, "%H:%M")
 
 def datetime_converter(stri):
     return datetime.strptime(stri, "%Y-%m-%d")
