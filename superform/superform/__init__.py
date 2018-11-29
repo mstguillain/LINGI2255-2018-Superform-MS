@@ -46,21 +46,20 @@ def search_publishings() :
         setattr(user, 'is_mod', is_moderator(user))
         chans = get_moderate_channels_for_user(user)
         pubs_per_chan = (db.session.query(Publishing).filter((Publishing.channel_id == c.name) &
-                                                             (Publishing.title.like('%'+request.form['subject']+'%') )&
+                                                             (Publishing.title.like('%'+request.form['subject']+'%')) &
                                                              (Publishing.description.like('%' + request.form['body'] + '%')) &
                                                              (Publishing.state == 0)) for c in chans)
         flattened_list_pubs = [y for x in pubs_per_chan for y in x]
         data = '['
         i = 0
         for p in flattened_list_pubs :
-            if request.form['author'] in p.get_author() :
+            if request.form['author'] in p.get_author() and p.channel_id in request.form.getlist('channels[]'):
                 if i != 0 :
                     data += ','
                 data += '{"channel": "'+p.channel_id+'" , "subject" : "'+p.title+'", "body":"'+p.description+'", "author":"'+p.get_author()+'",'
                 data += '"button":"'+ url_for('publishings.moderate_publishing',id=p.post_id,idc=p.channel_id)+'"}'
                 i = i + 1
         data += ']'
-
     return str(data)
 
 @app.route('/')
