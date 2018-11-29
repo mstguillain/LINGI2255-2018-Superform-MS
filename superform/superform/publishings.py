@@ -1,8 +1,7 @@
 from flask import Blueprint, url_for, request, redirect, render_template, session
 
 from superform.utils import login_required, datetime_converter, str_converter, hour_converter
-from superform.models import db, Publishing, Channel
-from models import State
+from superform.models import db, Publishing, Channel, State
 import facebook
 
 pub_page = Blueprint('publishings', __name__)
