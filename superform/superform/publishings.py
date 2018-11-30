@@ -33,7 +33,7 @@ def moderate_publishing(id,idc):
             from importlib import import_module
             plugin = import_module(plugin_name)
             plugin.run(pub,c_conf)
-            pub.state = State.PUBLISHED
+            pub.state = 1
             db.session.commit()
             return redirect(url_for('index'))
     except facebook.GraphAPIError as Error:

@@ -33,7 +33,7 @@ def number_of_waiting():
     """
     return db.session.query(Publishing)\
     .filter(Publishing.user_id == session.get("user_id", ""),\
-    Publishing.state == State.WAITING).count()
+    Publishing.state == 0).count()
 
 def number_of_accepted():
     """
@@ -42,7 +42,7 @@ def number_of_accepted():
     """
     return db.session.query(Publishing)\
     .filter(Publishing.user_id == session.get("user_id", ""),\
-    Publishing.state == State.PUBLISHED).count()
+    Publishing.state == 1).count()
 
 def number_of_archived():
     """
@@ -60,7 +60,7 @@ def accepted_user_posts(User_id):
     """
     return db.session.query(Publishing)\
     .filter(Publishing.user_id == session.get("user_id", ""),\
-    Publishing.user_id==User_id, Publishing.state==State.PUBLISHED).count()
+    Publishing.user_id==User_id, Publishing.state==1).count()
 
 def waiting_user_posts(User_id):
     """
@@ -69,7 +69,7 @@ def waiting_user_posts(User_id):
     """
     return db.session.query(Publishing)\
     .filter(Publishing.user_id == session.get("user_id", ""),\
-    Publishing.user_id==User_id, Publishing.state==State.WAITING).count()
+    Publishing.user_id==User_id, Publishing.state==0).count()
 
 def archived_user_posts(User_id):
     """
