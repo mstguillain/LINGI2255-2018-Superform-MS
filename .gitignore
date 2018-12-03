@@ -11,3 +11,4 @@ credentials.json
 superform/uild/
 superform/dist/
 superform/superform.egg-info/
+superform/superform/__pycache__/*
