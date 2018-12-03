@@ -30,7 +30,6 @@
                     </th>
                   </tr>
                 </thead>
-
                 <tbody class="list-publishings">
                 {% for p in publishings %}
                     <tr>
@@ -58,6 +57,7 @@
                 </table>
             {% endif %}
             <h2>All my posts</h2>
+                            <div id="search_post">{% include 'search_post.html' %} </div>
             <table class="table table-bordered">
             <thead>
               <tr>
@@ -76,7 +76,7 @@
               </tr>
             </thead>
 
-            <tbody>
+            <tbody class="list-posts">
                 {% for item in posts %}
                 <tr>
                     <td>

@@ -56,9 +56,35 @@ def search_publishings() :
             if request.form['author'] in p.get_author() and p.channel_id in request.form.getlist('channels[]'):
                 if i != 0 :
                     data += ','
-                data += '{"channel": "'+p.channel_id+'" , "subject" : "'+p.title+'", "body":"'+p.description+'", "author":"'+p.get_author()+'",'
+                data += '{"channel": "'+p.channel_id+'" , "subject" : "'+p.title+'", "body":"'+str(p.description.splitlines()) +'", "author":"'+p.get_author()+'",'
                 data += '"button":"'+ url_for('publishings.moderate_publishing',id=p.post_id,idc=p.channel_id)+'"}'
                 i = i + 1
+        data += ']'
+    return str(data)
+
+@app.route('/search_post', methods=['POST'])
+def search_post() :
+    user = User.query.get(session.get("user_id", "")) if session.get("logged_in", False) else None
+    posts=[]
+    data = '[]'
+    if user is not None:
+        setattr(user,'is_mod',is_moderator(user))
+        posts = db.session.query(Post).filter((Post.user_id==session.get("user_id", "")) &
+                                              (Post.title.like('%'+request.form['subject']+'%')) &
+                                              (Post.description.like('%'+request.form['body']+'%'))
+                                              ).order_by(request.form['sorted'])
+
+        data = '['
+        i = 0
+        for item in posts :
+
+            if i != 0 :
+                data += ','
+
+            data += '{ "id":"'+str(item.id)+'", "title":"'+ item.title +'", "description" : "'+ str(item.description.splitlines())+'",'
+            #For buttons in this table, add url there
+            data += '"hrefEdit" : "#", "hrefCopy" : "#", "hrefDelete" : "#" }'
+            i = i + 1
         data += ']'
     return str(data)
 
