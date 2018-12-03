@@ -12,4 +12,4 @@ superform/uild/
 superform/dist/
 superform/superform.egg-info/
 superform/superform/__pycache__/*
-*/__pycache__/*
+**/__pycache__/*
