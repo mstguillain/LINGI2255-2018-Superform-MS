@@ -1,34 +1,45 @@
-/*
-* CUSTOM BY GROUP 10
-*/
+
 LIMIT_CHAR_TWEET = 280;
 
 statusListener = {
     twitter :
     [
         {
+            type : "title",
+            compare : "GT",
+            value : 0,
+            text : "The title will be not displayed",
+            forbidPublish : false
+        },
+        {
             type : "description",
             compare : "GT",
             value : LIMIT_CHAR_TWEET,
             text : "If you hit publish, this post will be split in multiple tweets",
-            forbidPublish : false,
-            func : "renderTweet",
-            args : ""
+            forbidPublish : false
         },
         {
-            type : "title",
-            compare : "EQ",
-            value : "0",
-            text : "The title will be not displayed",
+            type : "description",
+            compare : "GT",
+            value : LIMIT_CHAR_TWEET,
+            text : "<a onClick=\"activateSplitTweet()\" id=\"button-status-tweet\" class=\"btn btn-outline-primary\" role=\"button\">See tweets splitted</a>",
             forbidPublish : false
+        },
+        {
+            type : "description",
+            compare : "GEQ",
+            value : 0,
+            text : "",
+            forbidPublish : false,
+            func : "manageTweet",
+            args : ""
         }
     ],
-    mail :
-    [
+    mail : [
         {
             type : "title",
             compare : "EQ",
-            value : "0",
+            value : 0,
             text : "You need a title for a mail",
             forbidPublish : true
         }
@@ -44,6 +55,7 @@ statusListener = {
         }
     ]
 }
+
 
 statusChecker = {
     _lengthTitle : 0,
@@ -131,7 +143,6 @@ function checkStatus(plugin, status) {
         addStatusText(plugin, status["text"], status["type"]+"-"+status["compare"]+"-"+status["value"]);
         if (status["forbidPublish"])
             statusChecker.forbidPublish = true;
-        console.log(statusChecker.forbidPublish);
     }
 
 }
@@ -176,7 +187,7 @@ function getValueType(type) {
 *   every time a user changes the post
 */
 
-// Every checkbox for each plugin implemented by Group 10 ( you can add here )
+// Every checkbox for each plugin implemented by Group 10
 
 $('input.checkbox').change(function () {
     var hisClass = $(this).attr("class").split(" ");
@@ -200,8 +211,8 @@ $( "#titlepost" ).on('input', function() {
 
 // Content
 $( "#descriptionpost" ).on('input', function() {
-    if (isInArray(statusChecker.pluginChecked, "twitter"))
-        statusChecker.lengthContent = $(this).val().length + tweets.toString().length;
+    if (isInArray(statusChecker.pluginChecked, "twitter") && typeof tweets != 'undefined')
+        statusChecker.lengthContent = $(this).val().length + 280 * tweets.length;
     else
         statusChecker.lengthContent = $(this).val().length;
 });
@@ -210,6 +221,7 @@ $( "#descriptionpost" ).on('input', function() {
 $( "#linkurlpost" ).on('input', function() {
     statusChecker.lengthUrl = $(this).val().length;
 });
+
 
 
 
@@ -273,75 +285,99 @@ function rearrangeArray(tb) {
 /*
 *  Render tweet part
 */
-
 tweets = new Array();
+buttonTweet = false;
 
-function createInputTextForTweet(text, nbTweet) {
-    if (nbTweet == tweets.length - 1) {
-        $("#descriptionpost").val(text);
+function activateSplitTweet() {
+    buttonTweet =  !buttonTweet;
+    unifyTweet();
+    if (buttonTweet) {
+         $("#button-status-tweet").val("Unify tweets"); // TODO problem here
+         renderTweet();
     }
     else {
-        var inputToAdd = '<textarea class="form-control tweet-'+nbTweet+'" rows="5" maxlength="'+LIMIT_CHAR_TWEET+'">'
-        inputToAdd += text
-        inputToAdd += '</textarea>';
-        $(inputToAdd).insertBefore('.tweet-'+(nbTweet+1));
-
-
-        $( ".tweet-"+nbTweet).on('input', function() { //Add listener
-            tweets[nbTweet] = $(this).val();
-
-            if ($(this).val().length == 0) {
-                tweets = rearrangeArray(tweets);
-                tweets.push(" ");
-                for (i = 0; i < tweets.length - 1; i ++) {
-                    $(".tweet-"+i).remove();
-                }
-                tweets.pop();
-                renderTweet();
-            }
-        });
+         $("#button-status-tweet").val("See tweets splitted"); // TODO problem here
     }
 }
 
+ function splitTextForTweet(idOrClassInput) {
+    tb = new Array();
+    for (var i = 0, charsLength = $(idOrClassInput).val().length; i < charsLength; i += 280) {
+        tb.push($(idOrClassInput).val().substring(i, i + 280));
+    }
+    return tb;
+ }
+
+function manageTweet(target) {
+    if (buttonTweet == false) {
+        tweets = splitTextForTweet("#descriptionpost");
+    }
+    else if (target.length > 0) {
+        tb = splitTextForTweet(target);
+        index = 0;
+        if (target == '#descriptionpost')
+                index = (tweets.length - 1);
+            else
+                index = (target.split('-')[1] - 1);
+        if (tb.length == 0) { //Check if the tweet is empty
+            unifyTweet();
+            tweets = removeFromArray(tweets, tweets[index]);
+            renderTweet();
+        }
+        else if (tb.length > 1) { // Check if we need to add another tweet
+            unifyTweet();
+            console.table(tweets);
+            tmp = tweets.slice(0, index);
+            tmp = tmp.concat(tb);
+            if (index + 1 < tweets.length)
+                tmp = tmp.concat(tweets.slice(index + 1, tweets.length));
+            tweets = tmp.slice();
+            renderTweet();
+        }
+        else {  //Just change the value
+           tweets[index] = $(target).val();
+        }
+
+        if (tweets.length == 1) {
+            activateSplitTweet() // Deactivate button
+        }
+    }
+}
+
+function addListenerTweet(target){
+    $(target).on('input', function() {
+        manageTweet(target);
+    });
+}
+
 function renderTweet() {
-
-    if (tweets.length > 0) // If the render is not new, suppress the last tweet
-        tweets.pop();
-
-    for (var i = 0, charsLength = $("#descriptionpost").val().length; i < charsLength; i += 280) {
-        tweets.push($("#descriptionpost").val().substring(i, i + 280));
-    }
+    tb = tweets.slice();
     nbTweet = tweets.length - 1;
-    $("#descriptionpost").attr("class","form-control tweet-"+nbTweet);
-    for (i = 0; i < tweets.length - 1; i ++) {
-        $(".tweet-"+i).remove();
+    $('#descriptionpost').val(tb.pop());
+    if (tb.length > 0 ) {
+        addListenerTweet('#descriptionpost');
+        inputToAdd = '<textarea class="form-control tweet-'+nbTweet+'" rows="5" maxlength="'+LIMIT_CHAR_TWEET+'">';
+        inputToAdd += tb.pop();
+        inputToAdd += '</textarea>';
+        $(inputToAdd).insertBefore("#descriptionpost");
+        addListenerTweet('.tweet-'+nbTweet);
+        while (tb.length != 0) {
+            nbTweet  = nbTweet - 1;
+            inputToAdd = '<textarea class="form-control tweet-'+nbTweet+'" rows="5" maxlength="'+LIMIT_CHAR_TWEET+'">'
+            inputToAdd += tb.pop();
+            inputToAdd += '</textarea>';
+            before = nbTweet + 1
+            $(inputToAdd).insertBefore('.tweet-'+ before );
+            addListenerTweet('.tweet-'+nbTweet);
+        }
     }
-
-    for (i = tweets.length; i > 0; i -- ){
-        createInputTextForTweet(tweets[i-1], nbTweet);
-        nbTweet = nbTweet - 1;
-    };
 }
 
 
 function unifyTweet() {
-    text = "";
-    if (tweets.length > 0) {
-        for (i = 0; i < tweets.length; i ++) {
-            text += $(".form-control tweet-"+i).val();
-            $(".form-control tweet-"+i).remove();
-        }
-        tweets = new Array();
-
-        $("#descriptionpost").val(text);
-    }
-}
-
-function RENDER_FOR_TWEET(plugin, text, value, canPublish) {
-    if ($("#descriptionpost").val().length > value) {
-        renderTweet();
-    }
-    else {
-        unifyTweet();
-    }
+    tweets.forEach(function(item, index) {
+        $(".tweet-"+index).off();
+        $(".tweet-"+index).remove();
+    });
+    $("#descriptionpost").val(tweets.toString());
 }
