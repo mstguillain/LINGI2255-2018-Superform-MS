@@ -5,25 +5,26 @@ from superform.models import Channel, db
 from googleapiclient.discovery import build
 from superform.tests.test_basic import client, login, write_to_db, create_user, create_channel, create_auth
 from superform.utils import get_module_full_name
-import random, string, json
+import pytest, random, string, json
 
 
-def setup_db(post_id, channel_name, user_id):
+def setup_db(channel_name, channel_module):
     gcal_config = {'project_id':'superform-1541421444976',
               'client_id':'886003916698-2pig0lv6eslba41vrfrefnovmlqpsk3i.apps.googleusercontent.com',
               'client_secret':'Txqi7eqzfGflL3U5PntpGBqV'}
 
-    gcal_plugin.generate_user_credentials(json.dumps(gcal_config), user_id)
-    create_channel(channel_name, 'gcal_plugin', gcal_config)
+    user = create_user(id=10, name="test10", first_name="utilisateur10", email="utilisateur10.test@uclouvain.be")
+    gcal_plugin.generate_user_credentials(json.dumps(gcal_config), user.id)
+    channel = create_channel(channel_name, channel_module, gcal_config)
     
-    post = basic_post(post_id, user_id)
-    pub = publish_from_post(post)
+    post = basic_post(user.id)
     write_to_db(post)
-    write_to_db(pub) 
+    pub = publish_from_post(post)
+    write_to_db(pub)
+    return user, channel, post, pub
 
-def basic_post(id, user_id, title=None, delta=timedelta(hours=1)):
+def basic_post(user_id, title=None, delta=timedelta(hours=1)):
     post = Post()
-    post.id = id
     post.user_id = user_id
     post.title = title if title else ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(10))
     post.description = 'This is a test !'
@@ -56,15 +57,12 @@ def basic_publish(title=None, delta=timedelta(hours=1)):
 
 #tries to publish an event by using the run function of the gcal_plugin and
 # then will check if it was actually published by getting the list of all published events.
-def test_run_gcal():
-    max_id = Channel.query.order_by(Channel.id).first().id
-    print('------------------------------------------------------------------ID:' + str(max_id))
-    return
-    setup_db(post_id=1, channel_name='test_gcal', user_id='1')
-    login(client, '1') 
-    rv = client.post('/moderate/1/test_gcal')
+def test_run_gcal(client):
+    user, channel, post, pub = setup_db(channel_name='test_gcal', channel_module='gcal_plugin')
+    login(client, user.id)
+    rv = client.post('/moderate/' + str(post.id) + '/' + str(channel.name))
 
-    creds = gcal_plugin.get_user_credentials('myself')
+    creds = gcal_plugin.get_user_credentials(user.id)
     service = build('calendar', 'v3', credentials=creds)
     events = service.events().list(calendarId='primary',pageToken=None, timeMin=pub.date_from, timeMax=pub.date_until).execute()
     found = False

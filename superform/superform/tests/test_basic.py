@@ -42,14 +42,17 @@ def login(client, login):
 def create_user(id, name, first_name, email):
     user = User(id=id, name=name, first_name=first_name, email=email)
     write_to_db(user)
+    return user
 
 def create_channel(name, module, config):
     channel = Channel(name=name, module=get_module_full_name(module), config=json.dumps(config))
     write_to_db(channel) 
+    return channel
 
 def create_auth(channel_id, user_id, permission):
     auth = Authorization(channel_id=channel_id, user_id=user_id, permission=permission)
     write_to_db(auth) 
+    return auth
 
 def write_to_db(obj):
     db.session.add(obj)

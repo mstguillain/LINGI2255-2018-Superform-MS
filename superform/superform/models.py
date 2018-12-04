@@ -66,10 +66,7 @@ class Publishing(db.Model):
     image_url = db.Column(db.Text)
     date_from = db.Column(db.DateTime)
     date_until = db.Column(db.DateTime)
-    # start_time = db.Column(db.DateTime, nullable=True)
-    # end_time = db.Column(db.DateTime, nullable=True)
-
-
+    
     __table_args__ = (db.PrimaryKeyConstraint('post_id', 'channel_id'),)
 
     def __repr__(self):
