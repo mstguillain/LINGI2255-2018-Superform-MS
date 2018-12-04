@@ -1,11 +1,11 @@
 from datetime import datetime, timedelta
 from superform.plugins import gcal_plugin
-from superform import app, db, Publishing, channels, Post
+from superform import app, db, User, Publishing, channels, Post
 from superform.models import Channel, db
 from googleapiclient.discovery import build
 from superform.tests.test_basic import client, login, write_to_db, create_user, create_channel, create_auth
 from superform.utils import get_module_full_name
-import random, string, tempfile
+import random, string, json
 
 
 def setup_db(post_id, channel_name, user_id):
@@ -13,9 +13,9 @@ def setup_db(post_id, channel_name, user_id):
               'client_id':'886003916698-2pig0lv6eslba41vrfrefnovmlqpsk3i.apps.googleusercontent.com',
               'client_secret':'Txqi7eqzfGflL3U5PntpGBqV'}
 
+    gcal_plugin.generate_user_credentials(json.dumps(gcal_config), user_id)
     create_channel(channel_name, 'gcal_plugin', gcal_config)
-    create_auth(1, 1, 2)
-
+    
     post = basic_post(post_id, user_id)
     pub = publish_from_post(post)
     write_to_db(post)
@@ -57,9 +57,11 @@ def basic_publish(title=None, delta=timedelta(hours=1)):
 #tries to publish an event by using the run function of the gcal_plugin and
 # then will check if it was actually published by getting the list of all published events.
 def test_run_gcal():
-    return # impossible to test gcal cause needs to login in google ==> not handled by us
-    setup_db(post_id=1, channel_name='test_gcal', user_id='myself')
-    login(client, "myself")
+    max_id = Channel.query.order_by(Channel.id).first().id
+    print('------------------------------------------------------------------ID:' + str(max_id))
+    return
+    setup_db(post_id=1, channel_name='test_gcal', user_id='1')
+    login(client, '1') 
     rv = client.post('/moderate/1/test_gcal')
 
     creds = gcal_plugin.get_user_credentials('myself')

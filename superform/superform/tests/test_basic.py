@@ -1,8 +1,7 @@
 # To run : Be sure to be in Superform/superform folder and then 'pytest -v' in your terminal
 import datetime
-import os
+import os, json
 import tempfile
-
 import pytest
 
 from superform.models import Authorization, Channel
@@ -45,7 +44,7 @@ def create_user(id, name, first_name, email):
     write_to_db(user)
 
 def create_channel(name, module, config):
-    channel = Channel(name=name, module=get_module_full_name(module), config=str(config))
+    channel = Channel(name=name, module=get_module_full_name(module), config=json.dumps(config))
     write_to_db(channel) 
 
 def create_auth(channel_id, user_id, permission):

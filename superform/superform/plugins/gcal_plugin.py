@@ -22,10 +22,10 @@ def creds_to_string(creds):
             'client_secret': creds._client_secret,
             'scopes': creds._scopes})
 
-def generate_user_credentials(channel_config):
+def generate_user_credentials(channel_config, user_id=None):
     SCOPES = 'https://www.googleapis.com/auth/calendar'
 
-    creds = get_user_credentials()
+    creds = get_user_credentials(user_id)
     if not creds:
        channel_config = get_full_config(json.loads(channel_config))
        flow = InstalledAppFlow.from_client_config(channel_config, scopes=[SCOPES])
@@ -33,14 +33,14 @@ def generate_user_credentials(channel_config):
                    authorization_prompt_message='Please visit this URL: {url}',
                    success_message='The auth flow is complete, you may close this window.',
                    open_browser=True)
-       set_user_credentials(creds)
+       set_user_credentials(creds, user_id)
 
-def get_user_credentials(user_id):
+def get_user_credentials(user_id=None):
    user = User.query.get(user_id) if user_id else User.query.get(session["user_id"])
    return Credentials.from_authorized_user_info(json.loads(user.gcal_cred)) if user.gcal_cred else None
 
-def set_user_credentials(creds):
-   user = User.query.get(session["user_id"])
+def set_user_credentials(creds, user_id=None):
+   user = User.query.get(user_id) if user_id else User.query.get(session["user_id"])
    user.gcal_cred = creds_to_string(creds)
    db.session.commit()
 
@@ -98,5 +98,6 @@ def delete(id):
     """
 
 def is_valid(pub):
+    # must have a date_from / date_until with hour and date
     now = datetime.now()
     return len(pub.title.strip()) != 0 and pub.date_from >= now and pub.date_from <= pub.date_until

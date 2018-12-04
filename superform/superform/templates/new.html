@@ -42,7 +42,7 @@
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="datefrompost">Publication Date</label><br>
-                                            <input id="datefrompost" name="datefrompost" type="datetime-local" class="form-control" required>
+                                            <input id="datefrompost" name="datefrompost" type="datetime-local" valueAsDate='document.write(new Date())' class="form-control" required>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
@@ -278,7 +278,14 @@
                 .val(text);
         });
     </script>
-
+    <script>
+        var start = new Date();
+        var end = new Date(start.getTime() + 60 * 60000);
+        datefrom = start.toISOString();
+        dateuntil = end.toISOString();
+        $('#datefrompost').val(datefrom.substring(0, datefrom.length - 8));
+        $('#dateuntilpost').val(dateuntil.substring(0, dateuntil.length - 8));
+    </script>
 
 
 <script src="./static/js/status-checker.js"></script>
