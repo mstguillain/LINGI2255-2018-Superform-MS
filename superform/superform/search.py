@@ -14,7 +14,6 @@ def search_publishings() :
     posts = []
     chans = []
     flattened_list_pubs = []
-    print('ok')
     if user is not None:
         setattr(user, 'is_mod', is_moderator(user))
         chans = get_moderate_channels_for_user(user)
