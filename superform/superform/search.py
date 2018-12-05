@@ -1,7 +1,7 @@
 from flask import Blueprint, url_for, request, session
 
 from superform.utils import login_required
-from superform.models import db, Publishing, User
+from superform.models import db, Publishing, User, Post
 from superform.users import is_moderator, get_moderate_channels_for_user
 
 search_page = Blueprint('search', __name__)
@@ -15,12 +15,14 @@ def search_publishings() :
     chans = []
     flattened_list_pubs = []
     if user is not None:
+
         setattr(user, 'is_mod', is_moderator(user))
         chans = get_moderate_channels_for_user(user)
         pubs_per_chan = (db.session.query(Publishing).filter((Publishing.channel_id == c.name) &
                                                              (Publishing.title.like('%'+request.form['subject']+'%')) &
                                                              (Publishing.description.like('%' + request.form['body'] + '%')) &
                                                              (Publishing.state == 0)) for c in chans)
+
         flattened_list_pubs = [y for x in pubs_per_chan for y in x]
         data = '['
         i = 0
@@ -32,6 +34,7 @@ def search_publishings() :
                 data += '"button":"'+ url_for('publishings.moderate_publishing',id=p.post_id,idc=p.channel_id)+'"}'
                 i = i + 1
         data += ']'
+
     return str(data)
 
 

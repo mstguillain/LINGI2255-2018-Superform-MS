@@ -4,6 +4,7 @@ import os
 import tempfile
 
 import pytest
+import requests
 
 from superform.models import Authorization, Channel
 from superform import app, db, Post, User
@@ -43,39 +44,111 @@ def login(client, login):
 
 
 ## Testing Functions ##
+@app.route("/tests", methods=["POST"])
+def test__not_moderator(client) :
+    user = User(id=63, name="test", first_name="utilisateur", email="utilisateur.test@uclouvain.be")
+    db.session.add(user)
+
+    channel = Channel(name="test", module=get_module_full_name("TestTwitter"), config="{}")
+    db.session.add(channel)
+
+    login(client, 63)
+
+    r = requests.post("http://127.0.0.1:5000/search_publishings", {
+        "subject": "",
+        "body": "",
+        "author": "",
+        "channels": "test"
+    })
 
 
-def test_not_logged_in(client) :
-    assert True==True
+    assert r.status_code == 200
+    assert len(r.text)== 0
 
-def test_not_moderator(client) :
-    assert True == True
 
-def test_search_publishing(client):
+def test_search_unlogged_client_publishing_search(client):
+    user = User(id=63, name="test", first_name="utilisateur", email="utilisateur.test@uclouvain.be")
+    db.session.add(user)
+
+    channel = Channel(name="test", module=get_module_full_name("TestTwitter"), config="{}")
+    db.session.add(channel)
+    a = Authorization(channel_id=1, user_id=63, permission=2)
+    db.session.add(a)
+
+    r = requests.post("http://127.0.0.1:5000/search_publishings", {
+        "subject": "",
+        "body": "",
+        "author": "",
+        "channels": "test"
+    })
+
+    assert int(r.status_code) == 200
+    assert len(r.text) == 0
+    assert r.text==""
+
+
+def test_search_unlogged_client_post_search(client):
+    user = User(id=63, name="test", first_name="utilisateur", email="utilisateur.test@uclouvain.be")
+    db.session.add(user)
+
+    channel = Channel(name="test", module=get_module_full_name("TestTwitter"), config="{}")
+    db.session.add(channel)
+    a = Authorization(channel_id=1, user_id=63, permission=2)
+    db.session.add(a)
+
+
+    r = requests.post("http://127.0.0.1:5000/search_post", {
+        "subject": "",
+        "body": "",
+        "sorted": ""
+    })
+
+
+    assert int(r.status_code) == 200
+    assert len(r.text) == 2
+    assert r.text=="[]"
+
+
+
+def test_search_publishing_valid_client(client):
+
+    user = User(id=63, name="test", first_name="utilisateur", email="utilisateur.test@uclouvain.be")
+    db.session.add(user)
+
+    channel = Channel(name="test", module=get_module_full_name("TestTwitter"), config="{}")
+    db.session.add(channel)
+    a = Authorization(channel_id=1, user_id=63, permission=2)
+    db.session.add(a)
+
+    login(client, 63)
+
+
+    r=requests.post("http://127.0.0.1:5000/search_publishings", {
+        "subject" : "",
+        "body" : "",
+        "author" : "",
+        "channels" : "test"
+    })
+
+    assert r.status_code==200
+
+
+def test_search_post_valid_login(client) :
     login(client, "myself")
 
-    channel = Channel(name="test", module=get_module_full_name("mail"), config="{}")
+    channel = Channel(name="testTwitter", module=get_module_full_name("TestTwitter"), config="{}")
     db.session.add(channel)
-    #a = Authorization(channel_id=1, user_id=1, permission=2)
-    #db.session.add(a)
-    rv = client.post('/new', data=dict(titlepost='A new test post', descrpost="A description",
-                                       linkurlpost="http://www.test.com", imagepost="image.jpg",
-                                       datefrompost="2018-07-01", dateuntilpost="2018-07-01"))
-    assert rv.status_code == 302
-
-    posts = db.session.query(Post).all()
-    assert len(posts) > 0
-    last_add = posts[-1]
 
 
+    r = requests.post("http://127.0.0.1:5000/search_post", {
+        "subject": "",
+        "body": "",
+        "sorted": ""
+    })
+
+    assert int(r.status_code) == 200
 
 
-    db.session.query(Post).filter(Post.id == last_add.id).delete()
-    db.session.commit()
-
-
-def test_search_post(client) :
-    assert True == True
 
 
 
