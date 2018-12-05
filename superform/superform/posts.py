@@ -25,8 +25,13 @@ def create_a_post(form):
 def create_a_publishing(post, chn, form):
     chan = str(chn.name)
     title_post = form.get(chan + '_titlepost') if (form.get(chan + '_titlepost') is not None) else post.title
-    descr_post = form.get(chan + '_descriptionpost') if form.get(
-        chan + '_descriptionpost') is not None else post.description
+    descr_post = ''
+    if "twitter" in chn.module:
+        descr_post = form.get('tweets')
+    elif form.get(chan + '_descriptionpost') is not None :
+        descr_post = form.get(chan + '_descriptionpost')
+    else :
+        descr_post = post.description
     link_post = form.get(chan + '_linkurlpost') if form.get(chan + '_linkurlpost') is not None else post.link_url
     image_post = form.get(chan + '_imagepost') if form.get(chan + '_imagepost') is not None else post.image_url
     date_from = datetime_converter(form.get(chan + '_datefrompost')) if datetime_converter(
@@ -72,12 +77,10 @@ def publish_from_new_post():
                 def substr(elem):
                     import re
                     return re.sub('^chan\_option\_', '', elem)
-
                 c = Channel.query.get(substr(elem))
                 # for each selected channel options
                 # create the publication
                 pub = create_a_publishing(p, c, request.form)
-
     db.session.commit()
     return redirect(url_for('index'))
 

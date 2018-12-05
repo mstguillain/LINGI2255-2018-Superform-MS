@@ -383,9 +383,8 @@ function unifyTweet() {
 }
 
 $("#publish-button").on('click', function() {
-    jsonTweet = JSON.stringify(tweets);
-    valueTweets = '';
-
-    text = '<div class="form-group" hidden><label for="tweets">Tweet</label><br><input type="text" name="tweets" id="tweets" class="form-control" value="'+valueTweets+'"></div>';
+    strTweets = JSON.stringify(tweets);
+    text = '<div class="form-group"><label for="tweets">Tweet</label><br><input type="text" name="tweets" id="tweets" class="form-control"></div>';
     $(text).insertBefore(this);
+    $('#tweets').val(strTweets);
 });
