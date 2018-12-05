@@ -41,7 +41,9 @@ app.config["PLUGINS"] = {
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    # addition for the pdf feature from team 06
+
+
+    # Team06: Export to PDF feature
     if request.method == "POST":
         action = request.form.get('@action', '')
         if action == "export":

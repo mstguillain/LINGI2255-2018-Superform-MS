@@ -1,7 +1,9 @@
 """
-@author: Team 06
-@date: December 2018
+author: Team 06
+date: December 2018
+Plugin for the PDF feature
 """
+
 from flask import url_for, redirect
 
 FIELDS_UNAVAILABLE = []
@@ -17,11 +19,12 @@ def run(publishing, channel_config):
 
 def export():
     """
-
+    Launches the export
     :return:
     """
     print("Here is the export method")
     # TODO
+    run(publishing = None, channel_config = None)
     return redirect(url_for('index'))
 
 

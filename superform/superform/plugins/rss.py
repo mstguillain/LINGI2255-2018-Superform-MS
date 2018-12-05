@@ -1,3 +1,9 @@
+"""
+author: Team 06
+date: December 2018
+Plugin for the RSS module
+"""
+
 from flask import current_app, request
 import json
 import rfeed

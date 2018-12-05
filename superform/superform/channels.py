@@ -13,10 +13,10 @@ from superform.utils import login_required, get_instance_from_module_path, \
 
 channels_page = Blueprint('channels', __name__)
 
-"""
-    Final static variables for the cookies keys related to the LinkedIn 
-    plugin.
-"""
+
+# author: Team 06
+# date: December 2018
+# Final static variables for the cookies keys related to the LinkedIn plugin.
 LAST_ACCESS_TOKEN = "last_access_token"
 LAST_CREATION_TIME = "last_creation_time"
 LAST_CHANNEL_ID = "last_channel_id"
@@ -108,6 +108,8 @@ def configure_channel(id):
 @login_required(admin_required = True)
 def linkedin_return():
     """
+        author: Team 06
+        date: December 2018
         Redirected route manager for the LinkedIn plugin, sets the necessary
         cookies to continue the session.
     """
