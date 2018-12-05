@@ -4,7 +4,7 @@ from superform import app, db, User, Publishing, channels, Post
 from superform.models import Channel, db
 from googleapiclient.discovery import build
 from superform.tests.test_basic import client, login, write_to_db, create_user, create_channel, create_auth
-from superform.utils import get_module_full_name
+from superform.utils import get_module_full_name, str_converter
 import pytest, random, string, json
 
 
@@ -19,9 +19,17 @@ def setup_db(channel_name, channel_module):
     
     post = basic_post(user.id)
     write_to_db(post)
-    pub = publish_from_post(post)
+    pub = publish_from_post(post, channel_name)
     write_to_db(pub)
     return user, channel, post, pub
+
+def delete_db(user, channel, post, pub):
+    db.session.query(User).filter(User.id == user.id).delete()
+    db.session.query(Channel).filter(Channel.id == channel.id).delete()
+    db.session.query(Post).filter(Post.id == post.id).delete()
+    db.session.query(Publishing).filter(Publishing.post_id == post.id,
+             Publishing.channel_id == channel.name).delete()
+    db.session.commit()
 
 def basic_post(user_id, title=None, delta=timedelta(hours=1)):
     post = Post()
@@ -32,7 +40,7 @@ def basic_post(user_id, title=None, delta=timedelta(hours=1)):
     post.date_until = post.date_from + delta
     return post
   
-def publish_from_post(post):
+def publish_from_post(post, channel_id):
     pub = Publishing()
     pub.post_id = post.id
     pub.title = post.title
@@ -40,7 +48,7 @@ def publish_from_post(post):
     pub.date_from = post.date_from
     pub.date_until = post.date_until
     pub.state = 0
-    pub.channel_id = 'gcal_plugin'
+    pub.channel_id = channel_id
     return pub
 
 def basic_publish(title=None, delta=timedelta(hours=1)):
@@ -60,16 +68,33 @@ def basic_publish(title=None, delta=timedelta(hours=1)):
 def test_run_gcal(client):
     user, channel, post, pub = setup_db(channel_name='test_gcal', channel_module='gcal_plugin')
     login(client, user.id)
-    rv = client.post('/moderate/' + str(post.id) + '/' + str(channel.name))
+    rv = client.post('/moderate/' + str(post.id) + '/test_gcal',
+            data=dict(titlepost=pub.title,
+                      descrpost=pub.description,
+                      linkurlpost=pub.link_url,
+                      imagepost=pub.image_url,
+                      datefrompost=str_converter(pub.date_from),
+                      dateuntilpost=str_converter(pub.date_until)))
 
     creds = gcal_plugin.get_user_credentials(user.id)
     service = build('calendar', 'v3', credentials=creds)
-    events = service.events().list(calendarId='primary',pageToken=None, timeMin=pub.date_from, timeMax=pub.date_until).execute()
-    found = False
-    for event in events['items']:
-        if(event['summary'] == pub.title):
-            found=True
-    assert found
+    events = service.events().list(calendarId='primary', pageToken=None).execute()
+    
+    page_token, goal = None, None
+    while True:
+        events = service.events().list(calendarId='primary', pageToken=page_token).execute()
+        for event in events['items']:
+            if('summary' in event and event['summary'] == pub.title):
+                goal = event
+                break
+        page_token = events.get('nextPageToken')
+        if not page_token:
+            break
+
+    delete_db(user, channel, post, pub)
+    if goal:
+        service.events().delete(calendarId='primary', eventId=goal['id']).execute()
+    assert goal != None
 
 def test_validity_title_gcal():
     pub = basic_publish(title='    ')

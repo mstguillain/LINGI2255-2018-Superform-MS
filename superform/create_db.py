@@ -48,5 +48,5 @@ if __name__ == '__main__':
               'client_secret':'Txqi7eqzfGflL3U5PntpGBqV'}
     
     create_basic_database()
-    add_channel('test_gcal', 'gcal_plugin', json.dumps(gcal_config))
+    add_channel('gcal', 'gcal_plugin', json.dumps(gcal_config))
     add_authorization('myself', 1, 2)
