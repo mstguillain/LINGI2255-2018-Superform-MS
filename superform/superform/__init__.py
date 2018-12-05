@@ -1,4 +1,4 @@
-from flask import Flask, render_template, session
+from flask import Flask, render_template, session, request, redirect, url_for
 import pkgutil
 import importlib
 
@@ -39,8 +39,16 @@ app.config["PLUGINS"] = {
 }
 
 
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def index():
+    # addition for the pdf feature from team 06
+    if request.method == "POST":
+        action = request.form.get('@action', '')
+        if action == "export":
+            post_id = request.form.get("id")
+            subject = request.form.get('subject')
+            return plugins.pdf.export()
+
     user = User.query.get(session.get("user_id", "")) if session.get(
         "logged_in", False) else None
     posts = []
@@ -54,7 +62,6 @@ def index():
             (Publishing.channel_id == c.id) & (Publishing.state == 0)) for c in
                          chans)
         flattened_list_pubs = [y for x in pubs_per_chan for y in x]
-
     return render_template("index.html", user = user, posts = posts,
                            publishings = flattened_list_pubs)
 

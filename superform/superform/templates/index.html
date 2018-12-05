@@ -95,6 +95,13 @@
                         <a href="#" class="btn btn-outline-primary" role="button">Edit</a>
                         <a href="#" class="btn btn-outline-primary">Copy</a>
                         <a href="#" class="btn btn-outline-warning" role="button">Delete</a>
+                        <!-- Export feature -->
+                        <button type="button" class="btn btn-info"
+                                data-toggle="modal" data-target="#exportModal"
+                                data-title="{{ item.title }}"
+                                data-id="{{ item.id }}">
+                            <i class="fas fa-fw fa-file-pdf"></i> Export
+                        </button>
                     </td>
                 </tr>
                 {% endfor %}
@@ -107,5 +114,44 @@
         <p>Your are not logged in.</p>
     {% endif %}
 
+    <div class="modal fade" id="exportModal" tabindex="-1" role="dialog"
+         aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form method="post">
+                    <input type="hidden" name="@action" value="export">
+                    <input id="post-id" type="hidden" name="id" value="">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Export to PDF</h5>
+                        <button type="button" class="close"
+                                data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Which template would you like to use for the post <span
+                                id="post-id"></span>?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-info">Export to pdf
+                        </button>
+                        <button type="button" class="btn btn-secondary"
+                                data-dismiss="modal">Cancel
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        $('#exportModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget); // Button that triggered the modal
+            $(this).find('#post-subject').text(button.data('subject'));
+            $(this).find('#post-id').val(button.data('id'));
+        });
+    </script>
 {% endblock %}
