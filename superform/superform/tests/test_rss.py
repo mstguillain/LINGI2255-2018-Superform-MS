@@ -1,7 +1,7 @@
 #####  PART 2 OF TESTS, DO NOT REMOVE ######
 
 import json
-import models
+from superform.models import Channel, db
 import random
 import os
 from rss import rss
@@ -117,7 +117,11 @@ def test_publish_base():
     pub.image_url = 'image url'
     pub.date_until = '14.02.19'
     pub.state = 1
-    pub.channel_id = 0
+    pub.channel_id = 0  # TODO : find the good chanel id
+    c = db.session.query(Channel).filter(
+        Channel.name == pub.channel_id).first()
+    plugin_name = c.module
+    c_conf = c.config
     channel_config = None
 
     rss.run(pub, channel_config)
@@ -132,4 +136,3 @@ def test_publish_base():
             print("The new field was well created")
             return
     assert found_wanted_feed, "The new rss publishign failled"
-
