@@ -25,10 +25,11 @@ def create_a_post(form):
     db.session.commit()
     return p
 
+
 def create_a_publishing(post, chn, form):
     chan = str(chn.name)
     title_post = form.get(chan + '_titlepost') if (
-                form.get(chan + '_titlepost') is not None) else post.title
+            form.get(chan + '_titlepost') is not None) else post.title
     descr_post = form.get(chan + '_descriptionpost') if form.get(
         chan + '_descriptionpost') is not None else post.description
     link_post = form.get(chan + '_linkurlpost') if form.get(
@@ -41,10 +42,10 @@ def create_a_publishing(post, chn, form):
     date_until = datetime_converter(
         form.get(chan + '_dateuntilpost')) if datetime_converter(
         form.get(chan + '_dateuntilpost')) is not None else post.date_until
-    pub = Publishing(post_id = post.id, channel_id = chn.id, state = 0,
-                     title = title_post, description = descr_post,
-                     link_url = link_post, image_url = image_post,
-                     date_from = date_from, date_until = date_until)
+    pub = Publishing(post_id=post.id, channel_id=chn.id, state=0,
+                     title=title_post, description=descr_post,
+                     link_url=link_post, image_url=image_post,
+                     date_from=date_from, date_until=date_until)
 
     c = db.session.query(Channel).filter(
         Channel.id == pub.channel_id).first()
@@ -55,11 +56,13 @@ def create_a_publishing(post, chn, form):
             c_conf = c.config
             from importlib import import_module
             plugin = import_module(plugin_name)
-            plugin.run(pub,c_conf)
+            plugin.run(pub, c_conf)
+            # Does not save the pdf posts
             return pub
     db.session.add(pub)
     db.session.commit()
     return pub
+
 
 @posts_page.route('/new', methods=['GET', 'POST'])
 @login_required()
