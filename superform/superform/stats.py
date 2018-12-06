@@ -1,5 +1,5 @@
 from flask import Blueprint, url_for, request, redirect, session, render_template
-from superform.users import channels_available_for_user
+from superform.users import channels_available_for_user, is_moderator
 from superform.utils import login_required, datetime_converter, str_converter, get_instance_from_module_path
 from superform.models import db, Post, Publishing, Channel, User, State, Authorization,Permission
 import facebook
@@ -20,11 +20,19 @@ def stats_channel():
         count.append(c.count)
     return {'label' : label, 'count' : count}
 
+def stats_publishing():
+    stats = []
+    stats.append(number_of_posts())
+    stats.append(number_of_publishings())
+    stats.append(number_of_waiting())
+    stats.append(number_of_accepted())
+    return stats
+
 def number_of_posts():
     return db.session.query(Post).filter(Post.user_id == session.get("user_id", "")).count()
 
 def number_of_publishings():
-    return db.session.query(Publishing).filter(Post.user_id == session.get("user_id", "")).count()
+    return db.session.query(Publishing).filter(Publishing.user_id == session.get("user_id", "")).count()
 
 def number_of_waiting():
     """
@@ -102,15 +110,39 @@ def channel_submission(Channel):
 def total_submission():
     return db.session.query(Publishing).filter(Publishing.user_id == session.get("user_id", "")).count()
 
+def get_all_users():
+    return db.session.query(User).with_entities(User.id).all()
 
+def stats_general():
+    return {'moderator' : number_of_Moderator(),
+            'submission' : total_submission()}
+
+def compute_for_users():
+    users = get_all_users()
+    accepted = []
+    waiting = []
+    total = []
+    all_users = []
+    for user in users:
+        accepted.append(accepted_user_posts(user.id))
+        waiting.append(waiting_user_posts(user.id))
+        total.append(total_user_posts(user.id))
+        all_users.append(user.id)
+    return {'users' : all_users,
+            'accepted' : accepted,
+            'waiting' : waiting,
+            'total' : total}
 
 @stats_page.route('/stats')
 @login_required()
 def stats():
+    user = User.query.get(session.get("user_id", "")) if session.get("logged_in", False) else None
+    if user is not None:
+        setattr(user,'is_mod',is_moderator(user))
     data = {
         'channels' : stats_channel(),
-        'number_of_posts' : number_of_posts(),
-        'number_of_publishings' : number_of_publishings(),
-        'number_of_accepted' : number_of_accepted()
+        'publishing' : stats_publishing(),
+        'users' : compute_for_users(),
+        'user' : user,
     }
     return render_template('stats.html', data=data).encode( "utf-8" )
