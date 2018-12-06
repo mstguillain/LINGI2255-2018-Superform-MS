@@ -30,9 +30,14 @@ def run(publishing, channel_config):
     json_data = json.loads(channel_config)
     title = publishing.title
     body = publishing.description
-    image = json_data['Logo'] # HOW WILL THE IMAGE BE STORED IN THE DB ?
+    image = json_data['Logo'] # HOW WILL THE IMAGE BE STORED IN THE DB ?replaceAll
     size = json_data['Format']
-    create_pdf(title, body, image, size)
+    path = create_pdf(title, body, image, size)
+    from flask import send_from_directory
+    import webbrowser
+    webbrowser.open_new_tab('file://' + path)
+    #sol = send_from_directory(directory='superform', filename=title)
+    #print(sol)
 
 
 def export():
@@ -47,7 +52,7 @@ def export():
 
 
 def create_pdf(titre, corps, image, size):
-    fileTitle = titre.replaceAll("[ -+.^:,']", "")
+    fileTitle = titre.replace("[ -+.^:,']", "")
     outfilename = fileTitle+".pdf"
     localPath = os.path.dirname(__file__)+"/pdf/"+outfilename
 
@@ -86,3 +91,4 @@ def create_pdf(titre, corps, image, size):
 
     #Saving pdf
     doc.build(Story)
+    return localPath
