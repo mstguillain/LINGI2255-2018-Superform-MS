@@ -46,6 +46,17 @@ def create_a_publishing(post, chn, form):
                      link_url = link_post, image_url = image_post,
                      date_from = date_from, date_until = date_until)
 
+    c = db.session.query(Channel).filter(
+        Channel.id == pub.channel_id).first()
+    if c is not None:
+        plugin_name = c.module
+        ##If it is a pdf chanel we don't need to save it, printing it would be enough
+        if str(plugin_name).endswith("pdf"):
+            c_conf = c.config
+            from importlib import import_module
+            plugin = import_module(plugin_name)
+            plugin.run(pub,c_conf)
+            return pub
     db.session.add(pub)
     db.session.commit()
     return pub

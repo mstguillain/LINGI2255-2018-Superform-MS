@@ -119,7 +119,7 @@ def test_publish_base():
     pub.state = 1
     pub.channel_id = 0  # TODO : find the good chanel id
     c = db.session.query(Channel).filter(
-        Channel.name == pub.channel_id).first()
+        Channel.id == pub.channel_id).first()
     plugin_name = c.module
     c_conf = c.config
     channel_config = None
