@@ -10,7 +10,7 @@ import json
 
 FIELDS_UNAVAILABLE = []
 
-CONFIG_FIELDS = []
+CONFIG_FIELDS = ["Format", "Logo"]
 
 
 def run(publishing, channel_config):
@@ -21,8 +21,8 @@ def run(publishing, channel_config):
     json_data = json.loads(channel_config)
     title = publishing.title
     body = publishing.description
-    image = json_data['image'] # HOW WILL THE IMAGE BE STORED IN THE DB ?
-    size = json_data['size']
+    image = json_data['Logo'] # HOW WILL THE IMAGE BE STORED IN THE DB ?
+    size = json_data['Format']
     create_pdf(title, body, image, size)
 
 
@@ -56,7 +56,8 @@ def create_pdf(titre, corps, image, size):
 def write_logo(canvas, image, realSize):
     leftMarge = realSize[1]*0.4
     topMarge = realSize[1]*0.85
-    imagePath = "/superform/plugins/logos"+image
+    #imagePath = "/superform/plugins/logos/"+image+".png"
+    imagePath = image+".png"
     canvas.drawImage(imagePath, leftMarge,topMarge )
 
 
