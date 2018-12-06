@@ -7,6 +7,7 @@ Plugin for the PDF feature
 from flask import url_for, redirect
 from reportlab.pdfgen import canvas
 import json
+from flask import current_app, request
 
 FIELDS_UNAVAILABLE = []
 
@@ -56,7 +57,7 @@ def create_pdf(titre, corps, image, size):
 def write_logo(canvas, image, realSize):
     leftMarge = realSize[1]*0.4
     topMarge = realSize[1]*0.85
-    #imagePath = "/superform/plugins/logos/"+image+".png"
+    #imagePath = request.url_root + "superform/plugins/logos/"+image+".png"
     imagePath = image+".png"
     canvas.drawImage(imagePath, leftMarge,topMarge )
 
