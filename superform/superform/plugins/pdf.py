@@ -15,7 +15,9 @@ from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import inch
 from reportlab.lib.pagesizes import letter
 from reportlab.platypus import Paragraph
+from pathlib import Path
 import os
+import time
 
 FIELDS_UNAVAILABLE = []
 
@@ -30,14 +32,20 @@ def run(publishing, channel_config):
     json_data = json.loads(channel_config)
     title = publishing.title
     body = publishing.description
-    image = json_data['Logo'] # HOW WILL THE IMAGE BE STORED IN THE DB ?replaceAll
+    image = json_data['Logo']
     size = json_data['Format']
-    path = create_pdf(title, body, image, size)
-    from flask import send_from_directory
+    datas = create_pdf(title, body, image, size)
+
+    path = datas[0]
+    outputFile = datas[1]
     import webbrowser
     webbrowser.open_new_tab('file://' + path)
-    #sol = send_from_directory(directory='superform', filename=title)
-    #print(sol)
+
+    #data_folder = Path("superform/plugins/pdf")
+    #file_to_delete = data_folder / outputFile
+    #file_to_delete = "DELETEMEPLEASE.txt"
+    #time.sleep(1)
+    #os.remove(file_to_delete)
 
 
 def export():
@@ -53,8 +61,10 @@ def export():
 
 def create_pdf(titre, corps, image, size):
 
-    empryString = "PDF"
+    empryString = ""
     fileTitle = empryString.join(e for e in titre if e.isalnum())
+    if(len(fileTitle))==0:
+        fileTitle="DEFAULT"
     outfilename = fileTitle+".pdf"
     localPath = os.path.dirname(__file__)+"/pdf/"+outfilename
 
@@ -93,4 +103,5 @@ def create_pdf(titre, corps, image, size):
 
     #Saving pdf
     doc.build(Story)
-    return localPath
+    datas = [localPath, outfilename]
+    return datas

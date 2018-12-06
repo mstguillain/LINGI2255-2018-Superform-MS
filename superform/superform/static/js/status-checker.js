@@ -23,6 +23,40 @@ statusListener = {
             forbidPublish : false
         }
     ],
+    pdf :
+    [
+        {
+            type : "title",
+            compare : "EQ",
+            value : "0",
+            text : "Your title should contain at least one (non-special) character ! Otherwise the PDF will be named DEFAULT",
+            forbidPublish : false
+        }
+        ,
+        {
+            type : "title",
+            compare : "GT",
+            value : "0",
+            text : "The generated PDF will be named with your title (special characters removed)",
+            forbidPublish : false
+        }
+        ,
+        {
+            type : "title",
+            compare : "GT",
+            value : "0",
+            text : "Your PDF will appear in a new tab",
+            forbidPublish : false
+        }
+        ,
+        {
+            type : "link",
+            compare : "GT",
+            value : "0",
+            text : "There will be no link in the PDF",
+            forbidPublish : false
+        }
+    ],
     mail :
     [
         {
