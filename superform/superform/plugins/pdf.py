@@ -54,18 +54,12 @@ def create_pdf(titre, corps, image, size):
     elif(size=="A3"):
         realSize=(841.27, 1190.54)
 
-    # pdf = canvas.Canvas(titre + ".pdf", realSize)
-    #
-    # write_logo(pdf,image, realSize)
-    # write_title(pdf, titre, realSize)
-    # write_body(pdf,corps,realSize)
-    # pdf.save()
-    titre.replace(" ","_")
-    outfilename = titre+".pdf"
-    PDF_DIR = request.url_root + "static/pdf/"
-    print(PDF_DIR)
-    outfilepath = os.path.join(PDF_DIR, outfilename)
-    doc = SimpleDocTemplate(outfilename, pagesize=letter,
+
+    fileTitle = titre.replace(" ","_")
+    outfilename = fileTitle+".pdf"
+    localPath = os.path.dirname(__file__)+"/pdf/"+outfilename
+
+    doc = SimpleDocTemplate(localPath, pagesize=letter,
                             rightMargin=72, leftMargin=72,
                             topMargin=72, bottomMargin=18)
 
@@ -74,7 +68,7 @@ def create_pdf(titre, corps, image, size):
     #Adding logo
     print("image path=",image)
     print(os.curdir)
-    # /home/marc-henry/PycharmProjects/LINGI2255-2018-Superform-MS-06/superform/superform/plugins/logos/UCL.png
+
 
     im = Image(image+".png")  # , 2 * inch, 2 * inch)
     Story.append(im)
