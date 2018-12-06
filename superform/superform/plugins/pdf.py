@@ -47,7 +47,8 @@ def export():
 
 
 def create_pdf(titre, corps, image, size):
-    fileTitle = titre.replaceAll("[ -+.^:,']", "")
+    empryString = "PDF"
+    fileTitle = empryString.join(e for e in titre if e.isalnum())
     outfilename = fileTitle+".pdf"
     localPath = os.path.dirname(__file__)+"/pdf/"+outfilename
 

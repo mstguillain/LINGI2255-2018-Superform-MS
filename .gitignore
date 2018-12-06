@@ -26,3 +26,4 @@ superform/superform.egg-info/
 .flooignore
 *.DS_Store
 linkedin.ini
+/superform/superform/plugins/pdf/*.pdf
