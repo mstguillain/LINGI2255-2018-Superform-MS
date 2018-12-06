@@ -50,7 +50,8 @@ def create_pdf(titre, corps, image, size):
 def write_logo(canvas, image, realSize):
     leftMarge = realSize[1]*0.4
     topMarge = realSize[1]*0.85
-    canvas.drawImage(image, leftMarge,topMarge )
+    imagePath = "/superform/plugins/logos"+image
+    canvas.drawImage(imagePath, leftMarge,topMarge )
 
 
 
