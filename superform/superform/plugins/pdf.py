@@ -47,15 +47,7 @@ def export():
 
 
 def create_pdf(titre, corps, image, size):
-    if(size=="A5"):
-        realSize=(420.94, 595.27)
-    elif(size=="A4"):
-        realSize=(595.27, 841.89)
-    elif(size=="A3"):
-        realSize=(841.27, 1190.54)
-
-
-    fileTitle = titre.replace(" ","_")
+    fileTitle = titre.replaceAll("[ -+.^:,']", "")
     outfilename = fileTitle+".pdf"
     localPath = os.path.dirname(__file__)+"/pdf/"+outfilename
 
@@ -94,41 +86,3 @@ def create_pdf(titre, corps, image, size):
 
     #Saving pdf
     doc.build(Story)
-
-
-def write_logo(canvas, image, realSize):
-    leftMarge = realSize[1]*0.4
-    topMarge = realSize[1]*0.85
-    #imagePath = request.url_root + "superform/plugins/logos/"+image+".png"
-    imagePath = image+".png"
-    canvas.drawImage(imagePath, leftMarge,topMarge )
-
-
-
-def write_title(canvas, titre, realSize):
-
-    myTitle = canvas.beginText()
-    myTitle.setCharSpace(3)
-    leftMarge = realSize[1]*0.1
-    topMarge = realSize[1]*0.9
-    myTitle.setTextOrigin(leftMarge,topMarge)
-    myTitle.textLine(titre)
-    canvas.drawText(myTitle)
-
-
-def write_body(canvas, body, realSize):
-
-    canvas.setFont("Times-Roman", 10*realSize[1]/800)
-    myText = canvas.beginText()
-    myText.setCharSpace(3)
-    leftMarge = realSize[0]*0.1
-    topMarge = realSize[1]*0.8
-    myText.setTextOrigin(leftMarge,topMarge)
-    words = body.split()
-    n = 9  # number of words per line
-    lignes = [' '.join(words[i:i + n]) for i in range(0, len(words), n)]
-
-    for i in range(0, len(lignes) - 1):
-        myText.textLine(lignes[i])
-    canvas.drawText(myText)
-
