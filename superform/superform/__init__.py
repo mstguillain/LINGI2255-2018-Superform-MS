@@ -1,20 +1,20 @@
-from flask import Flask, render_template, session, request, redirect, url_for
-import pkgutil
 import importlib
+import pkgutil
+
+from flask import Flask, render_template, session, request
 
 import superform.plugins
-from superform.publishings import pub_page
-from superform.models import db, User, Post, Publishing
 from superform.authentication import authentication_page
 from superform.authorizations import authorizations_page
 from superform.channels import channels_page
+# from OpenSSL import SSL
+from superform.models import db, Authorization, Channel
+from superform.models import db, User, Post, Publishing, Channel
 from superform.posts import posts_page
-from superform.users import get_moderate_channels_for_user, is_moderator
+from superform.publishings import pub_page
 from superform.rss_explorer import rss_explorer_page
-#from OpenSSL import SSL
-
-from werkzeug.serving import run_simple
-
+from superform.users import get_moderate_channels_for_user, is_moderator, \
+    channels_available_for_user
 
 app = Flask(__name__)
 app.config.from_json("config.json")
@@ -39,17 +39,17 @@ app.config["PLUGINS"] = {
 }
 
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/', methods = ['GET', 'POST'])
 def index():
-
-
     # Team06: Export to PDF feature
     if request.method == "POST":
         action = request.form.get('@action', '')
         if action == "export":
             post_id = request.form.get("id")
-            subject = request.form.get('subject')
-            return plugins.pdf.export()
+            chan_id = request.form.get("template")
+            print('post_id = %s\nchan_id = %s' %(post_id, chan_id))
+            return plugins.pdf.export(post_id, chan_id)
+    # end addition
 
     user = User.query.get(session.get("user_id", "")) if session.get(
         "logged_in", False) else None
@@ -62,10 +62,15 @@ def index():
         chans = get_moderate_channels_for_user(user)
         pubs_per_chan = (db.session.query(Publishing).filter(
             (Publishing.channel_id == c.id) & (Publishing.state == 0)) for c in
-                         chans)
+            chans)
         flattened_list_pubs = [y for x in pubs_per_chan for y in x]
+        # TEAM06: changes in the render_template, templates
+        pdf_chans = db.session.query(Channel).filter(
+            Channel.module=='superform.plugins.pdf'
+        )
     return render_template("index.html", user = user, posts = posts,
-                           publishings = flattened_list_pubs)
+                           publishings = flattened_list_pubs,
+                           templates = pdf_chans)
 
 
 @app.errorhandler(403)

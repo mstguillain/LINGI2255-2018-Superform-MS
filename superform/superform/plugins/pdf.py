@@ -4,6 +4,8 @@ date: December 2018
 Plugin for the PDF feature
 """
 
+import json
+
 from flask import url_for, redirect
 from reportlab.pdfgen import canvas
 import json
@@ -48,14 +50,19 @@ def run(publishing, channel_config):
     #os.remove(file_to_delete)
 
 
-def export():
+def export(post_id, idc):
     """
-    Launches the export
+    Launches the export process
     :return:
     """
     print("Here is the export method")
-    # TODO
-    # run(publishing = None, channel_config = None)
+    print('post_id = %s\nchan_id = %s' % (post_id, idc))
+
+    # TODO get the post information
+    # db.session... TODO
+    # pub = {'description': post.description, 'title': post.title} TODO
+    # config = TODO
+    # run(publishing = pub, channel_config = config)
     return redirect(url_for('index'))
 
 
