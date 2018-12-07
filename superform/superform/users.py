@@ -10,6 +10,10 @@ def channels_available_for_user(userid):
     for auth in auths:
         chans.append(db.session.query(Channel).get(auth.channel_id))
 
+    pdf_chans = db.session.query(Channel).filter(Channel.module == "superform.plugins.pdf")
+    for chan in pdf_chans:
+        chans.append(chan)
+
     return chans
 
 def get_moderate_channels_for_user(u):

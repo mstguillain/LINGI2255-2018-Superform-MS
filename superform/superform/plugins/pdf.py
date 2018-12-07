@@ -22,6 +22,8 @@ import os
 import time
 import webbrowser
 from reportlab.lib.pagesizes import letter, landscape, A4, A5, A3
+from superform.models import Channel, Post, db, Publishing
+
 
 FIELDS_UNAVAILABLE = []
 
@@ -41,7 +43,6 @@ def run(publishing, channel_config):
     """ Gathers the informations in the config column and launches the
     posting process
     channel_config format = {image : ??, size : "A4"}"""
-    # TODO
     json_data = json.loads(channel_config)
     title = publishing.title
     body = publishing.description
@@ -67,6 +68,16 @@ def export(post_id, idc):
     """
     print("Here is the export method")
     print('post_id = %s\nchan_id = %s' % (post_id, idc))
+    pdf_Channel = db.session.query(Channel).filter(
+        Channel.id == idc).first()
+    if pdf_Channel is not None:
+        channel_config = pdf_Channel.config
+    myPost = db.session.query(Post).filter(
+        Post.id == post_id).first()
+    myPub = Publishing()
+    myPub.description=myPost.description
+    myPub.title=myPost.title
+    run(myPub,channel_config)
 
     # TODO get the post information
     # db.session... TODO
