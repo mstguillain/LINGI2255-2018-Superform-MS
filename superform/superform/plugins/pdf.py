@@ -8,7 +8,7 @@ import json
 
 from flask import url_for, redirect, render_template
 from reportlab.pdfgen import canvas
-import json
+import json, time
 from flask import current_app, request
 from reportlab.lib.enums import TA_JUSTIFY
 from reportlab.lib.pagesizes import letter
@@ -18,7 +18,7 @@ from reportlab.lib.units import inch
 from reportlab.lib.pagesizes import letter
 from reportlab.platypus import Paragraph
 from pathlib import Path
-import os
+import os, glob
 import time
 import webbrowser
 from reportlab.lib.pagesizes import letter, landscape, A4, A5, A3
@@ -60,17 +60,20 @@ def run(publishing, channel_config, debug=False):
         webbrowser.open_new_tab('file://' + path)
 
     data_folder = Path("superform/plugins/pdf")
-    file_to_delete = data_folder / outputFile
-    #t = Timer(300.0, deleteLastFile(file_to_delete))
-    #t.start() # the generated pdf will be deleted in 5 min
+    file_to_delete = Path("superform/plugins/pdf/"+outputFile)
+    file_size = os.stat(file_to_delete).st_size
+    os.chdir(data_folder)
+
+    for file in glob.glob("*.pdf"):
+        if (time.time() - os.stat(file).st_atime > 3600):
+            os.remove(file)
+
+
     if(path is not None and outputFile is not None):
-        return ["status_OK", outputFile]
+        return ["status_OK", outputFile, file_size]
     else:
-        return ["status_KO", None]
+        return ["status_KO", None, None]
 
-
-def deleteLastFile(file_to_delete):
-    os.remove(file_to_delete)
 
 def export(post_id, idc):
     pdf_Channel = db.session.query(Channel).filter(

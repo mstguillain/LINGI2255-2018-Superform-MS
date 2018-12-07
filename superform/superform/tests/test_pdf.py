@@ -14,10 +14,10 @@ def test_run_PDF():
     run_result = pdf.run(pub, config_channel, True)
     assert (run_result[0]=="status_OK") #pdf was generated
     fileName = run_result[1]
+    fileSize = run_result[2]
     fileNameWithoutDot = fileName[:-4]
     fileNameWithoutDotWithoutFormatWithoutLogo = fileNameWithoutDot[fileNameWithoutDot.find("-")+4:]
-    print("XXX")
-    print(fileNameWithoutDotWithoutFormatWithoutLogo)
     assert (fileNameWithoutDotWithoutFormatWithoutLogo.isalnum()) #pdf name contains no special char
-    assert (fileName.startswith("UCL-A4"))
+    assert (fileName.startswith("UCL-A4")) #it used UCL logo and A4 format
+    assert (fileSize>0)
 
