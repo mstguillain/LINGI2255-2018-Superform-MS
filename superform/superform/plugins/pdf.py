@@ -98,7 +98,7 @@ def create_pdf(titre, corps, image="UCL", size=A4):
     fileTitle = empryString.join(e for e in titre if e.isalnum())
     if (len(fileTitle)) == 0:
         fileTitle = "DEFAULT"
-    outfilename = image + "-" +fileTitle +".pdf"
+    outfilename = image + "-"+size+"-" +fileTitle +".pdf" #every pdf channel should have different output
     localPath = os.path.dirname(__file__) + "/pdf/" + outfilename
 
     if size=="A5":
