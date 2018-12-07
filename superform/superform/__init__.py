@@ -55,6 +55,11 @@ def index():
         "logged_in", False) else None
     posts = []
     flattened_list_pubs = []
+    # TEAM06: add – pdf
+    pdf_chans = db.session.query(Channel).filter(
+        Channel.module == 'superform.plugins.pdf'
+    )
+    # end add
     if user is not None:
         setattr(user, 'is_mod', is_moderator(user))
         posts = db.session.query(Post).filter(
@@ -65,9 +70,6 @@ def index():
             chans)
         flattened_list_pubs = [y for x in pubs_per_chan for y in x]
         # TEAM06: changes in the render_template, templates
-        pdf_chans = db.session.query(Channel).filter(
-            Channel.module=='superform.plugins.pdf'
-        )
     return render_template("index.html", user = user, posts = posts,
                            publishings = flattened_list_pubs,
                            templates = pdf_chans)
