@@ -84,7 +84,18 @@ def configure_channel(id):
     for field in config_fields:
         if cfield > 0:
             str_conf += ","
-        str_conf += "\"" + field + "\" : \"" + request.form.get(field) + "\""
+
+        # TEAM06: changes for the pdf feature
+        if str(m) == "superform.plugins.pdf":
+            if field == "Format":
+                str_conf += "\"" + field + "\" : \"" + request.form['format'] + "\""
+            else:
+                str_conf += "\"" + field + "\" : \"" + request.form[
+                    'logo'] + "\""
+            print('field=%s\nstr_conf=%s' %(field,str_conf))
+        else:
+            str_conf += "\"" + field + "\" : \"" + request.form.get(field) + "\""
+        # TEAM06: end changes
         cfield += 1
 
     # If any LinkedIn session cookie is present we add them to the
@@ -94,9 +105,9 @@ def configure_channel(id):
     last_creation_time = request.cookies.get(LAST_CREATION_TIME)
     last_channel_id = request.cookies.get(LAST_CHANNEL_ID)
 
-    print("Saving LinkedIn channel data")
     if str(m) == "superform.plugins.LinkedIn" and str(last_channel_id) == str(
             id) and last_access_token is not None and last_creation_time is not None:
+        print("Saving LinkedIn channel data")
         if cfield > 0:
             str_conf += ","
         str_conf += "\"" + "token" + "\" : \"" + last_access_token + "\""

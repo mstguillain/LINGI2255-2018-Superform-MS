@@ -27,9 +27,9 @@ FIELDS_UNAVAILABLE = []
 
 CONFIG_FIELDS = ["Format", "Logo"]
 
-FORMATS = ["A4", "A3", "A76"]
+FORMATS = ["A5", "A4", "A3"]
 
-LOGOS = ["logo1", "logo2"]
+LOGOS = ["UCL", "EPL", 'INGI']
 
 
 def pdf_plugin(id, c, config_fields):
