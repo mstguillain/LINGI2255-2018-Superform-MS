@@ -122,8 +122,8 @@ def create_pdf(titre, corps, image="UCL", size=A4):
     # Adding logo
     #print("image path=", image)
     #print(os.curdir)
-
-    im = Image(image + ".png")  # , 2 * inch, 2 * inch)
+    imagePath = Path("superform/plugins/logos/"+image+".png")
+    im = Image(imagePath)  # , 2 * inch, 2 * inch)
     Story.append(im)
     styles = getSampleStyleSheet()
     styles.add(ParagraphStyle(name='Justify', alignment=TA_JUSTIFY, leading=15))

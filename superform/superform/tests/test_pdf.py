@@ -19,5 +19,5 @@ def test_run_PDF():
     fileNameWithoutDotWithoutFormatWithoutLogo = fileNameWithoutDot[fileNameWithoutDot.find("-")+4:]
     assert (fileNameWithoutDotWithoutFormatWithoutLogo.isalnum()) #pdf name contains no special char
     assert (fileName.startswith("UCL-A4")) #it used UCL logo and A4 format
-    assert (fileSize>0)
+    assert (fileSize>0) #verify that the pdf size is bigger than 0
 
