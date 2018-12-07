@@ -2,7 +2,8 @@ import locale
 import datetime
 from time import gmtime, strftime
 from rfeed import *
-from rss import rss
+#from rss import rss
+from superform.plugins import rss
 import pytest
 
 

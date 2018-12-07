@@ -47,7 +47,7 @@ def run(publishing, channel_config, debug=False):
     json_data = json.loads(channel_config)
     title = publishing.title
     body = publishing.description
-    if ( 'Logo' not in json_data):
+    if ( 'Logo' not in json_data and debug==False):
         print("This channel is not configured yet")
         return redirect(url_for('index'))
     image = json_data['Logo']
@@ -61,9 +61,12 @@ def run(publishing, channel_config, debug=False):
 
     data_folder = Path("superform/plugins/pdf")
     file_to_delete = data_folder / outputFile
-    #file_to_delete = "DELETEMEPLEASE.txt"
-    #t = Timer(1000.0, deleteLastFile(file_to_delete))
+    #t = Timer(300.0, deleteLastFile(file_to_delete))
     #t.start() # the generated pdf will be deleted in 5 min
+    if(path is not None and outputFile is not None):
+        return "status_OK"
+    else:
+        return "status_KO"
 
 
 def deleteLastFile(file_to_delete):

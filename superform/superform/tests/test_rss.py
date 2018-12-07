@@ -4,7 +4,8 @@ import json
 from superform.models import Channel, db
 import random
 import os
-from rss import rss
+#from rss import rss
+from superform.plugins import rss
 from superform import app, Publishing
 
 
