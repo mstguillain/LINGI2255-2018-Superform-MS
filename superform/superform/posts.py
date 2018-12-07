@@ -52,6 +52,7 @@ def create_a_publishing(post, chn, form):
     if c is not None:
         plugin_name = c.module
         ##If it is a pdf chanel we don't need to save it, printing it would be enough
+        #TEAM6: MODIFICATION FOR PDF
         if str(plugin_name).endswith("pdf"):
             c_conf = c.config
             from importlib import import_module
@@ -59,6 +60,7 @@ def create_a_publishing(post, chn, form):
             plugin.run(pub, c_conf)
             # Does not save the pdf posts
             return pub
+        #END OF MODIFICATION
     db.session.add(pub)
     db.session.commit()
     return pub

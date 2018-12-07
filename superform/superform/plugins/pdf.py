@@ -64,9 +64,9 @@ def run(publishing, channel_config, debug=False):
     #t = Timer(300.0, deleteLastFile(file_to_delete))
     #t.start() # the generated pdf will be deleted in 5 min
     if(path is not None and outputFile is not None):
-        return "status_OK"
+        return ["status_OK", outputFile]
     else:
-        return "status_KO"
+        return ["status_KO", None]
 
 
 def deleteLastFile(file_to_delete):
