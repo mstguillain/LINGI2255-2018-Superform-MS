@@ -23,6 +23,7 @@ import time
 import webbrowser
 from reportlab.lib.pagesizes import letter, landscape, A4, A5, A3
 from superform.models import Channel, Post, db, Publishing
+from threading import Timer
 
 
 FIELDS_UNAVAILABLE = []
@@ -39,35 +40,36 @@ def pdf_plugin(id, c, config_fields):
                            config_fields = config_fields, formats = FORMATS,
                            logos = LOGOS)
 
-def run(publishing, channel_config):
+def run(publishing, channel_config, debug=False):
     """ Gathers the informations in the config column and launches the
     posting process
     channel_config format = {image : ??, size : "A4"}"""
     json_data = json.loads(channel_config)
     title = publishing.title
     body = publishing.description
+    if ( 'Logo' not in json_data):
+        print("This channel is not configured yet")
+        return redirect(url_for('index'))
     image = json_data['Logo']
     size = json_data['Format']
     datas = create_pdf(title, body, image, size)
 
     path = datas[0]
     outputFile = datas[1]
-    webbrowser.open_new_tab('file://' + path)
+    if (debug==False):
+        webbrowser.open_new_tab('file://' + path)
 
-    # data_folder = Path("superform/plugins/pdf")
-    # file_to_delete = data_folder / outputFile
-    # file_to_delete = "DELETEMEPLEASE.txt"
-    # time.sleep(1)
-    # os.remove(file_to_delete)
+    data_folder = Path("superform/plugins/pdf")
+    file_to_delete = data_folder / outputFile
+    #file_to_delete = "DELETEMEPLEASE.txt"
+    #t = Timer(1000.0, deleteLastFile(file_to_delete))
+    #t.start() # the generated pdf will be deleted in 5 min
 
+
+def deleteLastFile(file_to_delete):
+    os.remove(file_to_delete)
 
 def export(post_id, idc):
-    """
-    Launches the export process
-    :return:
-    """
-    print("Here is the export method")
-    print('post_id = %s\nchan_id = %s' % (post_id, idc))
     pdf_Channel = db.session.query(Channel).filter(
         Channel.id == idc).first()
     if pdf_Channel is not None:
@@ -93,7 +95,7 @@ def create_pdf(titre, corps, image="UCL", size=A4):
     fileTitle = empryString.join(e for e in titre if e.isalnum())
     if (len(fileTitle)) == 0:
         fileTitle = "DEFAULT"
-    outfilename = fileTitle + ".pdf"
+    outfilename = image + "-" +fileTitle +".pdf"
     localPath = os.path.dirname(__file__) + "/pdf/" + outfilename
 
     if size=="A5":
@@ -112,8 +114,8 @@ def create_pdf(titre, corps, image="UCL", size=A4):
     Story = []
 
     # Adding logo
-    print("image path=", image)
-    print(os.curdir)
+    #print("image path=", image)
+    #print(os.curdir)
 
     im = Image(image + ".png")  # , 2 * inch, 2 * inch)
     Story.append(im)
