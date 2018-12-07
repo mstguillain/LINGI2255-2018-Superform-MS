@@ -98,7 +98,6 @@
                         <!-- Team06: Export to PDF feature -->
                         <button type="button" class="btn btn-info"
                                 data-toggle="modal" data-target="#exportModal"
-                                data-title="{{ item.title }}"
                                 data-id="{{ item.id }}">
                             <i class="fas fa-fw fa-file-pdf"></i> Export
                         </button>
@@ -122,6 +121,7 @@
                 <form method="post">
                     <input type="hidden" name="@action" value="export">
                     <input id="post-id" type="hidden" name="id" value="">
+                    <input id="chan-id" type="hidden" name="idc" value="">
                     <div class="modal-header">
                         <h5 class="modal-title">Export to PDF</h5>
                         <button type="button" class="close"
@@ -130,9 +130,23 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <p>Which template would you like to use for the post <span
-                                id="post-id"></span>?</p>
+                        <p>Which template would you like to use ?</p>
                     </div>
+                    <!--<form class="form-inline" method="post">-->
+                        <input type="hidden" name="@action" value="templates">
+                        <label class="sr-only" for="inlineFormInputText">Username</label>
+                        <label class="sr-only"
+                               for="inlineFormCustomSelectTemplate">Template</label>
+                        <div class="input-group mr-sm-2">
+                            <select name="template" class="custom-select"
+                                    id="inlineFormCustomSelectTemplate">
+                                <option selected>Choose a template...</option>
+                                {% for template in templates %}
+                                    <option value="{{ template.id }}">{{ template.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    <!--</form>-->
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-info">Export to pdf
                         </button>
@@ -151,7 +165,7 @@
     <script>
         $('#exportModal').on('show.bs.modal', function (event) {
             var button = $(event.relatedTarget); // Button that triggered the modal
-            $(this).find('#post-subject').text(button.data('subject'));
+            $(this).find('#chan-id').val(button.data('idc'));
             $(this).find('#post-id').val(button.data('id'));
         });
     </script>
