@@ -6,7 +6,7 @@ Plugin for the PDF feature
 
 import json
 
-from flask import url_for, redirect
+from flask import url_for, redirect, render_template
 from reportlab.pdfgen import canvas
 import json
 from flask import current_app, request
@@ -25,6 +25,16 @@ FIELDS_UNAVAILABLE = []
 
 CONFIG_FIELDS = ["Format", "Logo"]
 
+FORMATS = ["A4", "A3", "A76"]
+
+LOGOS = ["logo1", "logo2"]
+
+
+def pdf_plugin(id, c, config_fields):
+    name = 'Jean'
+    return render_template("pdf_configuration.html", channel = c,
+                           config_fields = config_fields, formats = FORMATS,
+                           logos = LOGOS)
 
 def run(publishing, channel_config):
     """ Gathers the informations in the config column and launches the

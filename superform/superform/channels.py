@@ -8,11 +8,11 @@ from flask import Blueprint, current_app, url_for, request, redirect, \
 from superform.models import db, Channel
 from superform.plugins.LinkedIn import linkedin_plugin, \
     linkedin_code_processing
+from superform.plugins.pdf import pdf_plugin
 from superform.utils import login_required, get_instance_from_module_path, \
     get_modules_names, get_module_full_name
 
 channels_page = Blueprint('channels', __name__)
-
 
 # author: Team 06
 # date: December 2018
@@ -71,6 +71,9 @@ def configure_channel(id):
             if str(m) == "superform.plugins.LinkedIn":
                 last_status = request.cookies.get(LAST_STATUS)
                 return linkedin_plugin(id, c, config_fields, last_status)
+            if str(m) == 'superform.plugins.pdf':
+                return pdf_plugin(id, c, config_fields)
+
         return render_template("channel_configure.html", channel = c,
                                config_fields = config_fields)
     str_conf = "{"
@@ -87,7 +90,6 @@ def configure_channel(id):
     last_access_token = request.cookies.get(LAST_ACCESS_TOKEN)
     last_creation_time = request.cookies.get(LAST_CREATION_TIME)
     last_channel_id = request.cookies.get(LAST_CHANNEL_ID)
-
 
     print("Saving LinkedIn channel data")
     if str(m) == "superform.plugins.LinkedIn" and str(last_channel_id) == str(
@@ -123,7 +125,8 @@ def linkedin_return():
         last_access_token = linkedin_code_processing(
             code)  # return from LinkedIn
         now = datetime.datetime.now()
-        last_creation_time = str(int(time.time()))  # str(time.gmtime()) #now.strftime("%Y-%m-%d %H:%M")
+        last_creation_time = str(int(
+            time.time()))  # str(time.gmtime()) #now.strftime("%Y-%m-%d %H:%M")
         last_channel_id = ch_id
         if last_access_token is None:
             print("No token retrieved!")
@@ -147,6 +150,7 @@ def linkedin_return():
         print("Error: no code found")
         i = url.find("state")
         ch_id = url[i + 9:url.find("rest")]
-        redirection = redirect(url_for('channels.configure_channel', id = ch_id))
+        redirection = redirect(
+            url_for('channels.configure_channel', id = ch_id))
         redirection.set_cookie(LAST_STATUS, "-1:%s" % ch_id)
     return redirection
