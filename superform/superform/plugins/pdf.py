@@ -18,6 +18,8 @@ from reportlab.platypus import Paragraph
 from pathlib import Path
 import os
 import time
+import webbrowser
+from reportlab.lib.pagesizes import letter, landscape, A4, A5, A3
 
 FIELDS_UNAVAILABLE = []
 
@@ -38,7 +40,6 @@ def run(publishing, channel_config):
 
     path = datas[0]
     outputFile = datas[1]
-    import webbrowser
     webbrowser.open_new_tab('file://' + path)
 
     #data_folder = Path("superform/plugins/pdf")
@@ -59,7 +60,7 @@ def export():
     return redirect(url_for('index'))
 
 
-def create_pdf(titre, corps, image, size):
+def create_pdf(titre, corps, image="UCL", size=A4):
 
     empryString = ""
     fileTitle = empryString.join(e for e in titre if e.isalnum())
@@ -68,7 +69,16 @@ def create_pdf(titre, corps, image, size):
     outfilename = fileTitle+".pdf"
     localPath = os.path.dirname(__file__)+"/pdf/"+outfilename
 
-    doc = SimpleDocTemplate(localPath, pagesize=letter,
+    if size=="A5":
+        mySize=A5
+    elif size=="A4":
+        mySize=A4
+    elif size=="A3":
+        mySize=A3
+
+
+
+    doc = SimpleDocTemplate(localPath, pagesize=mySize,
                             rightMargin=72, leftMargin=72,
                             topMargin=72, bottomMargin=18)
 
