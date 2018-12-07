@@ -149,11 +149,19 @@ def test_get_moderate_channels_for_user():
     assert len(get_moderate_channels_for_user(user)) == 1
     
 def test_channels_available_for_user():
+    #TEAM6: MODIFICATION FOR PDF CHANNELS AVAILABLE FOR EVERY USER
     u = User.query.get(1)
-    assert len(channels_available_for_user(u.id))==1
+    pdf_channels = db.session.query(Channel).filter(Channel.module=="superform.plugins.pdf")
+    pdf_channels_number = 0
+    if (pdf_channels is not None):
+        for chan in pdf_channels:
+            pdf_channels_number+=1
+
+    assert len(channels_available_for_user(u.id))==1 + pdf_channels_number
     user = User(id=3, name="test", first_name="utilisateur3", email="utilisateur3.test@uclouvain.be")
     db.session.add(user)
-    assert len(channels_available_for_user(user.id)) == 0
+    assert len(channels_available_for_user(user.id)) == 0 + pdf_channels_number
+    #END OF MODIFICATION
 
 
 
