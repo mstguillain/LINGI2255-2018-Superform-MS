@@ -31,7 +31,6 @@ LOGOS = ["logo1", "logo2"]
 
 
 def pdf_plugin(id, c, config_fields):
-    name = 'Jean'
     return render_template("pdf_configuration.html", channel = c,
                            config_fields = config_fields, formats = FORMATS,
                            logos = LOGOS)

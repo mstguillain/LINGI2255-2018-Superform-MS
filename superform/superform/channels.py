@@ -68,11 +68,14 @@ def configure_channel(id):
         if c.config is not "":
             d = ast.literal_eval(c.config)
             setattr(c, "config_dict", d)
+            # TEAM06: addition for LinkedIn plugin
             if str(m) == "superform.plugins.LinkedIn":
                 last_status = request.cookies.get(LAST_STATUS)
                 return linkedin_plugin(id, c, config_fields, last_status)
+            # TEAM06: addition for pdf feature
             if str(m) == 'superform.plugins.pdf':
                 return pdf_plugin(id, c, config_fields)
+            # TEAM06: end addition
 
         return render_template("channel_configure.html", channel = c,
                                config_fields = config_fields)
