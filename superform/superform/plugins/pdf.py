@@ -62,11 +62,13 @@ def run(publishing, channel_config, debug=False):
     data_folder = Path("superform/plugins/pdf")
     file_to_delete = Path("superform/plugins/pdf/"+outputFile)
     file_size = os.stat(file_to_delete).st_size
+    current_dir = os.getcwd()
     os.chdir(data_folder)
 
     for file in glob.glob("*.pdf"):
         if (time.time() - os.stat(file).st_atime > 3600):
             os.remove(file)
+    os.chdir(current_dir)
 
 
     if(path is not None and outputFile is not None):
