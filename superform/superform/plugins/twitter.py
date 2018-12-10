@@ -33,46 +33,33 @@ def send_tweet(api, tweet, url):
                 url: the link of the message
         :return: True if the tweet(s) has/have been correctly published, False otherwise
     '''
-
-    tweet = tweet[2:len(tweet)-3]
+    tweet = tweet[17:len(tweet)]
     s = ""
-    old = ''
-    for i in tweet :
-        if old == ',':
-            old = ''
-            if i == '"':
+    i = 0
+    finish = False
+    while not finish :
+        if tweet[i:i+18] == "</tweet-separator>":
+            if i + 19 >= len(tweet):
+                finish = True
+                ok = True
+                if url:
+                    if len(s) + len(url) < 280:
+                        s += ' ' + url
+                    else:
+                        ok = False
+                if not api.PostUpdate(status=s):
+                    return False
+                if not ok:
+                    if not api.PostUpdate(status=url):
+                        return False
+            else :
                 if not api.PostUpdate(status=s):
                     return False
                 s = ""
-            else :
-                s += '"' + ',' + i
-        elif old == '"':
-            if i == ',':
-                old = ','
-            else :
-                s += '"' + i
-                old = ''
-        elif old == '\\':
-            old = ''
-            if i == 'n':
-                s += '\n'
-            else :
-                s += '\\' + i
-        elif i == '"' or i == '\\':
-            old = i
+                i += 35
         else :
-            s += i
-    ok = True
-    if url :
-        if len(s) + len(url) < 280:
-            s += ' ' +url
-        else :
-            ok = False
-    if not api.PostUpdate(status=s):
-        return False
-    if not ok :
-        if not api.PostUpdate(status=url):
-            return False
+            s += tweet[i]
+            i += 1
     return True
 
 
