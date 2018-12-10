@@ -1,8 +1,8 @@
 from flask import Blueprint, url_for, request, redirect, render_template, \
     session
 
-from superform.utils import login_required, datetime_converter, str_converter
-from superform.models import db, Publishing, Channel
+from superform.utils import login_required, datetime_converter, str_converter, hour_converter
+from superform.models import db, Publishing, Channel, State
 import facebook
 
 pub_page = Blueprint('publishings', __name__)
@@ -27,6 +27,8 @@ def moderate_publishing(id,idc):
             pub.image_url = request.form.get('imagepost')
             pub.date_from = datetime_converter(request.form.get('datefrompost'))
             pub.date_until = datetime_converter(request.form.get('dateuntilpost'))
+            #pub.start_time = hour_converter(request.form.get('starttime'))
+            #pub.end_time = hour_converter(request.form.get('endtime'))
             #state is shared & validated
             #running the plugin here
             c=db.session.query(Channel).filter(Channel.id == pub.channel_id).first()
@@ -38,7 +40,8 @@ def moderate_publishing(id,idc):
             pub.state = 1
             db.session.commit()
             return redirect(url_for('index'))
-    except facebook.GraphAPIError:
+    except facebook.GraphAPIError as Error:
+            print(Error)
             return render_template('moderate_post.html', pub=pub)
     return redirect(url_for('index'))
 
