@@ -4,7 +4,8 @@ import json
 from superform.models import Channel, db
 import random
 import os
-#from rss import rss
+import pytest
+# from rss import rss
 from superform.plugins import rss
 from superform import app, Publishing
 
@@ -41,6 +42,8 @@ def test_run_feed_bad_name():
 
     # TODO : replace ValueError by something more general, we are just expecting an error
 
+    pass
+
 
 # with pytest.raises(ValueError, message="The RSS feed allows us to create a post with no title"):
 #   feed, nameOfFeed = rss.newFeed(rname, rdescription)
@@ -56,6 +59,8 @@ def test_run_feed_bad_description():
     rdescription = ""
 
     # TODO : replace ValueError by something more general, we are just expecting an error
+
+    pass
 
 
 # with pytest.raises(ValueError, message="The RSS feed allows us to create a post with no description"):
@@ -118,9 +123,11 @@ def test_publish_base():
     pub.image_url = 'image url'
     pub.date_until = '14.02.19'
     pub.state = 1
-    pub.channel_id = 0  # TODO : find the good chanel id
     c = db.session.query(Channel).filter(
-        Channel.id == pub.channel_id).first()
+        Channel.module == "rss").first()
+
+    assert c, "No Rss Channel found"
+    pub.channel_id = c.channel_id
     plugin_name = c.module
     c_conf = c.config
     channel_config = None
