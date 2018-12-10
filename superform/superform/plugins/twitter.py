@@ -33,6 +33,7 @@ def send_tweet(api, tweet, url):
                 url: the link of the message
         :return: True if the tweet(s) has/have been correctly published, False otherwise
     '''
+
     tweet = tweet[2:len(tweet)-3]
     s = ""
     old = ''
@@ -76,6 +77,10 @@ def send_tweet(api, tweet, url):
 
 
 def run(publishing,channel_config):
+    tweet = publishing.description
+
+    if empty_tweet(tweet):
+        return False
     try:
         json_data = json.loads(channel_config)
 
@@ -83,12 +88,11 @@ def run(publishing,channel_config):
                   consumer_secret = json_data['consumer_secret'],
                   access_token_key = json_data['access_token_key'],
                   access_token_secret = json_data['access_token_secret'])
-    except json.decoder.JSONDecodeError  as e:
+        api.GetHelpConfiguration()
+    except BaseException  as e:
         return "uncorrect credentials"
 
 
-    tweet = publishing.description
 
-    if empty_tweet(tweet) :
-        return False
+
     return send_tweet(api, tweet, publishing.link_url)

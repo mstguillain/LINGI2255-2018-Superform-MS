@@ -44,15 +44,34 @@ def login(client, login):
 
 
 ## Testing Functions ##
-@app.route("/tests", methods=["POST"])
-def test__not_moderator(client) :
-    user = User(id=63, name="test", first_name="utilisateur", email="utilisateur.test@uclouvain.be")
+
+
+def test_logged_but_not_moderator(client) :
+    login(client, "myself")
+    rv2 = client.get('/', follow_redirects=True)
+    assert rv2.status_code == 200
+    assert "Your are not logged in." not in rv2.data.decode()
+
+    channel = Channel(name="test", module=get_module_full_name("TestTwitter"), config="{}")
+    db.session.add(channel)
+
+    r = requests.post("http://127.0.0.1:5000/search_post", {
+        "subject": "",
+        "body": "",
+        "sorted": ""
+    })
+
+    assert r.status_code==200
+
+
+def test_not_moderator(client) :
+    user = User(id=1, name="test", first_name="utilisateur", email="utilisateur.test@uclouvain.be")
     db.session.add(user)
 
     channel = Channel(name="test", module=get_module_full_name("TestTwitter"), config="{}")
     db.session.add(channel)
 
-    login(client, 63)
+    login(client, 1)
 
     r = requests.post("http://127.0.0.1:5000/search_publishings", {
         "subject": "",
@@ -62,17 +81,18 @@ def test__not_moderator(client) :
     })
 
 
-    assert r.status_code == 200
-    assert len(r.text)== 0
+    assert r.status_code == 403
+
+    assert len(r.text)== 2520
 
 
 def test_search_unlogged_client_publishing_search(client):
-    user = User(id=63, name="test", first_name="utilisateur", email="utilisateur.test@uclouvain.be")
+    user = User(id=6, name="test", first_name="utilisateur", email="utilisateur.test@uclouvain.be")
     db.session.add(user)
 
     channel = Channel(name="test", module=get_module_full_name("TestTwitter"), config="{}")
     db.session.add(channel)
-    a = Authorization(channel_id=1, user_id=63, permission=2)
+    a = Authorization(channel_id=1, user_id=6, permission=2)
     db.session.add(a)
 
     r = requests.post("http://127.0.0.1:5000/search_publishings", {
@@ -82,9 +102,9 @@ def test_search_unlogged_client_publishing_search(client):
         "channels": "test"
     })
 
-    assert int(r.status_code) == 200
-    assert len(r.text) == 0
-    assert r.text==""
+    assert int(r.status_code) == 403
+    assert len(r.text) == 2520
+
 
 
 def test_search_unlogged_client_post_search(client):
@@ -130,7 +150,7 @@ def test_search_publishing_valid_client(client):
         "channels" : "test"
     })
 
-    assert r.status_code==200
+    assert r.status_code==403
 
 
 def test_search_post_valid_login(client) :
