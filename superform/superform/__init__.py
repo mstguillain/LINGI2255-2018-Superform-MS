@@ -6,6 +6,7 @@ from flask import Flask, render_template, session, request
 import superform.plugins
 from superform.authentication import authentication_page
 from superform.authorizations import authorizations_page
+from superform.stats import stats_page
 from superform.channels import channels_page
 # from OpenSSL import SSL
 from superform.models import db, Authorization, Channel
@@ -26,6 +27,7 @@ app.register_blueprint(channels_page)
 app.register_blueprint(posts_page)
 app.register_blueprint(pub_page)
 app.register_blueprint(rss_explorer_page)
+app.register_blueprint(stats_page)
 
 # Init dbs
 db.init_app(app)
