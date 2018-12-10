@@ -4,10 +4,12 @@ import json
 from superform.models import Channel, db
 import random
 import os
+import rfeed
 import pytest
 # from rss import rss
 from superform.plugins import rss
 from superform import app, Publishing
+import datetime
 
 
 def test_run_feed_simple():
@@ -20,7 +22,7 @@ def test_run_feed_simple():
     rdescription = "Trying to create a new field"
     # Creating the new field
 
-    feed, nameOfFeed = rss.newFeed(rname, rdescription)
+    feed, nameOfFeed = rss.newFeed(rname, rdescription,debug=True)
     expectedNameOfFeed = rname.replace(" ", "_")
     assert feed, "No new feed was created"
     assert nameOfFeed == expectedNameOfFeed, "The name of the field was modified or wrong : expected {} from {}  but got {}".format(
@@ -77,17 +79,30 @@ def test_import_items():
     rdescription = "Trying to create a new field and see if no data was lsot"
     # Creating the new field
 
-    feed, nameOfFeed = rss.newFeed(rname, rdescription)
+    feed, nameOfFeed = rss.newFeed(rname, rdescription,debug=True)
     assert feed.link, "The new feed doesn't have any link , can't test the created content"
-    items = rss.import_items(feed.link)
+    parent = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    localPath = parent + "\\static\\rss\\" + nameOfFeed + ".xml"
+    item = rfeed.Item(
+        title=rname,
+        link=feed.link,
+        description=rdescription,
+        pubDate=datetime.datetime.now())
+    feed.items.append(item)
+    a = feed.rss()
+    with open(localPath, 'w') as f:
+        f.write(a)
+    items = rss.import_items(localPath)
     found_wanted_feed = False
 
+    print("len item {}".format(len(items)))
     for item in items:
+        print(item.description)
         if item.description == rdescription and item.title == rname.replace(" ", "_"):
             found_wanted_feed = True
             print("The new field was well created")
             return
-    assert found_wanted_feed, "The new rss publishign failled"
+    assert found_wanted_feed, "The new rss feed creation and import failled"
 
 
 def test_publish_base():
