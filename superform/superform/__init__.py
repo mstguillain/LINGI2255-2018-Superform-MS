@@ -49,7 +49,7 @@ def index():
         if action == "export":
             post_id = request.form.get("id")
             chan_id = request.form.get("template")
-            print('post_id = %s\nchan_id = %s' %(post_id, chan_id))
+            #print('post_id = %s\nchan_id = %s' %(post_id, chan_id))
             return plugins.pdf.export(post_id, chan_id)
     # end addition
 

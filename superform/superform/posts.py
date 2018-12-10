@@ -6,6 +6,7 @@ import facebook
 import json
 import http
 import urllib.request
+import os
 from .plugins import gcal_plugin
 
 posts_page = Blueprint('posts', __name__)
@@ -44,7 +45,7 @@ def create_a_publishing(post, chn, form):
     date_until = datetime_converter(
         form.get(chan + '_dateuntilpost')) if datetime_converter(
         form.get(chan + '_dateuntilpost')) is not None else post.date_until
-    pub = Publishing(post_id=post.id, channel_id=chn.id, state=0,
+    pub = Publishing(post_id=post.id, user_id=user_id, channel_id=chn.id, state=0,
                      title=title_post, description=descr_post,
                      link_url=link_post, image_url=image_post,
                      date_from=date_from, date_until=date_until)
@@ -87,6 +88,7 @@ def generate_google_user_credentials(channel_id):
 @posts_page.route('/new', methods=['GET', 'POST'])
 @login_required()
 def new_post():
+
     user_id = session.get("user_id", "") if session.get("logged_in", False) else -1
     list_of_channels = channels_available_for_user(user_id)
     for elem in list_of_channels:
