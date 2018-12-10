@@ -128,16 +128,16 @@ def test_get_module_name():
     assert m is None
 
 def test_is_moderator():
-    user = User(id=1, name="test", first_name="utilisateur", email="utilisateur.test@uclouvain.be")
+    user = User(id=63, name="test", first_name="utilisateur", email="utilisateur.test@uclouvain.be")
     db.session.add(user)
-    u = User.query.get(1)
+    u = User.query.get(63)
     assert is_moderator(u) == False
-    a= Authorization(channel_id=1,user_id=1,permission=2)
+    a= Authorization(channel_id=1,user_id=63,permission=2)
     db.session.add(a)
     assert is_moderator(u) == True
 
 def test_get_moderate_channels_for_user():
-    u = User.query.get(1)
+    u = User.query.get(63)
     channel = Channel(name="test", module=get_module_full_name("mail"), config="{}")
     db.session.add(channel)
     assert get_moderate_channels_for_user(u) is not None
@@ -149,7 +149,7 @@ def test_get_moderate_channels_for_user():
     assert len(get_moderate_channels_for_user(user)) == 1
     
 def test_channels_available_for_user():
-    u = User.query.get(1)
+    u = User.query.get(63)
     assert len(channels_available_for_user(u.id))==1
     user = User(id=3, name="test", first_name="utilisateur3", email="utilisateur3.test@uclouvain.be")
     db.session.add(user)
