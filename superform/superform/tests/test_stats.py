@@ -2,21 +2,21 @@ import sys
 sys.path.append("..")
 #Gcal import
 from datetime import datetime
-from plugins.gcal_plugin import *
-from publishings import *
-from models import *
+from superform.plugins.gcal_plugin import *
+from superform.publishings import *
+from superform.models import *
 from googleapiclient.discovery import build
 #facebook import
-from plugins.facebook_plugin import *
+from superform.plugins.facebook_plugin import *
 import unittest
 from urllib.request import urlopen
 #Stats import
-import stats
+import superform.stats
 
 #We look first the number of post and then we publish a post and then we relook if the number of post is +1
 def test_GCAL_post():
 
-    k = stats.number_of_posts()
+    k = superform.stats.number_of_posts()
 
     pub = Publishing()
     pub.title='test-Title'
@@ -30,21 +30,21 @@ def test_GCAL_post():
 
     c = db.session.query(Channel).first()
     c_conf = c.config
-    gcal_plugin.run(pub, c_conf)
+    superform.gcal_plugin.run(pub, c_conf)
 
-    k2 = stats.number_of_posts() -1
+    k2 = superform.stats.number_of_posts() -1
 
     assert k==k2
 
 #We look first the number of post and then we publish a post and then we relook if the number of post is +1
 def test_FB_post():
 
-    k = stats.number_of_posts()
+    k = superform.stats.number_of_posts()
 
     msg = "This is a publication test"
     api = get_api(CFG)
     publication_id = publish(msg)
 
-    k2 = stats.number_of_posts() -1
+    k2 = superform.stats.number_of_posts() -1
 
     assert k==k2
