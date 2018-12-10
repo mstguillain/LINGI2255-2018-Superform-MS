@@ -3,7 +3,7 @@ from superform.models import db, User
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
-from datetime import datetime
+import datetime
 import json
 import time
 
@@ -102,5 +102,7 @@ def delete(id):
     """
 
 def is_valid(pub):
-    now = datetime.datetime.now()
-    return len(pub.title) != 0 and pub.date_from >= now and pub.date_from <= pub.date_until
+    now = datetime.datetime.now().date()
+    date_from = datetime.datetime.strptime(pub.date_from, "%d.%m.%Y").date()
+    date_until = datetime.datetime.strptime(pub.date_until, "%d.%m.%Y").date()
+    return len(pub.title) != 0 and date_from >= now and date_from <= date_until

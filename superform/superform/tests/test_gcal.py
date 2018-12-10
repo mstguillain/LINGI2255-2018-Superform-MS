@@ -34,9 +34,9 @@ def test_run():
 
 def test_validity_title():
     pub = Publishing()
-    pub.title = ' '
-    pub.date_from = '16.11.18'
-    pub.date_until = '16.11.18'
+    pub.title = ''
+    pub.date_from = '16.11.2019'
+    pub.date_until = '16.11.2019'
     pub.link_url = 'anything'
     pub.description = 'description'
     pub.image_url = 'image url'
@@ -63,8 +63,8 @@ def test_validity_date():
 def test_validity():
     pub = Publishing()
     pub.title = 'test'
-    pub.date_from = '16.11.18'
-    pub.date_until = '16.11.18'
+    pub.date_from = '16.11.2019'
+    pub.date_until = '16.11.2019'
     pub.link_url = 'anything'
     pub.description = 'description'
     pub.image_url = 'image url'
