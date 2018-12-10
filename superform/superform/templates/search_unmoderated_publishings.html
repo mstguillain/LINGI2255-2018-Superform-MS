@@ -105,6 +105,7 @@
                     success : function(data) {
                         console.table(JSON.parse(data));
                         $("tbody.list-publishings").html(changeTablePublishings(JSON.parse(data)));
+                        formattingTableForTwitter();
                     }
       });
      }
@@ -131,7 +132,19 @@
                 html += '</tr>'
             });
         }
-        return html
+        return html;
+     }
+
+     function formattingTableForTwitter() {
+        $(".col").each(function() {
+            text = $(this).html();
+            console.log(text);
+            text = "<ul>"+text+"</ul>";
+            while (text.search("tweet-separator") > -1 )
+                text = text.replace("tweet-separator","li");
+            console.log(text);
+            $(this).html(text);
+        });
      }
 
      function removeFromArray(tb, value) {
@@ -153,4 +166,5 @@
 
      launchSearchPublishings();
      waitJQuery(launchListenerPublishings);
+     nbRequestSearchPublishings += 1;
 </script>

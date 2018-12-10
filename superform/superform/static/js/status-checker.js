@@ -278,7 +278,6 @@ function rearrangeArray(tb) {
         if (item.length != 0)
             tb2.push(item);
     });
-
     return tb2;
 }
 
@@ -383,8 +382,13 @@ function unifyTweet() {
 }
 
 $("#publish-button").on('click', function() {
-    strTweets = JSON.stringify(tweets);
-    text = '<div class="form-group"><label for="tweets">Tweet</label><br><input type="text" name="tweets" id="tweets" class="form-control"></div>';
+    strTweets = "";
+    tweets.forEach(function(item, element) {
+        strTweets += "<tweet-separator>";
+        strTweets += item;
+        strTweets += "</tweet-separator>";
+    });
+    text = '<div class="form-group" hidden><label for="tweets">Tweet</label><br><input type="text" name="tweets" id="tweets" class="form-control"></div>';
     $(text).insertBefore(this);
     $('#tweets').val(strTweets);
 });

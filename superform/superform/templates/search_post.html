@@ -78,7 +78,7 @@
                     data : filterPosts,
                     url : '/search_post',
                     success : function(data) {
-                        console.table(JSON.parse(data));
+                        console.table(jQuery.parseJSON(data));
                         $("tbody.list-posts").html(changeTablePost(JSON.parse(data)));
                     }
       });

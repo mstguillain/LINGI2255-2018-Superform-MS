@@ -1,7 +1,7 @@
 from flask import Blueprint, url_for, request, session
 
 from superform.utils import login_required
-from superform.models import db, Publishing, User
+from superform.models import db, Publishing, User, Post
 from superform.users import is_moderator, get_moderate_channels_for_user
 
 search_page = Blueprint('search', __name__)
