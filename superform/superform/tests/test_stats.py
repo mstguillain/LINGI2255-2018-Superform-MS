@@ -1,17 +1,19 @@
 import sys
+
+
+
 sys.path.append("..")
 #Gcal import
 from datetime import datetime
-from plugins.gcal_plugin import *
-from publishings import *
-from models import *
+from superform.plugins import gcal_plugin
+from superform.models import *
 from googleapiclient.discovery import build
 #facebook import
-from plugins.facebook_plugin import *
+from superform.plugins import  facebook_plugin
 import unittest
 from urllib.request import urlopen
 #Stats import
-import stats
+from superform import stats
 
 #We look first the number of post and then we publish a post and then we relook if the number of post is +1
 def test_GCAL_post():
