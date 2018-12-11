@@ -90,7 +90,7 @@ def test_send_tweet_correct_tweet() :
     pub.date_from = '13.02.02'
     pub.link_url = 'blablablablablablablajdsff'
     rabdomStr=randomword(12)
-    pub.description =    "["+rabdomStr+"]"
+    pub.description =   "<tweet-separator>"+rabdomStr+"</tweet-separator> "
     pub.image_url = ""
     pub.date_until = '14.02.16'
     pub.state = 1
