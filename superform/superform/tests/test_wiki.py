@@ -41,7 +41,7 @@ def test_makeText():
     assert tab_of_text[3]== "-----"+"[["+pub.link_url+"]]"
 
 def test_run():
-    config ={ "username" : ["superform"], "password" : ["superform"]   }
+    config ={ 'username' : ['superform'], 'password' : ['superform']   }
     pub = Publishing()
     pub.date_from = '13.02.02'
     pub.title = 'test-Title'
