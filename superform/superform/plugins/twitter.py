@@ -34,6 +34,7 @@ def send_tweet(api, tweet, url):
         :return: True if the tweet(s) has/have been correctly published, False otherwise
     '''
     tweet = tweet[17:len(tweet)]
+    tweets = []
     s = ""
     i = 0
     finish = False
@@ -41,25 +42,23 @@ def send_tweet(api, tweet, url):
         if tweet[i:i+18] == "</tweet-separator>":
             if i + 19 >= len(tweet):
                 finish = True
-                ok = True
                 if url:
-                    if len(s) + len(url) < 280:
+                    if len(s) + len(url) <= 280:
                         s += ' ' + url
+                        tweets.append(s)
                     else:
-                        ok = False
-                if not api.PostUpdate(status=s):
-                    return False
-                if not ok:
-                    if not api.PostUpdate(status=url):
-                        return False
+                        tweets.append(s)
+                        tweets.append(url)
             else :
-                if not api.PostUpdate(status=s):
-                    return False
+                tweets.append(s)
                 s = ""
                 i += 35
         else :
             s += tweet[i]
             i += 1
+    for t in tweets:
+        if not api.PostUpdate(status=t):
+            return False
     return True
 
 
