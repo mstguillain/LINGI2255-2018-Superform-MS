@@ -1,6 +1,6 @@
 /*
 *
-* Status checker by Group 6. This file adds a status, based on a javascript object "statusListener"
+* Status checker by Group 10. This file adds a status, based on a javascript object "statusListener"
 */
 
 LIMIT_CHAR_TWEET = 280;
@@ -50,13 +50,89 @@ statusListener = {
             args : ""
         }
     ],
-    mail : [
+    pdf :
+    [
+        {
+            type : "title",
+            compare : "EQ",
+            value : "0",
+            text : "Your title should contain at least one (non-special) character ! Otherwise the PDF will be named DEFAULT",
+            forbidPublish : false
+        }
+        ,
+        {
+            type : "title",
+            compare : "GT",
+            value : "0",
+            text : "The generated PDF will be named with your title (special characters removed)",
+            forbidPublish : false
+        }
+        ,
+        {
+            type : "title",
+            compare : "GT",
+            value : "0",
+            text : "Your PDF will appear in a new tab",
+            forbidPublish : false
+        }
+        ,
+        {
+            type : "link",
+            compare : "GT",
+            value : "0",
+            text : "There will be no link in the PDF",
+            forbidPublish : false
+        }
+    ],
+    mail :
+    [
         {
             type : "title",
             compare : "EQ",
             value : 0,
             text : "You need a title for a mail",
             forbidPublish : true
+        }
+    ],
+    LinkedIn :
+    [
+        {
+            type : "title",
+            compare : "GT",
+            value : "0",
+            text : "The title will appear above the description",
+            forbidPublish : false
+        },
+        {
+            type : "link",
+            compare : "GT",
+            value : "0",
+            text : "The link may provide a background image",
+            forbidPublish : false
+        }
+    ],
+    rss :
+    [
+        {
+            type : "link",
+            compare : "EQ",
+            value : "0",
+            text : "The link tag will appear empty",
+            forbidPublish : false
+        },
+        {
+            type : "title",
+            compare : "EQ",
+            value : "0",
+            text : "The title tag will appear empty",
+            forbidPublish : false
+        },
+        {
+            type : "description",
+            compare : "EQ",
+            value : "0",
+            text : "The description tag will appear empty",
+            forbidPublish : false
         }
     ],
     wiki :

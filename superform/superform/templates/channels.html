@@ -4,43 +4,59 @@
     <h1>Channels</h1>
     <table class="table">
         <thead class="thead-light">
-            <tr>
-                <th scope="col">#</th>
-                <th scope="col">Name</th>
-                <th scope="col">Module</th>
-                <th scope="col">Action</th>
-            </tr>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Name</th>
+            <th scope="col">Module</th>
+            <th scope="col">Action</th>
+        </tr>
         </thead>
         <tbody>
-            {% for channel in channels %}
+        {% for channel in channels %}
             <tr>
                 <th scope="row">{{ channel.id }}</th>
                 <td>{{ channel.name }}</td>
                 <td>{{ channel.module.split('.')[2] }}</td>
                 <td>
-                    <div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
-                        <a href="{{ url_for('channels.configure_channel',id=channel.id) }}" class="btn btn-secondary" type="button">Configure</a>
-                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#editModal" data-name="{{ channel.name }}" data-id="{{ channel.id }}"><i class="fas fa-fw fa-edit"></i> Edit</button>
-                        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal" data-name="{{ channel.name }}" data-id="{{ channel.id }}"><i class="fas fa-fw fa-trash"></i> Delete</button>
+                    <div class="btn-group btn-group-sm" role="group"
+                         aria-label="Basic example">
+                        <a href="{{ url_for('channels.configure_channel',id=channel.id) }}"
+                           class="btn btn-secondary"
+                           type="button">Configure</a>
+                        <button type="button" class="btn btn-primary"
+                                data-toggle="modal" data-target="#editModal"
+                                data-name="{{ channel.name }}"
+                                data-id="{{ channel.id }}"><i
+                                class="fas fa-fw fa-edit"></i> Edit
+                        </button>
+                        <button type="button" class="btn btn-danger"
+                                data-toggle="modal" data-target="#deleteModal"
+                                data-name="{{ channel.name }}"
+                                data-id="{{ channel.id }}"><i
+                                class="fas fa-fw fa-trash"></i> Delete
+                        </button>
                     </div>
                 </td>
             </tr>
-            {% endfor %}
+        {% endfor %}
         </tbody>
     </table>
     <form class="form-inline" method="post">
         <input type="hidden" name="@action" value="new">
         <label class="sr-only" for="inlineFormInputText">Username</label>
         <div class="input-group mr-sm-2">
-            <input name="name" type="text" class="form-control" id="inlineFormInputText" placeholder="New channel name">
+            <input name="name" type="text" class="form-control"
+                   id="inlineFormInputText" placeholder="New channel name">
         </div>
 
-        <label class="sr-only" for="inlineFormCustomSelectModule">Module</label>
+        <label class="sr-only"
+               for="inlineFormCustomSelectModule">Module</label>
         <div class="input-group mr-sm-2">
-            <select name="module" class="custom-select" id="inlineFormCustomSelectModule">
+            <select name="module" class="custom-select"
+                    id="inlineFormCustomSelectModule">
                 <option selected>Choose a module...</option>
                 {% for module in modules %}
-                <option value="{{ module }}">{{ module }}</option>
+                    <option value="{{ module }}">{{ module }}</option>
                 {% endfor %}
             </select>
         </div>
@@ -50,7 +66,8 @@
         </button>
     </form>
 
-    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog"
+         aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <form method="post">
@@ -58,23 +75,29 @@
                     <input id="channel-id" type="hidden" name="id" value="">
                     <div class="modal-header">
                         <h5 class="modal-title">Delete channel</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <button type="button" class="close"
+                                data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
-                        <p>Are you sure to delete channel <span id="channel-name"></span>?</p>
+                        <p>Are you sure to delete channel <span
+                                id="channel-name"></span>?</p>
                     </div>
                     <div class="modal-footer">
-                        <button type="submit" class="btn btn-danger">Delete</button>
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-danger">Delete
+                        </button>
+                        <button type="button" class="btn btn-secondary"
+                                data-dismiss="modal">Cancel
+                        </button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
 
-    <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="editModal" tabindex="-1" role="dialog"
+         aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <form method="post">
@@ -82,16 +105,22 @@
                     <input id="channel-id" type="hidden" name="id" value="">
                     <div class="modal-header">
                         <h5 class="modal-title">Update channel</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <button type="button" class="close"
+                                data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
-                        <input name="name" type="text" class="form-control" id="inlineFormInputText" placeholder="New channel name">
+                        <input name="name" type="text" class="form-control"
+                               id="inlineFormInputText"
+                               placeholder="New channel name">
                     </div>
                     <div class="modal-footer">
-                        <button type="submit" class="btn btn-warning">Update</button>
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-warning">Update
+                        </button>
+                        <button type="button" class="btn btn-secondary"
+                                data-dismiss="modal">Cancel
+                        </button>
                     </div>
                 </form>
             </div>
