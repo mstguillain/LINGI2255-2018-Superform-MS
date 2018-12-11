@@ -72,14 +72,3 @@ def search_post() :
             data.append(row)
 
         return json.dumps(data)
-'''
-            if i != 0 :
-                text += ','
-
-            data += '{ "id":"'+str(item.id)+'", "title":"'+ item.title +'", "description" : "'+ str(item.description.splitlines())+'",'
-            #For buttons in this table, add url there
-            data += '"hrefEdit" : "#", "hrefCopy" : "#", "hrefDelete" : "#" }'
-            i = i + 1
-        data += ']'
-    return json.loads(data)
-'''
