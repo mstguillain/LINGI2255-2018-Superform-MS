@@ -3,7 +3,7 @@ from flask import Blueprint, url_for, request, session
 from superform.utils import login_required
 from superform.models import db, Publishing, User, Post
 from superform.users import is_moderator, get_moderate_channels_for_user
-
+import json
 search_page = Blueprint('search', __name__)
 
 @search_page.route('/search_publishings', methods=['POST'])
@@ -14,7 +14,7 @@ def search_publishings() :
         :param  no param, except request.form from front-end. This form contains all filters possible for a search
         :return: data, JSON containing all data retrieved from queries, based on filters.
     '''
-    data =''
+    data = []
     user = User.query.get(session.get("user_id", "")) if session.get("logged_in", False) else None
     posts = []
     chans = []
@@ -29,18 +29,17 @@ def search_publishings() :
                                                              (Publishing.state == 0)) for c in chans)
 
         flattened_list_pubs = [y for x in pubs_per_chan for y in x]
-        data = '['
-        i = 0
         for p in flattened_list_pubs :
             if request.form['author'] in p.get_author() and p.channel_id in request.form.getlist('channels[]'):
-                if i != 0 :
-                    data += ','
-                data += '{"channel": "'+p.channel_id+'" , "subject" : "'+p.title+'", "body":"'+str(p.description.splitlines()) +'", "author":"'+p.get_author()+'",'
-                data += '"button":"'+ url_for('publishings.moderate_publishing',id=p.post_id,idc=p.channel_id)+'"}'
-                i = i + 1
-        data += ']'
+                row = {}
+                row["channel"] = p.channel_id
+                row["subject"] = p.title
+                row["body"] = str(p.description.splitlines())
+                row["author"] = p.get_author()
+                row["button"] = url_for('publishings.moderate_publishing',id=p.post_id,idc=p.channel_id)
+                data.append(row)
 
-    return str(data)
+    return json.dumps(data)
 
 
 @search_page.route('/search_post', methods=['POST'])
@@ -53,7 +52,8 @@ def search_post() :
     '''
     user = User.query.get(session.get("user_id", "")) if session.get("logged_in", False) else None
     posts=[]
-    data = '[]'
+    data = []
+    print(str(request.form))
     if user is not None:
         setattr(user,'is_mod',is_moderator(user))
         posts = db.session.query(Post).filter((Post.user_id==session.get("user_id", "")) &
@@ -61,16 +61,25 @@ def search_post() :
                                               (Post.description.like('%'+request.form['body']+'%'))
                                               ).order_by(request.form['sorted'])
 
-        data = '['
-        i = 0
         for item in posts :
+            row = {}
+            row["id"] = str(item.id)
+            row["title"] = item.title
+            row["description"] = str(item.description.splitlines())
+            row["hrefEdit"] = "#"  #Add here after creating buttons function
+            row["hrefCopy"] = "#"
+            row["hrefDelete"] = "#"
+            data.append(row)
 
+        return json.dumps(data)
+'''
             if i != 0 :
-                data += ','
+                text += ','
 
             data += '{ "id":"'+str(item.id)+'", "title":"'+ item.title +'", "description" : "'+ str(item.description.splitlines())+'",'
             #For buttons in this table, add url there
             data += '"hrefEdit" : "#", "hrefCopy" : "#", "hrefDelete" : "#" }'
             i = i + 1
         data += ']'
-    return str(data)
+    return json.loads(data)
+'''

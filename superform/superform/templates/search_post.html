@@ -77,9 +77,10 @@
                     type : 'POST',
                     data : filterPosts,
                     url : '/search_post',
+                    dataType : 'json',
                     success : function(data) {
-                        console.table(jQuery.parseJSON(data));
-                        $("tbody.list-posts").html(changeTablePost(JSON.parse(data)));
+                        console.log(data);
+                        $("tbody.list-posts").html(changeTablePost(data));
                     }
       });
      }
@@ -95,7 +96,6 @@
                 html += '<td>' + row['id'] + '</td>'
                 html += '<td>' + row['title'] + '</td>'
                 html += '<td><div class="row"><div class="col">'
-                console.log(row['description'])
                 body = row['description'].substring(1, row['description'].length - 1).split(',') //String to array
                 body.forEach(function(item) {
                     html += item.substring(1, item.length - 1);

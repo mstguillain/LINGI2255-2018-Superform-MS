@@ -102,9 +102,10 @@
                     type : 'POST',
                     data : filterPublishings,
                     url : '/search_publishings',
+                    dataType : 'json',
                     success : function(data) {
-                        console.table(JSON.parse(data));
-                        $("tbody.list-publishings").html(changeTablePublishings(JSON.parse(data)));
+                        //console.table(JSON.parse(data));
+                        $("tbody.list-publishings").html(changeTablePublishings(data));
                         formattingTableForTwitter();
                     }
       });
@@ -138,11 +139,9 @@
      function formattingTableForTwitter() {
         $(".col").each(function() {
             text = $(this).html();
-            console.log(text);
             text = "<ul>"+text+"</ul>";
             while (text.search("tweet-separator") > -1 )
                 text = text.replace("tweet-separator","li");
-            console.log(text);
             $(this).html(text);
         });
      }

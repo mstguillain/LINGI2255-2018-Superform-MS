@@ -25,7 +25,6 @@ def create_a_post(form):
 def create_a_publishing(post, chn, form):
     chan = str(chn.name)
     title_post = form.get(chan + '_titlepost') if (form.get(chan + '_titlepost') is not None) else post.title
-    descr_post = ''
     if "twitter" in chn.module:
         descr_post = form.get('tweets')
     elif form.get(chan + '_descriptionpost') is not None :
