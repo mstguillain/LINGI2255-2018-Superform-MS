@@ -1,6 +1,21 @@
+/*
+*
+* Status checker by Group 6. This file adds a status, based on a javascript object "statusListener"
+*/
 
 LIMIT_CHAR_TWEET = 280;
-
+/*
+*  ADD A NEW CHANNEL :
+*  -) Just add a new array, do like twitter or mail
+*  ADD NEW STATUS :
+*   put on corresponding channels new arguments ( between brackets)
+*   type => which field can trigger your status (title, description, link)
+*   compare => GT : greater than, EQ : equals, LT : less than, GEQ : greater equals than, LEQ : lesser equals than
+*   value => the value for the comparaison
+*   forbidPublish => if the status is triggered, disable or not the button "Save and publish"
+*   func => (optional ) launch a specific function when the status is triggered
+*   args => (optional ) arguments for the specific function
+*/
 statusListener = {
     twitter :
     [
@@ -56,7 +71,7 @@ statusListener = {
     ]
 }
 
-
+// for each fields, statusChecker launches checking function for every changes on theses fields.
 statusChecker = {
     _lengthTitle : 0,
     _lengthContent : 0,
@@ -130,7 +145,11 @@ statusChecker.checking(function(){
     $("#publish-button").prop("disabled",this._forbidPublish);
 });
 
-
+/*
+*   checkStatus function adds or not a status text based on status argument
+*   @params : - plugin : the name of the plugin
+*             - status : javascript object contains status text and theses conditions
+*/
 function checkStatus(plugin, status) {
     value = getValueType(status["type"]);
 
@@ -147,7 +166,12 @@ function checkStatus(plugin, status) {
 
 }
 
-
+/*
+*   comparingValue based on a specific string "compare"
+*   @parmas : arg1 , arg2 : two values to compare
+*             compare : string to parse to have the comparaison
+*   @returns : true or false, based on the comparaison
+*/
 function comparingValue(arg1, compare, arg2) {
     var value
     switch (compare) {
@@ -167,6 +191,11 @@ function comparingValue(arg1, compare, arg2) {
     return value;
 }
 
+/*
+*   getValue function is return the length of the value field based on the field name
+*   @params : type : the name of the field
+*   @returns : the length value of this field
+*/
 function getValueType(type) {
     var value;
     switch (type) {
@@ -187,7 +216,7 @@ function getValueType(type) {
 *   every time a user changes the post
 */
 
-// Every checkbox for each plugin implemented by Group 10
+// Every checkbox for each plugin
 
 $('input.checkbox').change(function () {
     var hisClass = $(this).attr("class").split(" ");
@@ -229,6 +258,10 @@ $( "#linkurlpost" ).on('input', function() {
 * Utility functions to render status
 */
 
+/*
+*   addStatusBox creates a status box based on the name of the plugin
+*   @params : name : the title of the box
+*/
 function addStatusBox(name) {
     var title = name.substring(0,1).toUpperCase() + name.substring(1,name.length);
     if($("#status-"+name).length == 0)   { // If it doesn't exist, create it
@@ -236,16 +269,30 @@ function addStatusBox(name) {
     }
 }
 
+/*
+*   removeStatusBox removes a status box based on the name of the plugin
+*   @params : name : the title of the box
+*/
 function removeStatusBox(name) {
     $("#status-"+name).remove();
 }
 
+/*
+*   addStatusText adds a text in a status box (choose by name of the plugin)
+*   @params : plugin : the name of the plugin
+*             text : the text for this status
+*             id : the id tag of this text
+*/
 function addStatusText(plugin, text, id) {
     if ($("#"+id).length == 0) { // If it doesn't exist, create it
          $("#status-"+plugin).append("<li class=\"list-group-item\" id=\""+plugin+"-"+id+"\">"+text+"</li>");
     }
 }
-
+/*
+*   removeStatusText removes a text in a status box (choose by name of the plugin)
+*   @params : plugin : the name of the plugin
+*             id : the id tag of this text
+*/
 function removeStatusText(plugin, id) {
     if ($("#"+id).length != 0) { // If it doesn't exist, create it
          $("#status-"+plugin+"-"+id).remove();
@@ -253,7 +300,13 @@ function removeStatusText(plugin, id) {
 }
 
 
-// Utily function for array
+// UTILY FUNCTIONS
+
+/*
+*  Check if a value is in a array (the find or search function bugs for IE browser, so here's a custom function )
+*  @params : tb : the array to check , value : the value to search
+*  @returns : true or false, if the value is in the array or not
+*/
 function isInArray(tb, value) {
     var isIn = false;
     tb.forEach(function(item, index) {
@@ -263,6 +316,11 @@ function isInArray(tb, value) {
     return isIn;
 }
 
+/*
+*  Check if a value is in a array (remove bugs for IE browser, so here's a custom function )
+*  @params : tb : the array to remove , value : the value to remove
+*  @returns : the array without the value
+*/
 function removeFromArray(tb, value) {
     var tb2 = new Array();
     tb.forEach(function(item, index) {
@@ -272,6 +330,9 @@ function removeFromArray(tb, value) {
     return tb2;
 }
 
+/*
+* This is a custom slice function but slice function standard bugs on IE browser
+*/
 function rearrangeArray(tb) {
     tb2 = new Array();
     tb.forEach(function(item, index) {
@@ -281,24 +342,31 @@ function rearrangeArray(tb) {
     return tb2;
 }
 
-/*
-*  Render tweet part
-*/
-tweets = new Array();
-buttonTweet = false;
 
+//  RENDER TWEET PART
+
+tweets = new Array();  // Array containing every tweets
+buttonTweet = false;   // button triggering or not the split view
+
+/*
+* Function from button tweet, trigerring the renderTweet function ( or unify)
+*/
 function activateSplitTweet() {
     buttonTweet =  !buttonTweet;
     unifyTweet();
     if (buttonTweet) {
-         $("#button-status-tweet").val("Unify tweets"); // TODO problem here
+         $("#button-status-tweet").val("Unify tweets");
          renderTweet();
     }
     else {
-         $("#button-status-tweet").val("See tweets splitted"); // TODO problem here
+         $("#button-status-tweet").val("See tweets splitted");
     }
 }
-
+/*
+*   splitTextForTweet split text to respect twitter length format
+*   @params : idorClassInput : the class or the id to extract the text
+*   @returns : an array contains text splitted respecting the twitter length format
+*/
  function splitTextForTweet(idOrClassInput) {
     tb = new Array();
     for (var i = 0, charsLength = $(idOrClassInput).val().length; i < charsLength; i += 280) {
@@ -307,6 +375,10 @@ function activateSplitTweet() {
     return tb;
  }
 
+/*
+*   manageTweet function will reformat the tweets array based on target who triggering this function.
+*   @params : target : the id or the class of the element that triggered this function
+*/
 function manageTweet(target) {
     if (buttonTweet == false) {
         tweets = splitTextForTweet("#descriptionpost");
@@ -343,12 +415,19 @@ function manageTweet(target) {
     }
 }
 
+/*
+* addListenerTweet function adds a listener on a target for tweet management
+* @params : target : the id or the class of the element listening
+*/
 function addListenerTweet(target){
     $(target).on('input', function() {
         manageTweet(target);
     });
 }
 
+/*
+* renderTweet will split fields based on tweets array
+*/
 function renderTweet() {
     tb = tweets.slice();
     nbTweet = tweets.length - 1;
@@ -372,7 +451,9 @@ function renderTweet() {
     }
 }
 
-
+/*
+* unifyTweet will negate the renderTweet visual
+*/
 function unifyTweet() {
     tweets.forEach(function(item, index) {
         $(".tweet-"+index).off();
@@ -381,6 +462,7 @@ function unifyTweet() {
     $("#descriptionpost").val(tweets.toString());
 }
 
+// Adding tweets array in the form (with a hidden field)
 $("#publish-button").on('click', function() {
     strTweets = "";
     tweets.forEach(function(item, element) {

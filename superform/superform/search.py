@@ -9,6 +9,11 @@ search_page = Blueprint('search', __name__)
 @search_page.route('/search_publishings', methods=['POST'])
 @login_required()
 def search_publishings() :
+    '''
+        Searching in query for publishings with a specific filter
+        :param  no param, except request.form from front-end. This form contains all filters possible for a search
+        :return: data, JSON containing all data retrieved from queries, based on filters.
+    '''
     data =''
     user = User.query.get(session.get("user_id", "")) if session.get("logged_in", False) else None
     posts = []
@@ -41,6 +46,11 @@ def search_publishings() :
 @search_page.route('/search_post', methods=['POST'])
 #@login_required()
 def search_post() :
+    '''
+        Searching in query for posts with a specific filter
+        :param  no param, except request.form from front-end. This form contains all filters possible for a search
+        :return: data, JSON containing all data retrieved from queries, based on filters.
+    '''
     user = User.query.get(session.get("user_id", "")) if session.get("logged_in", False) else None
     posts=[]
     data = '[]'
