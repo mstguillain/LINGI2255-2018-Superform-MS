@@ -11,7 +11,7 @@ from superform import app, db, Post, User
 from superform.utils import datetime_converter, str_converter, get_module_full_name
 from superform.users import is_moderator, get_moderate_channels_for_user, channels_available_for_user
 
-
+import json
 @pytest.fixture
 def client():
     app.app_context().push()
@@ -54,13 +54,15 @@ def test_logged_but_not_moderator(client) :
 
     channel = Channel(name="test", module=get_module_full_name("TestTwitter"), config="{}")
     db.session.add(channel)
-
-    r = requests.post("http://127.0.0.1:5000/search_post", {
-        "subject": "",
-        "body": "",
-        "sorted": ""
-    })
-
+    filter = {}
+    filter["subject"] = " "
+    filter["sorted"] = "id"
+    filter["body"] = " "
+    headers ={}
+    headers["Content-Type"] = "application/json"
+    headers["Data-Type"] = "json"
+    headers["Accept"] = "application/json"
+    r = requests.post("http://127.0.0.1:5000/search_post",headers=headers, data=json.dumps(filter))
     assert r.status_code==200
 
 
@@ -83,7 +85,6 @@ def test_not_moderator(client) :
 
     assert r.status_code == 403
 
-    assert len(r.text)== 2520
 
 
 def test_search_unlogged_client_publishing_search(client):
@@ -103,7 +104,6 @@ def test_search_unlogged_client_publishing_search(client):
     })
 
     assert int(r.status_code) == 403
-    assert len(r.text) == 2520
 
 
 

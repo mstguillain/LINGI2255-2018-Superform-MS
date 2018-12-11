@@ -38,7 +38,6 @@ def search_publishings() :
                 row["author"] = p.get_author()
                 row["button"] = url_for('publishings.moderate_publishing',id=p.post_id,idc=p.channel_id)
                 data.append(row)
-
     return json.dumps(data)
 
 
@@ -70,5 +69,4 @@ def search_post() :
             row["hrefCopy"] = "#"
             row["hrefDelete"] = "#"
             data.append(row)
-
-        return json.dumps(data)
+    return json.dumps(data)
