@@ -38,9 +38,9 @@ import math
 FIELDS_UNAVAILABLE = []
 CONFIG_FIELDS = ["username","password"]
 
-urlwiki = "http://localhost/pmwiki-2.2.109/pmwiki.php"
+urlwiki = "http://localhost:8080/pmwiki-2.2.109/pmwiki.php"
 
-def makeText(publishing):
+def makeText(publishing, authid):
     text = ""
     #title
     titre = "!! " + publishing.title + "\n"
@@ -48,15 +48,15 @@ def makeText(publishing):
 
     #author and date
     try :
-        author = publishing.get_author()
-    except BaseException:
+        author = authid
+    except AttributeError:
         author = "Superform"
     except TypeError:
         author = "Superform"
 
     date = str(datetime.datetime.now().strftime("%d/%m/%Y"))
-    suite = "Par " + author + " Publié le " + date +"\n"
-    text = text  + suite +"\n"+ "-----"+"\n"
+    footer = "Par " + str(author) + " Publié le " + date +"\n"
+    text = text  + footer +"\n"+ "-----"+"\n"
 
     #description
     #corps = str(publishing.description).replace("\n","[[<<]] ") +"\n"
@@ -73,6 +73,7 @@ def makeText(publishing):
         text = text+image_url
 
     text.encode("UTF-8")
+    print(text)
     return text
 
 def run(publishing,channel_config):
@@ -81,16 +82,15 @@ def run(publishing,channel_config):
         json_data = json.loads(channel_config)
         authid= json_data['username'] # à rajouter dans configuration de la channel sur superform sinon ne marche pas...
         authpw = json_data['password'] # à rajouter dans configuration de la channel sur superform sinon ne marche pas...
-    except BaseException  as e:
+    except json.decoder.JSONDecodeError  as e:
         return "error json decoder"
 
     pageName = "News."+str(publishing.title).replace(" ","")
-    text = makeText(publishing)
+    text = makeText(publishing, authid)
     data = {"n": pageName, "text": text, "action": "edit", "post": "1", 'authid': authid, "authpw":authpw,"basetime": math.floor(time.time())}
     # r2 = requests.post(urlwiki + "?n=Main.Essai_nono&action=edit&text=Hello%20World&post=1", data)
 
-    return requests.post(urlwiki, data)
-
+    r2 = requests.post(urlwiki, data)
 
 
 
