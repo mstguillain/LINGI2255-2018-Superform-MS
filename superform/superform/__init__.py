@@ -71,6 +71,7 @@ def index():
         Channel.module == 'superform.plugins.pdf'
     )
     # end add
+    chans = []
     if user is not None:
         setattr(user, 'is_mod', is_moderator(user))
         posts = db.session.query(Post).filter(
@@ -81,7 +82,7 @@ def index():
             chans)
         flattened_list_pubs = [y for x in pubs_per_chan for y in x]
         # TEAM06: changes in the render_template, templates
-    return render_template("index.html", user = user, posts = posts,
+    return render_template("index.html", user = user, posts = posts, channels=chans,
                            publishings = flattened_list_pubs,
                            templates = pdf_chans)
 

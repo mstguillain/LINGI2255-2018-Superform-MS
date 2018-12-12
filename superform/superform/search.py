@@ -23,14 +23,15 @@ def search_publishings() :
 
         setattr(user, 'is_mod', is_moderator(user))
         chans = get_moderate_channels_for_user(user)
-        pubs_per_chan = (db.session.query(Publishing).filter((Publishing.channel_id == c.name) &
+        pubs_per_chan = (db.session.query(Publishing).filter((Publishing.channel_id == c.id) &
                                                              (Publishing.title.like('%'+request.form['subject']+'%')) &
                                                              (Publishing.description.like('%' + request.form['body'] + '%')) &
                                                              (Publishing.state == 0)) for c in chans)
 
         flattened_list_pubs = [y for x in pubs_per_chan for y in x]
-        for p in flattened_list_pubs :
-            if request.form['author'] in p.get_author() and p.channel_id in request.form.getlist('channels[]'):
+        print(str(flattened_list_pubs))
+        for p in flattened_list_pubs : #request.form['author'] in p.get_author() and
+           if str(p.channel_id) in request.form.getlist('channels[]'):
                 row = {}
                 row["channel"] = p.channel_id
                 row["subject"] = p.title

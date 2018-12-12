@@ -22,7 +22,7 @@
                                  {% for chan in channels %}
                                      <div class="form-check">
                                       <label class="form-check-label">
-                                        <input id ="checkbox-search {{chan.name}}" type="checkbox" class="form-check-input checkbox" checked>{{ chan.name }}
+                                        <input id ="checkbox-search {{chan.id}}" type="checkbox" class="form-check-input checkbox" checked>{{ chan.name }}
                                       </label>
                                     </div>
                                  {% endfor %}
@@ -32,7 +32,7 @@
 <br/>
 
 <script>
-     var allChannels = {% if channels|length == 0 %}[]{% else %}[{% for chan in channels %}'{{chan.name}}',{% endfor %}]{% endif %}
+     var allChannels = {% if channels|length == 0 %}[]{% else %}[{% for chan in channels %}'{{chan.id}}',{% endfor %}]{% endif %}
      var nbRequestSearchPublishings = 0;
      var filterPublishings = {
           channels : allChannels,
@@ -104,6 +104,7 @@
                     url : '/search_publishings',
                     dataType : 'json',
                     success : function(data) {
+                        console.log(filterPublishings);
                         //console.table(JSON.parse(data));
                         $("tbody.list-publishings").html(changeTablePublishings(data));
                         formattingTableForTwitter();
@@ -139,7 +140,8 @@
      function formattingTableForTwitter() {
         $(".col").each(function() {
             text = $(this).html();
-            text = "<ul>"+text+"</ul>";
+            if (text.search("tweet-separator") > -1 )
+                text = "<ul>"+text+"</ul>";
             while (text.search("tweet-separator") > -1 )
                 text = text.replace("tweet-separator","li");
             $(this).html(text);
