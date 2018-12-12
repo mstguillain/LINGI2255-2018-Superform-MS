@@ -33,33 +33,37 @@ def send_tweet(api, tweet, url):
                 url: the link of the message
         :return: True if the tweet(s) has/have been correctly published, False otherwise
     '''
-    tweet = tweet[17:len(tweet)]
-    tweets = []
-    s = ""
-    i = 0
-    finish = False
-    while not finish :
-        if tweet[i:i+18] == "</tweet-separator>":
-            if i + 19 >= len(tweet):
-                finish = True
-                if url:
-                    if len(s) + len(url) <= 280:
-                        s += ' ' + url
-                        tweets.append(s)
-                    else:
-                        tweets.append(s)
-                        tweets.append(url)
-            else :
-                tweets.append(s)
-                s = ""
-                i += 35
+    #Separate text in a array, based on separator
+    tweet = tweet.replace("<tweet-separator>", "")
+    tweet = tweet.replace("</tweet-separator>", "<tweet-separator>")
+    tb_tweets = [i.strip() for i in tweet.split("<tweet-separator>")]
+    tb_tweets.pop()
+
+    if len(tweet) < 1 :
+        return False
+
+    if url :
+        last_element = tb_tweets.pop()
+        if len(last_element) + len(" ") + len(url) < 280 :
+            last_element = last_element + " " + url
+            tb_tweets.append(last_element)
         else :
-            s += tweet[i]
-            i += 1
-    for t in tweets:
+            tb_tweets.append(last_element)
+            tb_tweets.append(url)
+
+    for t in tb_tweets:
         if not api.PostUpdate(status=t):
             return False
     return True
+
+def split(txt, seps):
+    '''
+    From https://stackoverflow.com/questions/4697006/python-split-string-by-list-of-separators,
+    This is
+    :param txt: the main text
+    :param seps: the separator value
+    :return: a table contains each text without separator
+    '''
 
 
 def run(publishing,channel_config):
@@ -78,7 +82,4 @@ def run(publishing,channel_config):
     except BaseException  as e:
         return "uncorrect credentials"
 
-
-
-
-    return send_tweet(api, tweet, publishing.link_url)
+    return (send_tweet(api, tweet, publishing.link_url))
