@@ -88,7 +88,7 @@ def test_run_uncorrect_credentials_JSON():
 def test_send_tweet_correct_tweet() :
     pub = Publishing()
     pub.date_from = '13.02.02'
-    pub.link_url = 'blablablablablablablajdsff'
+    pub.link_url = ' : Test string'
     rabdomStr=randomword(12)
     pub.description =   "<tweet-separator>"+rabdomStr+"</tweet-separator> "
     pub.image_url = ""
