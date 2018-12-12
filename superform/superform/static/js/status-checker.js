@@ -316,7 +316,7 @@ $( "#titlepost" ).on('input', function() {
 
 // Content
 $( "#descriptionpost" ).on('input', function() {
-    if (isInArray(statusChecker.pluginChecked, "twitter") && typeof tweets != 'undefined')
+    if (isInArray(statusChecker.pluginChecked, "twitter") && typeof tweets != 'undefined' && tweets.length > 1)
         statusChecker.lengthContent = $(this).val().length + 280 * tweets.length;
     else
         statusChecker.lengthContent = $(this).val().length;
