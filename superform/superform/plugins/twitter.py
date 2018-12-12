@@ -39,7 +39,7 @@ def send_tweet(api, tweet, url):
     tb_tweets = [i.strip() for i in tweet.split("<tweet-separator>")]
     tb_tweets.pop()
 
-    if len(tweet) < 1 :
+    if len(tb_tweets) < 1 :
         return False
 
     if url :
