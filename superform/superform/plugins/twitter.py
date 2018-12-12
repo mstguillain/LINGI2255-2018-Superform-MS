@@ -56,15 +56,6 @@ def send_tweet(api, tweet, url):
             return False
     return True
 
-def split(txt, seps):
-    '''
-    From https://stackoverflow.com/questions/4697006/python-split-string-by-list-of-separators,
-    This is
-    :param txt: the main text
-    :param seps: the separator value
-    :return: a table contains each text without separator
-    '''
-
 
 def run(publishing,channel_config):
     tweet = publishing.description
