@@ -16,7 +16,7 @@ CONFIG_FIELDS = [PROJECT_ID, CLIENT_ID, CLIENT_SECRET]
 
 
 def str_converter(datet):
-    return datetime.strftime(datet,"%Y-%m-%d")
+    return datetime.datetime.strftime(datet,"%Y-%m-%d")
 
 def creds_to_string(creds):
    return json.dumps({'token': creds.token,
