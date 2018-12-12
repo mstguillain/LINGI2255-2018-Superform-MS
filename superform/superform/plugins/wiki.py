@@ -49,7 +49,7 @@ def makeText(publishing):
     #author and date
     try :
         author = publishing.get_author()
-    except AttributeError:
+    except BaseException:
         author = "Superform"
     except TypeError:
         author = "Superform"
@@ -81,7 +81,7 @@ def run(publishing,channel_config):
         json_data = json.loads(channel_config)
         authid= json_data['username'] # à rajouter dans configuration de la channel sur superform sinon ne marche pas...
         authpw = json_data['password'] # à rajouter dans configuration de la channel sur superform sinon ne marche pas...
-    except json.decoder.JSONDecodeError  as e:
+    except BaseException  as e:
         return "error json decoder"
 
     pageName = "News."+str(publishing.title).replace(" ","")
@@ -89,7 +89,8 @@ def run(publishing,channel_config):
     data = {"n": pageName, "text": text, "action": "edit", "post": "1", 'authid': authid, "authpw":authpw,"basetime": math.floor(time.time())}
     # r2 = requests.post(urlwiki + "?n=Main.Essai_nono&action=edit&text=Hello%20World&post=1", data)
 
-    r2 = requests.post(urlwiki, data)
+    return requests.post(urlwiki, data)
+
 
 
 

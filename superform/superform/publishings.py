@@ -33,6 +33,7 @@ def moderate_publishing(id,idc):
             #running the plugin here
             c=db.session.query(Channel).filter(Channel.id == pub.channel_id).first()
             plugin_name = c.module
+            print("module : "+plugin_name)
             c_conf = c.config
             from importlib import import_module
             plugin = import_module(plugin_name)
