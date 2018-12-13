@@ -16,10 +16,6 @@ import math
 # éditer une page sur wiki :
 # https://www.pmwiki.org/wiki/PmWiki/BasicEditing
 
-# à faire :
-# - rajouter :  image_url, connexion avec user et password
-# - gerer accent dans desciption
-
 # COMMENT ON A GERE L'AUTHENTIFICATION POUR LE MOMENT :
 # On modifie les accès de notre server local pour que seules les personnes
 # possédant le mot de passe puissent créer un nouveau post.
@@ -38,7 +34,7 @@ import math
 FIELDS_UNAVAILABLE = []
 CONFIG_FIELDS = ["username","password"]
 
-urlwiki = "http://localhost:8080/pmwiki-2.2.109/pmwiki.php"
+urlwiki = "http://kuretar-serveur.fr/deleteLundi/pmwiki-2.2.109/pmwiki.php"
 
 def makeText(publishing, authid):
     text = ""
@@ -53,6 +49,7 @@ def makeText(publishing, authid):
         author = "Superform"
     except TypeError:
         author = "Superform"
+
 
     date = str(datetime.datetime.now().strftime("%d/%m/%Y"))
     footer = "Par " + str(author) + " Publié le " + date +"\n"
@@ -73,7 +70,7 @@ def makeText(publishing, authid):
         text = text+image_url
 
     text.encode("UTF-8")
-    print(text)
+
     return text
 
 def run(publishing,channel_config):
@@ -82,7 +79,7 @@ def run(publishing,channel_config):
         json_data = json.loads(channel_config)
         authid= json_data['username'] # à rajouter dans configuration de la channel sur superform sinon ne marche pas...
         authpw = json_data['password'] # à rajouter dans configuration de la channel sur superform sinon ne marche pas...
-    except json.decoder.JSONDecodeError  as e:
+    except BaseException  as e:
         return "error json decoder"
 
     pageName = "News."+str(publishing.title).replace(" ","")
@@ -90,7 +87,8 @@ def run(publishing,channel_config):
     data = {"n": pageName, "text": text, "action": "edit", "post": "1", 'authid': authid, "authpw":authpw,"basetime": math.floor(time.time())}
     # r2 = requests.post(urlwiki + "?n=Main.Essai_nono&action=edit&text=Hello%20World&post=1", data)
 
-    r2 = requests.post(urlwiki, data)
+    return requests.post(urlwiki, data)
+
 
 
 

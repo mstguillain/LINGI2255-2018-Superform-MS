@@ -43,7 +43,7 @@ CONFIG_FIELDS = ["username","password"]
 #Test de la fonction qui decoupe un publishing et la mets dans le bon format
 def test_makeText():
     pub = Publishing()
-    pub.user_id= "me myself and I"
+    pub.user_id= "Superform"
     pub.post_id="1"
     pub.date_from='13.02.02'
     pub.title='test-Title'
@@ -54,7 +54,7 @@ def test_makeText():
     pub.state = 1
     pub.channel_id=8
 
-    text = wiki.makeText(pub)
+    text = wiki.makeText(pub, pub.user_id)
     tab_of_text=text.splitlines()
     date = str(datetime.datetime.now().strftime("%d/%m/%Y"))
 
