@@ -14,7 +14,7 @@ from pathlib import Path
 
 FIELDS_UNAVAILABLE = []
 
-CONFIG_FIELDS = ["Feed title", "Feed description"]
+CONFIG_FIELDS = ["Feed title", "Feed description", "URL of original feed (optional)"]
 
 
 def newFeed(rname, rdescription, debug=False):
@@ -68,6 +68,9 @@ def import_items(xml_path):
             # print('description ok')
         if 'published' in post:
             date = post.published
+            temp = date.split(" ")
+            temp[5] = "GMT"
+            date = " ".join(temp[:6])
             # print('date ok')
 
         item = rfeed.Item(
@@ -85,6 +88,10 @@ def run(publishing, channel_config):
     json_data = json.loads(channel_config)
     rname = json_data['Feed title']
     rdescription = json_data['Feed description']
+    rbaselineFeed = json_data['URL of original feed (optional)']
+    existingFeed=0
+    if rbaselineFeed != "None" and rbaselineFeed[-4:] == ".xml":
+        existingFeed = 1
     item_title = publishing.title
     item_body = publishing.description
     item_link = publishing.link_url
@@ -108,7 +115,9 @@ def run(publishing, channel_config):
     if os.path.isfile(localPath):  # import older publishing if any
         olderItems = import_items(localPath)
         feed.items.extend(olderItems)
-
+    elif existingFeed == 1: #Remote rss feed not yet in our server
+        olderItems = import_items(rbaselineFeed)
+        feed.items.extend(olderItems)
     a = feed.rss()
     with open(localPath, 'w') as f:
         f.write(a)
