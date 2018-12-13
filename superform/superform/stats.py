@@ -69,8 +69,7 @@ def accepted_user_posts(User_id):
     :return:
     """
     return db.session.query(Publishing)\
-    .filter(Publishing.user_id == session.get("user_id", ""),\
-    Publishing.user_id==User_id, Publishing.state==1).count()
+    .filter(Publishing.user_id==User_id, Publishing.state==1).count()
 
 def waiting_user_posts(User_id):
     """
@@ -78,8 +77,7 @@ def waiting_user_posts(User_id):
     :return:
     """
     return db.session.query(Publishing)\
-    .filter(Publishing.user_id == session.get("user_id", ""),\
-    Publishing.user_id==User_id, Publishing.state==0).count()
+    .filter(Publishing.user_id==User_id, Publishing.state==0).count()
 
 def archived_user_posts(User_id):
     """
@@ -87,8 +85,7 @@ def archived_user_posts(User_id):
     :return:
     """
     return db.session.query(Publishing)\
-    .filter(Publishing.user_id == session.get("user_id", ""),\
-    Publishing.user_id==User_id, Publishing.state==State.ARCHIVED).count()
+    .filter(Publishing.user_id==User_id, Publishing.state==State.ARCHIVED).count()
 
 
 def total_user_posts(User_id):
@@ -97,8 +94,7 @@ def total_user_posts(User_id):
     :return:
     """
     return db.session.query(Publishing)\
-    .filter(Publishing.user_id == session.get("user_id", ""),\
-    Publishing.user_id == User_id).count()
+    .filter(Publishing.user_id == User_id).count()
 
 def number_of_users():
     return db.session.query(Authorization).filter(Authorization.permission==Permission.AUTHOR).distinct().count()
