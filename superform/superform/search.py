@@ -69,5 +69,6 @@ def search_post() :
             row["hrefEdit"] = "#"  #Add here after creating buttons function
             row["hrefCopy"] = "#"
             row["hrefDelete"] = "#"
+            row["hrefExportPdf"] =  str(item.id)
             data.append(row)
     return json.dumps(data)
