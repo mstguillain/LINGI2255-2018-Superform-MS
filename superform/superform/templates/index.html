@@ -34,7 +34,11 @@
                 {% for p in publishings %}
                     <tr>
                         <td>
-                            {{ p.channel_id }}
+                            {% for chan in channels %}
+                            {% if p.channel_id == chan.id %}
+                            {{chan.name}}
+                            {% endif %}
+                            {% endfor %}
                         </td>
                         <td >
                             {{ p.title }}
