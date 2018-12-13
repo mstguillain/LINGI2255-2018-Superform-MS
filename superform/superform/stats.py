@@ -136,7 +136,7 @@ def compute_for_users():
 def stats():
     user = User.query.get(session.get("user_id", "")) if session.get("logged_in", False) else None
     if user is not None:
-        setattr(user,'is_mod',is_moderator(user))
+        setattr(user,'is_mod',user.admin)
     data = {
         'channels' : stats_channel(),
         'publishing' : stats_publishing(),
