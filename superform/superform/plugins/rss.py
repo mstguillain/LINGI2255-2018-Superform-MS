@@ -13,10 +13,9 @@ import feedparser
 
 FIELDS_UNAVAILABLE = []
 
-CONFIG_FIELDS = ["Feed title", "Feed description"]
+CONFIG_FIELDS = ["Feed title", "Feed description", "URL of original feed (optional)"]
 
-
-def newFeed(rname, rdescription):
+def newFeed(rname, rdescription, debug=False):
     """
     :param rname: name for the RSS feed
     :param rdescription: description of the RSS feed
@@ -26,8 +25,12 @@ def newFeed(rname, rdescription):
           "Creating a new rss feed")
     temp = rname.split(" ")
     nameOfFeed = "_".join(temp)
-    RSS_DIR = request.url_root + "static/rss/"
-    feedLink = RSS_DIR + nameOfFeed + ".xml"
+    if not debug:
+        RSS_DIR = request.url_root + "static/rss/"
+        feedLink = RSS_DIR + nameOfFeed + ".xml"
+    else:
+        feedLink = Path("superform/static/rss/" + nameOfFeed + ".xml")
+
     feed = rfeed.Feed(
         title=rname,
         link=feedLink,
@@ -47,7 +50,7 @@ def import_items(xml_path):
     """
     items = list()
     d = feedparser.parse(xml_path)
-
+    print("Parsed xml from ", xml_path, ":", d)
     for post in d.entries:
         title = None
         link = None
@@ -64,6 +67,9 @@ def import_items(xml_path):
             # print('description ok')
         if 'published' in post:
             date = post.published
+            temp = date.split(" ")
+            temp[5] = "GMT"
+            date = " ".join(temp[:6])
             # print('date ok')
 
         item = rfeed.Item(
@@ -81,6 +87,10 @@ def run(publishing, channel_config):
     json_data = json.loads(channel_config)
     rname = json_data['Feed title']
     rdescription = json_data['Feed description']
+    rbaselineFeed = json_data['URL of original feed (optional)']
+    existingFeed = 0
+    if rbaselineFeed != "None" and rbaselineFeed[-4:] == ".xml":
+        existingFeed = 1
     item_title = publishing.title
     item_body = publishing.description
     item_link = publishing.link_url
@@ -103,6 +113,9 @@ def run(publishing, channel_config):
     feed.items.append(item)
     if os.path.isfile(localPath):  # import older publishing if any
         olderItems = import_items(localPath)
+        feed.items.extend(olderItems)
+    elif existingFeed == 1:  # Remote rss feed not yet in our server
+        olderItems = import_items(rbaselineFeed)
         feed.items.extend(olderItems)
 
     a = feed.rss()
