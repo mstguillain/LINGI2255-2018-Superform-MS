@@ -1,8 +1,7 @@
 # To run : Be sure to be in ../LINGI2255-2018-Superform-MS-06/superform folder and then 'pytest -v' in your terminal
 import datetime
-import os
+import os, json
 import tempfile
-
 import pytest
 
 from superform.models import Authorization, Channel
@@ -39,6 +38,25 @@ def login(client, login):
             sess["name"] = "myname_gen"
             sess["email"] = "hello@genemail.com"
             sess['user_id'] = login
+
+def create_user(id, name, first_name, email):
+    user = User(id=id, name=name, first_name=first_name, email=email)
+    write_to_db(user)
+    return user
+
+def create_channel(name, module, config):
+    channel = Channel(name=name, module=get_module_full_name(module), config=json.dumps(config))
+    write_to_db(channel) 
+    return channel
+
+def create_auth(channel_id, user_id, permission):
+    auth = Authorization(channel_id=channel_id, user_id=user_id, permission=permission)
+    write_to_db(auth) 
+    return auth
+
+def write_to_db(obj):
+    db.session.add(obj)
+    db.session.commit()
 
 ## Testing Functions ##
 
@@ -78,7 +96,7 @@ def test_log_out(client):
 
 def test_new_post(client):
     login(client,"myself")
-    rv = client.post('/new',data=dict(titlepost='A new test post', descrpost= "A description", linkurlpost="http://www.test.com", imagepost="image.jpg",datefrompost="2018-07-01",dateuntilpost="2018-07-01"))
+    rv = client.post('/new',data=dict(titlepost='A new test post', descrpost= "A description", linkurlpost="http://www.test.com", imagepost="image.jpg",datefrompost="2018-07-01T09:00",dateuntilpost="2018-07-01T10:00"))
     assert rv.status_code ==302
     posts = db.session.query(Post).all()
     assert len(posts)>0
@@ -111,7 +129,9 @@ def test_forbidden(client):
     assert "Forbidden" not in rv.data.decode()
 
 def test_date_converters():
-    t = datetime_converter("2017-06-02")
+    t = datetime_converter("2017-06-02T09:00")
+    assert t.minute == 0
+    assert t.hour == 9
     assert t.day == 2
     assert t.month == 6
     assert t.year == 2017

@@ -15,12 +15,15 @@ CFG = {
     
 
 def run(publishing, channel_config):
+
+    CFG['page_id'] = "UNDEFINED"
+    CFG['access_token'] = "UNDEFINED"
     json_data = json.loads(channel_config)
 
-    if(CFG['page_id'] == "UNDEFINED"):
-        CFG['page_id'] = json_data['page_id']
+    CFG['page_id'] = json_data['page_id']
 
     if(CFG['access_token'] == "UNDEFINED"):
+        print("PAGE ID: "+str(CFG['page_id']))
         CFG['access_token'] = setToken(CFG['page_id']) #Check fb_cred in table User for corresponding access_token
 
     if(CFG['access_token'] == "ACCESS_TOKEN_NOT_FOUND"): 
