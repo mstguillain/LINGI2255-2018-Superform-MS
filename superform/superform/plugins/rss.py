@@ -90,7 +90,7 @@ def run(publishing, channel_config):
     rdescription = json_data['Feed description']
     rbaselineFeed = json_data['URL of original feed (optional)']
     existingFeed=0
-    if rbaselineFeed != "None" and rbaselineFeed[-4:] == ".xml":
+    if rbaselineFeed != "None" :
         existingFeed = 1
     item_title = publishing.title
     item_body = publishing.description
