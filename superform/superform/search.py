@@ -33,7 +33,9 @@ def search_publishings() :
         for p in flattened_list_pubs : #request.form['author'] in p.get_author() and
            if str(p.channel_id) in request.form.getlist('channels[]'):
                 row = {}
-                row["channel"] = p.channel_id
+                for c in chans :
+                    if c.id == p.channel_id:
+                        row["channel"] = c.name
                 row["subject"] = p.title
                 row["body"] = str(p.description.splitlines())
                 row["author"] = p.get_author()

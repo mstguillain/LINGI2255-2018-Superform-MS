@@ -22,7 +22,7 @@
                                  {% for chan in channels %}
                                      <div class="form-check">
                                       <label class="form-check-label">
-                                        <input id ="checkbox-search {{chan.name}}" type="checkbox" class="form-check-input checkbox" checked>{{ chan.name }}
+                                        <input id ="checkbox-search {{chan.id}}" type="checkbox" class="form-check-input checkbox" checked>{{ chan.name }}
                                       </label>
                                     </div>
                                  {% endfor %}
@@ -32,7 +32,7 @@
 <br/>
 
 <script>
-     var allChannels = {% if channels|length == 0 %}[]{% else %}[{% for chan in channels %}'{{chan.name}}',{% endfor %}]{% endif %}
+     var allChannels = {% if channels|length == 0 %}[]{% else %}[{% for chan in channels %}'{{chan.id}}',{% endfor %}]{% endif %}
      var nbRequestSearchPublishings = 0;
      var filterPublishings = {
           channels : allChannels,
@@ -167,5 +167,5 @@
 
      launchSearchPublishings();
      waitJQuery(launchListenerPublishings);
-     //nbRequestSearchPublishings += 1;
+     nbRequestSearchPublishings += 1;
 </script>
