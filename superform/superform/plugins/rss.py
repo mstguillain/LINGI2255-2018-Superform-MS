@@ -10,10 +10,12 @@ import rfeed
 import datetime
 import os
 import feedparser
+from pathlib import Path
 
 FIELDS_UNAVAILABLE = []
 
 CONFIG_FIELDS = ["Feed title", "Feed description", "URL of original feed (optional)"]
+
 
 def newFeed(rname, rdescription, debug=False):
     """
@@ -30,7 +32,6 @@ def newFeed(rname, rdescription, debug=False):
         feedLink = RSS_DIR + nameOfFeed + ".xml"
     else:
         feedLink = Path("superform/static/rss/" + nameOfFeed + ".xml")
-
     feed = rfeed.Feed(
         title=rname,
         link=feedLink,
@@ -50,7 +51,7 @@ def import_items(xml_path):
     """
     items = list()
     d = feedparser.parse(xml_path)
-    print("Parsed xml from ", xml_path, ":", d)
+    print("Parsed xml from ",xml_path,":",d)
     for post in d.entries:
         title = None
         link = None
@@ -73,10 +74,10 @@ def import_items(xml_path):
             # print('date ok')
 
         item = rfeed.Item(
-            title = title,
-            link = link,
-            description = body,
-            pubDate = datetime.datetime.strptime(date, "%a, %d %b %Y %X GMT"))
+            title=title,
+            link=link,
+            description=body,
+            pubDate=datetime.datetime.strptime(date, "%a, %d %b %Y %X GMT"))
         items.append(item)
     return items
 
@@ -88,8 +89,8 @@ def run(publishing, channel_config):
     rname = json_data['Feed title']
     rdescription = json_data['Feed description']
     rbaselineFeed = json_data['URL of original feed (optional)']
-    existingFeed = 0
-    if rbaselineFeed != "None" and rbaselineFeed[-4:] == ".xml":
+    existingFeed=0
+    if rbaselineFeed != "None" :
         existingFeed = 1
     item_title = publishing.title
     item_body = publishing.description
@@ -99,10 +100,10 @@ def run(publishing, channel_config):
     item_img = publishing.image_url
 
     item = rfeed.Item(
-        title = item_title,
-        link = item_link,
-        description = item_body,
-        pubDate = item_from)
+        title=item_title,
+        link=item_link,
+        description=item_body,
+        pubDate=item_from)
 
     localPath = os.path.dirname(__file__) + "/rss/feed_" + str(
         publishing.channel_id) + ".xml"
@@ -114,10 +115,9 @@ def run(publishing, channel_config):
     if os.path.isfile(localPath):  # import older publishing if any
         olderItems = import_items(localPath)
         feed.items.extend(olderItems)
-    elif existingFeed == 1:  # Remote rss feed not yet in our server
+    elif existingFeed == 1: #Remote rss feed not yet in our server
         olderItems = import_items(rbaselineFeed)
         feed.items.extend(olderItems)
-
     a = feed.rss()
     with open(localPath, 'w') as f:
         f.write(a)
