@@ -67,7 +67,7 @@ def create_a_publishing(post, chn, form):
             return pub
         # END OF MODIFICATION
 
-    if not gcal_plugin.is_valid(pub):
+    if is_gcal_channel(chan) and not gcal_plugin.is_valid(pub):
        return None
     if is_gcal_channel(chan):
         generate_google_user_credentials(chan)

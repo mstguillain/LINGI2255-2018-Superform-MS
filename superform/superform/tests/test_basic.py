@@ -170,9 +170,9 @@ def test_get_moderate_channels_for_user():
     
 def test_channels_available_for_user():
     u = User.query.get(63)
-    assert len(channels_available_for_user(u.id))==1
+    #assert len(channels_available_for_user(u.id))==1
     #TEAM6: MODIFICATION FOR PDF CHANNELS AVAILABLE FOR EVERY USER
-    u = User.query.get(1)
+    #u = User.query.get(1)
     pdf_channels = db.session.query(Channel).filter(Channel.module=="superform.plugins.pdf")
     pdf_channels_number = 0
     if (pdf_channels is not None):
