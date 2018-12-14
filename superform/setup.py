@@ -12,7 +12,7 @@ setup(
         'flask-sqlalchemy',
         'google-api-python-client',
         'oauth2client',
-        'google_auth_oauthlib'
+        'google_auth_oauthlib',
         'feedparser',
         'python3-linkedin',
         'facebook-sdk',

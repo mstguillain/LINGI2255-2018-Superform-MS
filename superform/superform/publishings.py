@@ -1,4 +1,4 @@
-from flask import Blueprint, url_for, request, redirect, render_template, \
+from flask import Blueprint, flash, url_for, request, redirect, render_template, \
     session
 
 from superform.utils import login_required, datetime_converter, str_converter
@@ -38,5 +38,6 @@ def moderate_publishing(id,idc):
             db.session.commit()
             return redirect(url_for('index'))
     except facebook.GraphAPIError:
+            flash('Access token error, please refresh your tokens and fill the publication date again')
             return render_template('moderate_post.html', pub=pub)
     return redirect(url_for('index'))

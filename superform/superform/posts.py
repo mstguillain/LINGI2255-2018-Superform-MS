@@ -48,7 +48,7 @@ def create_a_publishing(post, chn, form):
     date_until = datetime_converter(
         form.get(chan + '_dateuntilpost')) if datetime_converter(
         form.get(chan + '_dateuntilpost')) is not None else post.date_until
-pub = Publishing(post_id=post.id, user_id=user_id, channel_id=chn.id, state=0,
+    pub = Publishing(post_id=post.id, user_id=user_id, channel_id=chn.id, state=0,
                      title=title_post, description=descr_post,
                      link_url=link_post, image_url=image_post,
                      date_from=date_from, date_until=date_until)
