@@ -17,13 +17,15 @@ def setup_db(channel_name, channel_module):
               'client_id':'886003916698-2pig0lv6eslba41vrfrefnovmlqpsk3i.apps.googleusercontent.com',
               'client_secret':'Txqi7eqzfGflL3U5PntpGBqV'}
 
-    user = create_user(id="26", name="test26", first_name="utilisateur26", email="utilisateur26.test@uclouvain.be")
+    user = db.session.query(User).filter_by(id=101).first()
+    if not user:
+        user = create_user(id=101, name="test101", first_name="utilisateur101", email="utilisateur101.test@uclouvain.be")
     gcal_plugin.generate_user_credentials(json.dumps(gcal_config), user.id)
     channel = create_channel(channel_name, channel_module, gcal_config)
 
     post = test_gcal.basic_post(user.id)
     write_to_db(post)
-    pub = test_gcal.publish_from_post(post, channel_name)
+    pub = test_gcal.publish_from_post(post, channel.id)
     write_to_db(pub)
     return user, channel, post, pub
 
@@ -35,7 +37,7 @@ def test_GCAL_post(client):
     #-------------------------
     user, channel, post, pub = setup_db(channel_name='test_gcal', channel_module='gcal_plugin')
     login(client, user.id)
-    rv = client.post('/moderate/' + str(post.id) + '/test_gcal',
+    rv = client.post('/moderate/' + str(post.id) + '/' + str(channel.id),
             data=dict(titlepost=pub.title,
                       descrpost=pub.description,
                       linkurlpost=pub.link_url,

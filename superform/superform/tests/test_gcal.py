@@ -1,10 +1,11 @@
 from datetime import datetime, timedelta
 from superform.plugins import gcal_plugin
-from superform import app, db, User, Publishing, channels, Post
-from superform.models import Channel, db
+from superform import app, db, Publishing, channels, Post
+from superform.models import Channel, db, User
 from googleapiclient.discovery import build
 from superform.tests.test_basic import client, login, write_to_db, create_user, create_channel, create_auth
 from superform.utils import get_module_full_name, str_converter
+from sqlalchemy.sql import func
 import pytest, random, string, json
 
 
@@ -13,13 +14,15 @@ def setup_db(channel_name, channel_module):
               'client_id':'886003916698-2pig0lv6eslba41vrfrefnovmlqpsk3i.apps.googleusercontent.com',
               'client_secret':'Txqi7eqzfGflL3U5PntpGBqV'}
 
-    user = create_user(id=10, name="test10", first_name="utilisateur10", email="utilisateur10.test@uclouvain.be")
+    user = db.session.query(User).filter_by(id=100).first()
+    if not user:
+        user = create_user(id=100, name="test100", first_name="utilisateur100", email="utilisateur100.test@uclouvain.be")
     gcal_plugin.generate_user_credentials(json.dumps(gcal_config), user.id)
     channel = create_channel(channel_name, channel_module, gcal_config)
     
     post = basic_post(user.id)
     write_to_db(post)
-    pub = publish_from_post(post, channel_name)
+    pub = publish_from_post(post, channel.id)
     write_to_db(pub)
     return user, channel, post, pub
 
@@ -69,7 +72,7 @@ def basic_publish(title=None, delta=timedelta(hours=1)):
 def test_run_gcal(client):
     user, channel, post, pub = setup_db(channel_name='test_gcal', channel_module='gcal_plugin')
     login(client, user.id)
-    rv = client.post('/moderate/' + str(post.id) + '/test_gcal',
+    rv = client.post('/moderate/' + str(post.id) + '/' + str(channel.id),
             data=dict(titlepost=pub.title,
                       descrpost=pub.description,
                       linkurlpost=pub.link_url,
