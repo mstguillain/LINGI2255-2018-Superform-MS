@@ -8,15 +8,15 @@ from flask import Blueprint, current_app, url_for, request, redirect, \
 from superform.models import db, Channel
 from superform.plugins.LinkedIn import linkedin_plugin, \
     linkedin_code_processing
+from superform.plugins.pdf import pdf_plugin
 from superform.utils import login_required, get_instance_from_module_path, \
     get_modules_names, get_module_full_name
 
 channels_page = Blueprint('channels', __name__)
 
-"""
-    Final static variables for the cookies keys related to the LinkedIn 
-    plugin.
-"""
+# author: Team 06
+# date: December 2018
+# Final static variables for the cookies keys related to the LinkedIn plugin.
 LAST_ACCESS_TOKEN = "last_access_token"
 LAST_CREATION_TIME = "last_creation_time"
 LAST_CHANNEL_ID = "last_channel_id"
@@ -68,9 +68,15 @@ def configure_channel(id):
         if c.config is not "":
             d = ast.literal_eval(c.config)
             setattr(c, "config_dict", d)
+            # TEAM06: addition for LinkedIn plugin
             if str(m) == "superform.plugins.LinkedIn":
                 last_status = request.cookies.get(LAST_STATUS)
                 return linkedin_plugin(id, c, config_fields, last_status)
+            # TEAM06: addition for pdf feature
+            if str(m) == 'superform.plugins.pdf':
+                return pdf_plugin(id, c, config_fields)
+            # TEAM06: end addition
+
         return render_template("channel_configure.html", channel = c,
                                config_fields = config_fields)
     str_conf = "{"
@@ -78,7 +84,18 @@ def configure_channel(id):
     for field in config_fields:
         if cfield > 0:
             str_conf += ","
-        str_conf += "\"" + field + "\" : \"" + request.form.get(field) + "\""
+
+        # TEAM06: changes for the pdf feature
+        if str(m) == "superform.plugins.pdf":
+            if field == "Format":
+                str_conf += "\"" + field + "\" : \"" + request.form['format'] + "\""
+            else:
+                str_conf += "\"" + field + "\" : \"" + request.form[
+                    'logo'] + "\""
+            print('field=%s\nstr_conf=%s' %(field,str_conf))
+        else:
+            str_conf += "\"" + field + "\" : \"" + request.form.get(field) + "\""
+        # TEAM06: end changes
         cfield += 1
 
     # If any LinkedIn session cookie is present we add them to the
@@ -88,10 +105,9 @@ def configure_channel(id):
     last_creation_time = request.cookies.get(LAST_CREATION_TIME)
     last_channel_id = request.cookies.get(LAST_CHANNEL_ID)
 
-
-    print("Saving LinkedIn channel data")
     if str(m) == "superform.plugins.LinkedIn" and str(last_channel_id) == str(
             id) and last_access_token is not None and last_creation_time is not None:
+        print("Saving LinkedIn channel data")
         if cfield > 0:
             str_conf += ","
         str_conf += "\"" + "token" + "\" : \"" + last_access_token + "\""
@@ -108,6 +124,8 @@ def configure_channel(id):
 @login_required(admin_required = True)
 def linkedin_return():
     """
+        author: Team 06
+        date: December 2018
         Redirected route manager for the LinkedIn plugin, sets the necessary
         cookies to continue the session.
     """
@@ -121,7 +139,8 @@ def linkedin_return():
         last_access_token = linkedin_code_processing(
             code)  # return from LinkedIn
         now = datetime.datetime.now()
-        last_creation_time = str(int(time.time()))  # str(time.gmtime()) #now.strftime("%Y-%m-%d %H:%M")
+        last_creation_time = str(int(
+            time.time()))  # str(time.gmtime()) #now.strftime("%Y-%m-%d %H:%M")
         last_channel_id = ch_id
         if last_access_token is None:
             print("No token retrieved!")
@@ -145,6 +164,7 @@ def linkedin_return():
         print("Error: no code found")
         i = url.find("state")
         ch_id = url[i + 9:url.find("rest")]
-        redirection = redirect(url_for('channels.configure_channel', id = ch_id))
+        redirection = redirect(
+            url_for('channels.configure_channel', id = ch_id))
         redirection.set_cookie(LAST_STATUS, "-1:%s" % ch_id)
     return redirection

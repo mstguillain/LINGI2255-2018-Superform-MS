@@ -4,8 +4,8 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 from datetime import datetime
+from superform.utils import str_converter
 import json
-import time
 
 
 FIELDS_UNAVAILABLE = ['Image']
@@ -13,10 +13,6 @@ PROJECT_ID = 'project_id'
 CLIENT_ID = 'client_id'
 CLIENT_SECRET = 'client_secret'
 CONFIG_FIELDS = [PROJECT_ID, CLIENT_ID, CLIENT_SECRET]
-
-
-def str_converter(datet):
-    return datetime.strftime(datet,"%Y-%m-%d")
 
 def creds_to_string(creds):
    return json.dumps({'token': creds.token,
@@ -26,10 +22,10 @@ def creds_to_string(creds):
             'client_secret': creds._client_secret,
             'scopes': creds._scopes})
 
-def generate_user_credentials(channel_config):
+def generate_user_credentials(channel_config, user_id=None):
     SCOPES = 'https://www.googleapis.com/auth/calendar'
 
-    creds = get_user_credentials()
+    creds = get_user_credentials(user_id)
     if not creds:
        channel_config = get_full_config(json.loads(channel_config))
        flow = InstalledAppFlow.from_client_config(channel_config, scopes=[SCOPES])
@@ -37,14 +33,14 @@ def generate_user_credentials(channel_config):
                    authorization_prompt_message='Please visit this URL: {url}',
                    success_message='The auth flow is complete, you may close this window.',
                    open_browser=True)
-       set_user_credentials(creds)
+       set_user_credentials(creds, user_id)
 
-def get_user_credentials():
-   user = User.query.get(session["user_id"])
+def get_user_credentials(user_id=None):
+   user = User.query.get(user_id) if user_id else User.query.get(session["user_id"])
    return Credentials.from_authorized_user_info(json.loads(user.gcal_cred)) if user.gcal_cred else None
 
-def set_user_credentials(creds):
-   user = User.query.get(session["user_id"])
+def set_user_credentials(creds, user_id=None):
+   user = User.query.get(user_id) if user_id else User.query.get(session["user_id"])
    user.gcal_cred = creds_to_string(creds)
    db.session.commit()
 
@@ -67,11 +63,11 @@ def generate_event(publishing):
             }
         ],
         'start': {
-            'date': str_converter(publishing.date_from),
+            'dateTime': str_converter(publishing.date_from) + ':00Z',
             'timeZone': 'Europe/Zurich',
         },
         'end': {
-            'date': str_converter(publishing.date_until),
+            'dateTime': str_converter(publishing.date_until) + ':00Z',
             'timeZone': 'Europe/Zurich',
         },
         'reminders': {
@@ -102,5 +98,6 @@ def delete(id):
     """
 
 def is_valid(pub):
-    now = datetime.datetime.now()
-    return len(pub.title) != 0 and pub.date_from >= now and pub.date_from <= pub.date_until
+    # must have a date_from / date_until with hour and date
+    now = datetime.now()
+    return len(pub.title.strip()) != 0 and pub.date_from >= now and pub.date_from <= pub.date_until

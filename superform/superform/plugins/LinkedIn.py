@@ -1,3 +1,9 @@
+"""
+@author: Team 06
+@date: December 2018
+Plugin for the LinkedIn module
+"""
+
 import configparser
 import json
 import random
