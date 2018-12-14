@@ -23,8 +23,8 @@ class User(db.Model):
 
     def __repr__(self):
         return '<User {}>'.format(repr(self.id))
-    
-    
+
+
 
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key = True, unique = True,
@@ -60,6 +60,7 @@ class Post(db.Model):
 
 
 class Publishing(db.Model):
+
     post_id = db.Column(db.Integer, db.ForeignKey("post.id"), nullable=False)
     user_id = db.Column(db.String(80), db.ForeignKey("user.id"), nullable=False)
     channel_id = db.Column(db.Integer, db.ForeignKey("channel.id"), nullable=False)
@@ -70,9 +71,6 @@ class Publishing(db.Model):
     image_url = db.Column(db.Text)
     date_from = db.Column(db.DateTime)
     date_until = db.Column(db.DateTime)
-    # start_time = db.Column(db.DateTime, nullable=True)
-    # end_time = db.Column(db.DateTime, nullable=True)
-
 
     __table_args__ = (db.PrimaryKeyConstraint('post_id', 'channel_id'),)
 
@@ -85,6 +83,7 @@ class Publishing(db.Model):
 
 
 class Channel(db.Model):
+
     id = db.Column(db.Integer, primary_key=True, unique=True, nullable=False)
     name = db.Column(db.Text, nullable=False)
     module = db.Column(db.String(100), nullable=False)
@@ -124,3 +123,4 @@ class Permission(Enum):
 class State(Enum):
     WAITING = 1
     PUBLISHED = 2
+    ARCHIVED = 3

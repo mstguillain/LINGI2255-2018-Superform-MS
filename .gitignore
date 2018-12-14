@@ -9,7 +9,7 @@
 /superform/.pytest_cache/*
 *.pyc
 *.xml
-superform.db
+*.db
 *.cert
 *.key
 *.aux
@@ -26,9 +26,13 @@ superform/superform.egg-info/
 .flooignore
 *.DS_Store
 linkedin.ini
+/superform/superform/plugins/pdf/*.pdf
 .DS_Store
-*/superform.db
 credentials.json
 superform/uild/
 superform/dist/
 superform/superform.egg-info/
+superform/superform/__pycache__/*
+**/__pycache__/
+*.pytest_cache
+

@@ -1,7 +1,7 @@
 from flask import Blueprint, url_for, request, redirect, render_template, \
     session
 
-from superform.utils import login_required, datetime_converter, str_converter, hour_converter
+from superform.utils import login_required, datetime_converter, str_converter
 from superform.models import db, Publishing, Channel
 import facebook
 
@@ -37,10 +37,6 @@ def moderate_publishing(id,idc):
             pub.state = 1
             db.session.commit()
             return redirect(url_for('index'))
-    except facebook.GraphAPIError as Error:
-            print(Error)
+    except facebook.GraphAPIError:
             return render_template('moderate_post.html', pub=pub)
     return redirect(url_for('index'))
-
-        
-
