@@ -8,10 +8,7 @@
 
 <h2> Your personnal statistics </h2>
 <div class="row">
-    <div class="col-md-4 offset-md-1">
-        <h3>Channel use</h3>
-        <canvas id="channel_chart" width="400" height="400"></canvas>
-    </div>
+
     <div class="col-md-4 offset-md-1">
         <h3>Channel use</h3>
         <canvas id="publishing_chart" width="400" height="400"></canvas>
@@ -19,7 +16,12 @@
 </div>
 {% if data.user.is_mod %}
 <h2> Global site statistics </h2>
+
 <div class="row">
+    <div class="col-md-4 offset-md-1">
+        <h3>Channel use</h3>
+        <canvas id="channel_chart" width="400" height="400"></canvas>
+    </div>
     <div class="col-md-4 offset-md-1">
         <h3>Number of accepted publications</h3>
         <canvas id="accepted_chart" width="400" height="400"></canvas>
