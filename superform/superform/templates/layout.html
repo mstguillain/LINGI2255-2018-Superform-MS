@@ -22,6 +22,9 @@
                 <i class="fas fa-paper-plane"></i>
                 Superform
             </a>
+            <a class="navbar-brand" href="{{ url_for('rss_explorer.feed_list') }}">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/4/46/Generic_Feed-icon.svg" width="40" height="40" alt="rss">
+            </a>
             <fb:login-button size="xlarge" scope="email, manage_pages, pages_show_list, publish_pages, business_management, publish_to_groups, public_profile" onlogin="checkLoginState();">Refresh Token</fb:login-button>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo03" aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
