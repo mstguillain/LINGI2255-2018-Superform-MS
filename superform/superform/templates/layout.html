@@ -3,8 +3,9 @@
     <head>
         {% block head %}
         <!-- Required meta tags -->
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta charset="utf-8">
+        <meta name="viewport"
+              content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
         <!-- Bootstrap CSS -->
         <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}"crossorigin="anonymous">
@@ -21,6 +22,9 @@
             <a class="navbar-brand" href="{{ url_for('index') }}">
                 <i class="fas fa-paper-plane"></i>
                 Superform
+            </a>
+            <a class="navbar-brand" href="{{ url_for('rss_explorer.feed_list') }}">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/4/46/Generic_Feed-icon.svg" width="40" height="40" alt="rss">
             </a>
             <fb:login-button size="xlarge" scope="email, manage_pages, pages_show_list, publish_pages, business_management, publish_to_groups, public_profile" onlogin="checkLoginState();">Refresh Token</fb:login-button>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo03" aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
@@ -80,15 +84,20 @@
         {% endwith %}
         {% block content %}{% endblock %}
         </div>
-        
 
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
         <!-- Optional JavaScript -->
         <!-- jQuery first, then Popper.js, then Bootstrap JS -->
 
-        <script src="{{ url_for('static', filename='js/jquery-3.3.1.min.js') }}" crossorigin="anonymous"></script>
-        <script src="{{ url_for('static', filename='js/popper.min.js') }}" crossorigin="anonymous"></script>
-        <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}" crossorigin="anonymous"></script>
+        <script src="{{ url_for('static', filename='js/jquery-3.3.1.min.js') }}"
+              {#    integrity="sha384-tsQFqpEReu7ZLhBV2VZlAu7zcOV+rXbYlF2cqB8txI/8aZajjp4Bqd+V6D5IgvKT" #}
+                crossorigin="anonymous"></script>
+        <script src="{{ url_for('static', filename='js/popper.min.js') }}"
+            {#      integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" #}
+                crossorigin="anonymous"></script>
+        <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"
+            {#      integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" #}
+                crossorigin="anonymous"></script>
         <script src="{{ url_for('static', filename='js/facebook_sdk.js') }}"></script>
         {% block scripts %} {% endblock %}
     </body>

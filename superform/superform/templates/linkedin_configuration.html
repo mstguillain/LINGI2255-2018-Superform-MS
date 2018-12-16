@@ -1,0 +1,61 @@
+<!--
+author: Team 06
+date: December 2018
+This is an html file used for the LinkedIn module
+-->
+{% extends "channel_configure.html" %}
+{% block content %}
+    <h1>Configuration</h1>
+    {% if session.logged_in %}
+        <form method="POST" action="">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="row">
+                        <div class="col-md-12">
+                            {% for field in config_fields %}
+                                <div class="form-group">
+                                    <label for="{{ field }}">{{ field }}</label><br>
+                                    <input type="{{ 'password' if field == 'Password' else 'text' }}"
+                                           name="{{ field }}"
+                                           id="{{ field }}"
+                                           class="form-control"
+                                           value="{{ channel.config_dict.get(field) }}">
+                                </div>
+                            {% endfor %}
+                            <a type="button" class="btn btn-info"
+                               href="{{ redirect }}">Link
+                                in your LinkedIn</a>
+                            <br/><br/>
+                            <!-- Credentials block -->
+                            {% if credentials_flag == -1 %} <!-- Error -->
+                                <p class="alert-danger">{{ credentials_message }}</p>
+                            {% elif credentials_flag == 1 %} <!-- Success -->
+                                <p class="alert-info">{{ credentials_message }}</p>
+                            {% endif %}
+                            <!-- Connection block -->
+                            {% if connection_flag == -1 %} <!-- Error -->
+                                <p class="alert-danger">{{ connection_message }}</p>
+                            {% elif connection_flag == 1 %} <!-- Success -->
+                                <p class="alert-info">{{ connection_message }}</p>
+                            {% endif %}
+                            <!-- Expiration block -->
+                            {% if expiration_flag == -1 %} <!-- Error -->
+                                <p class="alert-danger">{{ expiration_message }}</p>
+                            {% elif expiration_flag == 1 %} <!-- Success -->
+                                <p class="alert-info">{{ expiration_message }}</p>
+                            {% elif expiration_flag == 2 %} <!-- Warning -->
+                                <p class="alert-warning">{{ expiration_message }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button class="btn btn-success" type="submit">Save Configuration
+            </button>
+            <a type="button" class="btn btn-outline-primary"
+               href="{{ url_for('channels.channel_list') }}">Abort</a>
+        </form>
+    {% else %}
+        Your are not logged in.
+    {% endif %}
+{% endblock %}

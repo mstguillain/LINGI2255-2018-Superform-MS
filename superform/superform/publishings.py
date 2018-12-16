@@ -1,4 +1,5 @@
-from flask import Blueprint, url_for, request, redirect, render_template, session
+from flask import Blueprint, flash, url_for, request, redirect, render_template, \
+    session
 
 from superform.utils import login_required, datetime_converter, str_converter
 from superform.models import db, Publishing, Channel
@@ -27,7 +28,7 @@ def moderate_publishing(id,idc):
             #pub.end_time = hour_converter(request.form.get('endtime'))
             #state is shared & validated
             #running the plugin here
-            c=db.session.query(Channel).filter(Channel.name == pub.channel_id).first()
+            c=db.session.query(Channel).filter(Channel.id == pub.channel_id).first()
             plugin_name = c.module
             c_conf = c.config
             from importlib import import_module
@@ -37,5 +38,6 @@ def moderate_publishing(id,idc):
             db.session.commit()
             return redirect(url_for('index'))
     except facebook.GraphAPIError:
+            flash('Access token error, please refresh your tokens and fill the publication date again')
             return render_template('moderate_post.html', pub=pub)
     return redirect(url_for('index'))

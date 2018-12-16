@@ -1,4 +1,4 @@
-# To run : Be sure to be in Superform/superform folder and then 'pytest -v' in your terminal
+# To run : Be sure to be in ../LINGI2255-2018-Superform-MS-06/superform folder and then 'pytest -v' in your terminal
 import datetime
 import os, json
 import tempfile
@@ -148,16 +148,16 @@ def test_get_module_name():
     assert m is None
 
 def test_is_moderator():
-    user = User(id=1, name="test", first_name="utilisateur", email="utilisateur.test@uclouvain.be")
+    user = User(id=63, name="test", first_name="utilisateur", email="utilisateur.test@uclouvain.be")
     db.session.add(user)
-    u = User.query.get(1)
+    u = User.query.get(63)
     assert is_moderator(u) == False
-    a= Authorization(channel_id=1,user_id=1,permission=2)
+    a= Authorization(channel_id=1,user_id=63,permission=2)
     db.session.add(a)
     assert is_moderator(u) == True
 
 def test_get_moderate_channels_for_user():
-    u = User.query.get(1)
+    u = User.query.get(63)
     channel = Channel(name="test", module=get_module_full_name("mail"), config="{}")
     db.session.add(channel)
     assert get_moderate_channels_for_user(u) is not None
@@ -169,11 +169,21 @@ def test_get_moderate_channels_for_user():
     assert len(get_moderate_channels_for_user(user)) == 1
     
 def test_channels_available_for_user():
-    u = User.query.get(1)
-    assert len(channels_available_for_user(u.id))==1
+    u = User.query.get(63)
+    #assert len(channels_available_for_user(u.id))==1
+    #TEAM6: MODIFICATION FOR PDF CHANNELS AVAILABLE FOR EVERY USER
+    #u = User.query.get(1)
+    pdf_channels = db.session.query(Channel).filter(Channel.module=="superform.plugins.pdf")
+    pdf_channels_number = 0
+    if (pdf_channels is not None):
+        for chan in pdf_channels:
+            pdf_channels_number+=1
+
+    assert len(channels_available_for_user(u.id))==1 + pdf_channels_number
     user = User(id=3, name="test", first_name="utilisateur3", email="utilisateur3.test@uclouvain.be")
     db.session.add(user)
-    assert len(channels_available_for_user(user.id)) == 0
+    assert len(channels_available_for_user(user.id)) == 0 + pdf_channels_number
+    #END OF MODIFICATION
 
 
 
