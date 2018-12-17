@@ -10,7 +10,6 @@
 <div class="row">
 
     <div class="col-md-4 offset-md-1">
-        <h3>Channel use</h3>
         <canvas id="publishing_chart" width="400" height="400"></canvas>
     </div>
 </div>
@@ -84,7 +83,13 @@ var publishing_chart = new Chart(ctx2, {
         legend: {
                 display: false,
         },
-
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero: true
+                }
+            }]
+        },
     }
 });
 
