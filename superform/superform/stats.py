@@ -29,9 +29,7 @@ def stats_publishing():
     return stats
 
 def number_of_posts():
-    #Edit by Will: the number of post isn't only the myself post.
-    #return db.session.query(Post).filter(Post.user_id == session.get("user_id", "")).count()
-    return db.session.query(Post).filter(Post.user_id).count()
+    return db.session.query(Post).filter(Post.user_id == session.get("user_id", "")).count()
 
 def number_of_publishings():
     return db.session.query(Publishing).filter(Publishing.user_id == session.get("user_id", "")).count()
